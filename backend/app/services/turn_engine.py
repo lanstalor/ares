@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 
-from app.models.campaign import Campaign
+from sqlalchemy.orm import Session
+
 from app.core.config import get_settings
-from app.services.ai_provider import NarrationRequest
+from app.models.campaign import Campaign
+from app.services.ai_provider import NarrationProvider, NarrationRequest
 from app.services.canon_guard import evaluate_canon_guard
+from app.services.consequence_applier import apply_consequences
 from app.services.context_builder import build_turn_context
 from app.services.provider_registry import get_narration_provider
 
@@ -17,24 +22,38 @@ class TurnEngineResult:
     canon_guard_message: str | None
 
 
-def resolve_turn(campaign: Campaign, player_input: str) -> TurnEngineResult:
-    context_excerpt = build_turn_context(campaign, player_input)
-    settings = get_settings()
-    narration_provider = get_narration_provider(settings.generation_provider)
+def resolve_turn(
+    *,
+    session: Session,
+    campaign: Campaign,
+    player_input: str,
+    narration_provider: NarrationProvider | None = None,
+) -> TurnEngineResult:
+    context = build_turn_context(session, campaign, player_input)
+
+    if narration_provider is None:
+        settings = get_settings()
+        narration_provider = get_narration_provider(settings.generation_provider)
+
     narration = narration_provider.narrate(
         NarrationRequest(
-            campaign=campaign,
+            campaign_name=campaign.name,
+            current_date_pce=campaign.current_date_pce,
             player_input=player_input,
-            context_excerpt=context_excerpt,
+            player_safe_brief=context.player_safe_brief,
+            hidden_gm_brief=context.hidden_gm_brief,
         )
     )
-    gm_response = narration.narrative
-    player_safe_summary = narration.player_safe_summary
-    canon_guard_passed, canon_guard_message = evaluate_canon_guard(gm_response)
+
+    canon_guard_passed, canon_guard_message = evaluate_canon_guard(narration.narrative)
+
+    if canon_guard_passed:
+        apply_consequences(session, campaign, narration.consequences)
+
     return TurnEngineResult(
-        gm_response=gm_response,
-        player_safe_summary=player_safe_summary,
-        context_excerpt=context_excerpt,
+        gm_response=narration.narrative,
+        player_safe_summary=narration.player_safe_summary,
+        context_excerpt=context.player_safe_brief,
         canon_guard_passed=canon_guard_passed,
         canon_guard_message=canon_guard_message,
     )

@@ -1,20 +1,23 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Protocol
 
-from app.models.campaign import Campaign
+from app.services.consequence_applier import Consequences
 
 
 @dataclass
 class NarrationRequest:
-    campaign: Campaign
+    campaign_name: str
+    current_date_pce: int
     player_input: str
-    context_excerpt: str
+    player_safe_brief: str
+    hidden_gm_brief: str
 
 
 @dataclass
 class NarrationResponse:
     narrative: str
     player_safe_summary: str
+    consequences: Consequences = field(default_factory=Consequences)
 
 
 class NarrationProvider(Protocol):
@@ -31,4 +34,5 @@ class NullNarrationProvider:
                 "and is ready for provider-backed narrative resolution."
             ),
             player_safe_summary=f"Player attempted: {request.player_input[:180]}",
+            consequences=Consequences(),
         )

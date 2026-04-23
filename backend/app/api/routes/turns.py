@@ -35,7 +35,11 @@ def create_turn(campaign_id: str, payload: TurnCreate, session: SessionDep) -> T
     if campaign is None:
         raise HTTPException(status_code=404, detail="Campaign not found")
 
-    result = resolve_turn(campaign=campaign, player_input=payload.player_input)
+    result = resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input=payload.player_input,
+    )
 
     turn = Turn(
         campaign_id=campaign.id,
