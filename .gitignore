@@ -1,0 +1,17 @@
+.DS_Store
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.venv/
+node_modules/
+dist/
+build/
+.env.local
+backend/.venv/
+backend/.pytest_cache/
+frontend/node_modules/
+frontend/dist/
+data/postgres/
+ares.db
+.env
+ebooks/
