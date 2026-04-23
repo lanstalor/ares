@@ -1,7 +1,9 @@
 name|type|description|mechanics|rarity|visibility
-Sigil-Scrambler|Intel/Comms|Palm-sized device emitting localized EM pulses.|Temporarily blinds mid-range biometric scanners. 10m range. 3 uses before recharge.|VERY_RARE|GM_ONLY
-Bypass Key (Orange-spec)|Tool|Physical override key forged by compromised Orange engineers.|Opens 80% of House Codovan industrial locks. Does not work on high-security doors.|RARE|PLAYER_FACING
-Filter-Mask (Modified)|Intel/Comms|Standard mask with frequency-hopping comms chip.|Allows 200m private communication without using dome-comms.|UNCOMMON|PLAYER_FACING
-The "Claw"|Mobility|Collapsible high-tensile grappling line with magnetic anchor.|Allows climbing vertical shafts. +5 to Athletics for climbing.|COMMON|PLAYER_FACING
-Sons Whisper-Mic|Intel/Comms|Near-invisible throat-mic used for sub-vocal communication.|Requires a Filter-Mask or receiver to hear. DC 18 Perception to notice in use.|RARE|SEALED
-Pulse-Dampener|Utility|Small disk that suppresses the signature of active pulse-armor.|Hides the EM signature of pulse-armor for 10 minutes.|VERY_RARE|GM_ONLY
+ClawDrill|Industrial/Vehicle|A massive, 90-meter-long drill operated by Red Helldivers to excavate Helium-3 from planetary cores.|Operated via complex manual nodule panels. Requires a DC 20 Dexterity check for non-Helldivers to pilot without crashing.|VERY_RARE|PLAYER_FACING
+GravBoots|Mobility|Advanced anti-gravity footwear primarily used by Golds. Controlled through subtle toe movements.|Allows the wearer to hover, fly, and perform high-speed aerial maneuvers. Grants a fly speed of 60 ft.|RARE|PLAYER_FACING
+Razor|Weapon (Martial)|The signature weapon of the Gold Color. Made of a chemical-reactive material that transitions between a flexible whip and a rigid blade.|Versatile (sword/whip), Finesse. Whip form has 10 ft reach and can grapple as a bonus action. Illegal for non-Golds.|VERY_RARE|PLAYER_FACING
+PulseFist|Weapon (Energy)|A gauntlet-mounted energy weapon capable of firing destructive pulses. Can be set to stun or kill.|Ranged weapon. Stun setting requires a DC 15 CON save or target falls unconscious. Kill setting deals 2d10 radiant damage.|RARE|PLAYER_FACING
+PulseArmor|Armor|High-tech, form-fitting combat armor with a built-in PulseShield generator. Deflects kinetic and energy attacks.|Base AC 17. The PulseShield absorbs the first 20 points of damage per encounter before needing to recharge. Overheats under sustained fire.|VERY_RARE|PLAYER_FACING
+Forged Sigil|Intel/Comms|A surgical implant on the back of the hand spoofing BoQC scanners with a false Color identity.|Passes standard commercial manifest scans. Automatically fails deep-scans or White Arbiter inquisitions. Discovery is a capital offense.|VERY_RARE|SEALED
+Scocher|Weapon (Energy)|A standard-issue energy sidearm, often carried by Gray legionaries.|Ranged weapon (30/120 ft), 1d8 radiant damage. Common on the black market in the Belt or the Gyre.|COMMON|PLAYER_FACING
+WhisperCrystal|Intel/Comms|A thumb-sized translucent crystal encoded with a single-use voice message.|Plays once at a whisper volume, then dissolves into inert dust leaving no data trail.|UNCOMMON|PLAYER_FACING
