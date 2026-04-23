@@ -1,0 +1,7 @@
+name|type|description|mechanics|rarity|visibility
+Sigil-Scrambler|Intel/Comms|Palm-sized device emitting localized EM pulses.|Temporarily blinds mid-range biometric scanners. 10m range. 3 uses before recharge.|VERY_RARE|GM_ONLY
+Bypass Key (Orange-spec)|Tool|Physical override key forged by compromised Orange engineers.|Opens 80% of House Codovan industrial locks. Does not work on high-security doors.|RARE|PLAYER_FACING
+Filter-Mask (Modified)|Intel/Comms|Standard mask with frequency-hopping comms chip.|Allows 200m private communication without using dome-comms.|UNCOMMON|PLAYER_FACING
+The "Claw"|Mobility|Collapsible high-tensile grappling line with magnetic anchor.|Allows climbing vertical shafts. +5 to Athletics for climbing.|COMMON|PLAYER_FACING
+Sons Whisper-Mic|Intel/Comms|Near-invisible throat-mic used for sub-vocal communication.|Requires a Filter-Mask or receiver to hear. DC 18 Perception to notice in use.|RARE|SEALED
+Pulse-Dampener|Utility|Small disk that suppresses the signature of active pulse-armor.|Hides the EM signature of pulse-armor for 10 minutes.|VERY_RARE|GM_ONLY

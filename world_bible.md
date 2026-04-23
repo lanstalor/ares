@@ -795,6 +795,12 @@ The only district on Ganymede where a Color other than Gold effectively self-gov
 Ganymede’s primary black market. 200-meter corridor exchange in sub-level 6. Forged sigils (third stall from north), weapons (behind wall panel, three stalls down), intelligence exchange (Enna — Pink, fourth stall, scent-and-fiber cover, charges in information not credits). The Sons’ most useful operational location and most structurally fragile dependency.
 *Tension mechanic:* Roll d6: 1–3 = normal; 4 = Gray Lurcher at corridor end (Perception DC 14 to identify); 5 = Syndicate enforcer watching sigil stall; 6 = Enna approaches first: *“I have something that belongs to you. Bring a question worth trading.”*
 
+**The Spatter** | Parent: The Underbelly | Faction: None
+A coolant-leak catchment basin repurposed as a lowColor social hub. Smells of algae and industrial grease. Low-ceilinged, crowded, and loud enough to mask a whisperCrystal playback. The cell uses it for high-heat meetings when the Melt is watched.
+
+**Vex’s Scavenge** | Parent: The Underbelly | Faction: None
+A mountain of decommissioned atmospheric intake filters and scuttled freight-shuttles. Vex of Gamma lives in the hollowed-out hull of a *Pikeman*-class shuttle at the center. If it’s made of metal and was built after 500 PCE, Vex can find a replacement part for it.
+
 **Doc’s Corner** | Parent: The Underbelly | Faction: Unaffiliated (Yellow — off-books)
 Marked by a single yellow bioluminescent strip — the only yellow light in the Underbelly. Run by Pell, a Yellow medic who lost their clinic license in 718 PCE after treating Sons operatives and lying to the Garrison about it. Treats 40 patients per week, charges whatever a patient can pay, has never turned anyone away. `[GM ONLY]` Pell’s supply cabinet contains three items left by a previous cell operative taken to Block IV in 725 PCE. “Keep them until someone asks about Nagasos.” Nobody has asked.
 
@@ -945,6 +951,28 @@ A 400-meter iron-nickel asteroid in the Drift’s outer arc. Single pressurized 
 **Born:** Early 717 PCE. Good Hope, Australia, Earth.
 **Appearance:** 11–15 years old depending on exact campaign date. Lean, close-cropped dark hair, same warm brown eyes as Trigg but harder. Standard Gray legionary armor slightly too large. Helmet tucked under one arm.
 **GM rule:** Not a Sons contact — a pressure point. The person the player character is most likely to accidentally endanger. If she discovers what the cell is doing, she has to choose between her training and everything her brother has been quietly learning. That choice is the campaign’s emotional climax.
+
+-----
+
+### Vex of Gamma
+
+**Race:** LowRed | **Class:** Helldiver (Saboteur) | **Faction:** Sons of Ares (Ganymede cell)
+**Appearance:** Mid-forties, unusually tall for a lowRed (5'6"), with a permanent hunch and hands that look like they've been dipped in engine oil. Left eye is a milky-white cataract from a welding accident. Wears a heavy multi-pocketed work vest over a stained thermal layer.
+**Personality:** Suspicious, talkative, and fiercely loyal to the "Underbelly" community. He doesn't believe in the Rising because he doesn't think Golds can be beaten, but he'll sabotage a House Codovan processor just to see the lights flicker in the Prefect's Hall.
+**Mannerisms:** Constantly chews on a piece of synthetic rubber. Wipes his hands on his vest even when they're already dirty. Refers to all Golds as "Glints."
+**Stats:** STR 13 | DEX 14 | CON 16 | INT 15 | WIS 12 | CHA 10 | HP 48 | AC 12 | CR 3
+**GM rule:** The cell's primary source for mechanical repairs and Underbelly rumors. He knows the vent network better than any Orange engineer.
+
+-----
+
+### Legate Voss ti Harlan
+
+**Race:** Gray | **Class:** Gray Legionary (Garrison Instinct) | **Faction:** Gray Garrison (Ganymede)
+**Appearance:** Late fifties, silver-gray hair in a regulation buzz cut. Tired eyes, skin the color of old parchment. Always in a pristine Garrison uniform, but the medals on his chest look heavy.
+**Personality:** A "good soldier" who is beginning to suspect the Society he serves isn't as perfect as the HoloCan says. He wants his pension and a quiet retirement, but he finds himself looking the other way when he sees lowColor children stealing ration bars.
+**Mannerisms:** Polishes his rank sigil when he's nervous. Speaks in a low, measured monotone. Avoids looking at Whites if he can help it.
+**Stats:** STR 14 | DEX 12 | CON 15 | INT 14 | WIS 15 | CHA 13 | HP 62 | AC 16 | CR 5
+**GM rule:** A potential recruit or a dangerous obstacle. He won't join the Sons, but he might become a "silent partner" who leaks patrol schedules if he thinks it prevents a massacre.
 
 -----
 
@@ -1188,6 +1216,22 @@ Every commercial torchShip runs sigil checks at departure and arrival. A forged 
 The Ganymede Dockyards were built in 493 PCE — the second major orbital shipbuilding facility in the solar system, constructed to break House Carthii’s Venus monopoly on warship production. Owned and operated by House Codovan. One of the most strategically significant facilities in the outer solar system.
 
 `[GM ONLY]` Canon warning: In 743 PCE, Darrow destroys the Ganymede Dockyards. This is a fixed canon event. Players cannot prevent it, but they may operate in or around the Dockyards during this campaign. The Dockyards’ destruction is not their story — the fourteen years before it might be.
+
+-----
+
+### Sons of Ares — Standard Operating Equipment
+
+*[GM ONLY]*
+
+Standard-issue gear for a Sons of Ares cell operating on Ganymede. Most of this equipment is illegal to possess for non-Golds or non-authorized Grays.
+
+**Sigil-Scrambler:** A palm-sized device that emits a localized EM pulse designed to temporarily blind mid-range biometric scanners. Used to bypass automated checkpoints in the Underbelly. `[SEALED]` Frequent use flags the location for a BoQC "deep-clean" audit.
+
+**Bypass Key (Orange-spec):** A physical override key forged by compromised Orange engineers. Fits 80% of House Codovan industrial locks. Does not work on Gold-tier residential or high-security Garrison doors.
+
+**Filter-Mask (Modified):** A standard atmospheric filter-mask with a built-in frequency-hopping comms chip. Allows cell members to communicate over short distances (200m) without using the public dome-comms network.
+
+**The "Claw":** A collapsible, high-tensile grappling line with a magnetic anchor. Essential for navigating the vertical shafts of the Underbelly where elevators are monitored or broken.
 
 -----
 

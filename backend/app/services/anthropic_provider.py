@@ -112,7 +112,7 @@ class AnthropicNarrationProvider:
         self,
         *,
         messages_create: Callable[..., Any] | None = None,
-        model: str = "claude-opus-4-7",
+        model: str = "claude-haiku-4-5-20251015",
         max_tokens: int = 4096,
     ) -> None:
         self._messages_create = messages_create

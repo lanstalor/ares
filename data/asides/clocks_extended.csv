@@ -1,0 +1,4 @@
+label|clock_type|max_value|current_value|description
+Garrison Heat|pressure|8|2|As the cell operates, the Gray Garrison begins to notice patterns. At 8, a sector-wide lockdown and BoQC audit occurs.
+The Syndicate's Patience|faction|6|0|Hask knows the cell exists. At 6, he sells them to the BoQC or extorts them for all their gear.
+Oxygen Scrubber Failure|event|4|0|Sector 43's old scrubbers are failing. At 4, the sector becomes uninhabitable, forcing the cell to find a new safehouse.

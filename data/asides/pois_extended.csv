@@ -1,0 +1,6 @@
+name|parent_area|faction|description|gm_instructions|visibility
+The Spatter|The Underbelly|None|A coolant-leak catchment basin repurposed as a lowColor social hub. Smells of algae and industrial grease.|Masks whisperCrystal playback. Used for high-heat meetings.|PLAYER_FACING
+Vex’s Scavenge|The Underbelly|None|A mountain of decommissioned atmospheric intake filters. Vex lives in a scuttled shuttle hull at the center.|Vex can find any mechanical part here if players trade information or favors.|PLAYER_FACING
+Sector 43 "The Ghost"|The Underbelly|None|A pressurized sub-level that was "erased" from the official Codovan blueprints after a 715 PCE fire.|Used as a deep-cover safehouse. Requires an Orange-spec bypass key to enter.|SEALED
+The Choke|Eastern Dome Sector|None|A narrow service-pipe corridor connecting the Underbelly to the Dockyards.|Guarded by a Syndicate "toll-taker." The only way to move gear without sigil-scans.|LOCKED
+The Signal Splice|The Codovan Tier|House Codovan|A high-security communications junction box hidden behind a false marble pillar near the Dueling Court.|Breaching this allows a 60-second hijack of Ganymede's public HoloCan network.|GM_ONLY
