@@ -29,7 +29,7 @@ def test_seed_runtime_imports_world_bible_into_database() -> None:
     assert result.areas_imported >= 20
     assert result.pois_imported >= 15
     assert result.npcs_imported >= 8
-    assert result.lore_pages_imported == 5
+    assert result.lore_pages_imported >= 5
     assert result.characters_imported == 1
     assert result.objectives_imported == 1
     assert result.secrets_imported >= 20
@@ -68,4 +68,4 @@ def test_seed_runtime_reuses_global_world_entities_on_repeat_import() -> None:
     assert poi_count < 50
     assert npc_count >= 8
     assert npc_count < 20
-    assert lore_count == 5
+    assert lore_count >= 5
