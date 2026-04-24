@@ -69,3 +69,4 @@ def test_seed_runtime_reuses_global_world_entities_on_repeat_import() -> None:
     assert npc_count >= 8
     assert npc_count < 20
     assert lore_count >= 5
+    assert lore_count < 20

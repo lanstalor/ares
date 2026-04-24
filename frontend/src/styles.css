@@ -148,11 +148,18 @@ textarea::placeholder {
   text-transform: uppercase;
 }
 
+.system-badge.is-good,
 .panel-chip.is-good {
   border-color: rgba(120, 162, 100, 0.5);
   color: var(--ok);
 }
 
+.system-badge.is-warn {
+  border-color: rgba(217, 165, 66, 0.45);
+  color: var(--accent);
+}
+
+.system-badge.is-bad,
 .panel-chip.is-bad {
   border-color: rgba(165, 61, 47, 0.65);
   color: #e28679;
@@ -201,6 +208,48 @@ textarea::placeholder {
   margin-top: 16px;
 }
 
+.readiness-grid,
+.console-actions,
+.seed-summary {
+  display: grid;
+  gap: 12px;
+}
+
+.readiness-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 16px;
+}
+
+.readiness-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 241, 203, 0.025);
+  padding: 12px;
+}
+
+.readiness-value {
+  margin: 8px 0 6px;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.readiness-value.is-good {
+  color: var(--ok);
+}
+
+.readiness-value.is-warn {
+  color: var(--accent);
+}
+
+.readiness-value.is-bad {
+  color: #e28679;
+}
+
+.console-actions {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 16px;
+}
+
 .turn {
   border-left: 3px solid var(--border);
   background: rgba(255, 241, 203, 0.03);
@@ -223,6 +272,28 @@ textarea::placeholder {
 
 .turn-system {
   border-left-color: #70808f;
+}
+
+.turn-system-location {
+  border-left-color: #4ec9b0;
+  background: rgba(78, 201, 176, 0.04);
+  font-size: 0.9rem;
+}
+
+.turn-system-location .turn-meta {
+  color: #4ec9b0;
+  opacity: 0.8;
+}
+
+.turn-system-clock {
+  border-left-color: #d4a843;
+  background: rgba(212, 168, 67, 0.04);
+  font-size: 0.9rem;
+}
+
+.turn-system-clock .turn-meta {
+  color: #d4a843;
+  opacity: 0.8;
 }
 
 .turn-location {
@@ -276,6 +347,28 @@ textarea::placeholder {
   gap: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   padding-top: 14px;
+}
+
+.seed-summary {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin-top: 4px;
+  padding-top: 12px;
+}
+
+.seed-summary dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.seed-summary dd {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  word-break: break-word;
 }
 
 .panel-label,

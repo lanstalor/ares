@@ -1,14 +1,17 @@
 .PHONY: backend-install backend-dev backend-test frontend-install frontend-dev frontend-build check compose-up migrate
 
+BACKEND_VENV := backend/.venv
+
 backend-install:
-	python3 -m venv backend/.venv
-	backend/.venv/bin/pip install -e backend/.[dev]
+	python3 -m venv $(BACKEND_VENV)
+	$(BACKEND_VENV)/bin/pip install -e backend/.[dev]
 
 backend-dev:
-	cd backend && ../.venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+	$(BACKEND_VENV)/bin/python -m app.db.bootstrap
+	$(BACKEND_VENV)/bin/uvicorn --app-dir backend app.main:app --reload --host 0.0.0.0 --port 8000
 
 backend-test:
-	cd backend && ../.venv/bin/pytest
+	$(BACKEND_VENV)/bin/pytest backend/tests
 
 frontend-install:
 	cd frontend && npm install

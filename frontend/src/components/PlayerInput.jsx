@@ -30,7 +30,7 @@ export function PlayerInput({ disabled, isSubmitting, onSubmit, placeholder }) {
       <div className="input-actions">
         <span className="hint">
           {disabled
-            ? "Select a campaign before transmitting."
+            ? "Select or create a campaign to begin."
             : "Player-safe output only. Hidden state stays server-side."}
         </span>
         <button disabled={disabled || isSubmitting || !value.trim()} type="submit">
