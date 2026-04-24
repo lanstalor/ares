@@ -54,7 +54,7 @@ export function CampaignConsole({
             ))
           ) : (
             <p className="empty-state">
-              No campaigns found. Create one or seed from the world bible to open the turn loop.
+              No active campaign found. Seed the world bible to begin, or create a new cell.
             </p>
           )}
         </div>
@@ -84,7 +84,7 @@ export function CampaignConsole({
         </form>
 
         <div className="campaign-seed-tools">
-          <p className="panel-label">Canonical bootstrap</p>
+          <p className="panel-label">World Setup</p>
           <p className="hint">
             {worldBibleReady
               ? "Seed a campaign directly from world_bible.md."

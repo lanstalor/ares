@@ -35,7 +35,7 @@ function createOpeningNotice(selectedCampaign) {
       speaker: "system",
       label: "System",
       meta: "Link primed",
-      text: `Campaign uplink established for ${selectedCampaign.name}. Submit Davan's next move when ready.`,
+      text: `Operative channel open — ${selectedCampaign.name}. You are Davan, a HighRed running cells for the Sons of Ares in the Callisto Depot District. The Society is everywhere. Move carefully.`,
     },
   ];
 }
@@ -382,21 +382,21 @@ export default function App() {
       <header className="masthead">
         <div>
           <p className="eyebrow">Project Ares</p>
-          <h1>The Solar Society, 728 PCE</h1>
+          <h1>Sons of Ares — 728 PCE</h1>
           <p className="masthead-copy">
-            Retro operator shell targeting <span>{API_BASE_URL}</span> with live backend readiness checks.
+            728 PCE. Ganymede bleeds. The Society watches everything — but not us. Not yet.
           </p>
         </div>
         <div className="masthead-badges">
-          <div className="system-badge">{loadingShell ? "Booting shell" : "UI shell online"}</div>
+          <div className="system-badge">{loadingShell ? "Connecting..." : "Uplink active"}</div>
           <div className={`system-badge is-${shellReadiness.provider.tone}`}>
-            Provider: {shellReadiness.provider.label}
+            AI core: {shellReadiness.provider.label}
           </div>
           <div className={`system-badge is-${shellReadiness.worldBible.tone}`}>
-            world_bible.md: {shellReadiness.worldBible.label}
+            Lore archive: {shellReadiness.worldBible.label}
           </div>
           <div className={`system-badge is-${shellReadiness.campaignSeed.tone}`}>
-            Campaign: {shellReadiness.campaignSeed.label}
+            Active cell: {shellReadiness.campaignSeed.label}
           </div>
         </div>
       </header>
@@ -421,7 +421,7 @@ export default function App() {
             placeholder={
               selectedCampaign
                 ? "Describe what Davan does next..."
-                : "Create or select a campaign to unlock transmission."
+                : "Select or create a campaign to begin."
             }
           />
         </section>
