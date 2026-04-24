@@ -1,9 +1,25 @@
 name|type|description|mechanics|rarity|visibility
-ClawDrill|Industrial/Vehicle|A massive, 90-meter-long drill operated by Red Helldivers to excavate Helium-3 from planetary cores.|Operated via complex manual nodule panels. Requires a DC 20 Dexterity check for non-Helldivers to pilot without crashing.|VERY_RARE|PLAYER_FACING
-GravBoots|Mobility|Advanced anti-gravity footwear primarily used by Golds. Controlled through subtle toe movements.|Allows the wearer to hover, fly, and perform high-speed aerial maneuvers. Grants a fly speed of 60 ft.|RARE|PLAYER_FACING
-Razor|Weapon (Martial)|The signature weapon of the Gold Color. Made of a chemical-reactive material that transitions between a flexible whip and a rigid blade.|Versatile (sword/whip), Finesse. Whip form has 10 ft reach and can grapple as a bonus action. Illegal for non-Golds.|VERY_RARE|PLAYER_FACING
-PulseFist|Weapon (Energy)|A gauntlet-mounted energy weapon capable of firing destructive pulses. Can be set to stun or kill.|Ranged weapon. Stun setting requires a DC 15 CON save or target falls unconscious. Kill setting deals 2d10 radiant damage.|RARE|PLAYER_FACING
-PulseArmor|Armor|High-tech, form-fitting combat armor with a built-in PulseShield generator. Deflects kinetic and energy attacks.|Base AC 17. The PulseShield absorbs the first 20 points of damage per encounter before needing to recharge. Overheats under sustained fire.|VERY_RARE|PLAYER_FACING
-Forged Sigil|Intel/Comms|A surgical implant on the back of the hand spoofing BoQC scanners with a false Color identity.|Passes standard commercial manifest scans. Automatically fails deep-scans or White Arbiter inquisitions. Discovery is a capital offense.|VERY_RARE|SEALED
-Scocher|Weapon (Energy)|A standard-issue energy sidearm, often carried by Gray legionaries.|Ranged weapon (30/120 ft), 1d8 radiant damage. Common on the black market in the Belt or the Gyre.|COMMON|PLAYER_FACING
-WhisperCrystal|Intel/Comms|A thumb-sized translucent crystal encoded with a single-use voice message.|Plays once at a whisper volume, then dissolves into inert dust leaving no data trail.|UNCOMMON|PLAYER_FACING
+ClawDrill|Industrial/Vehicle|A massive, 90-meter-long drill operated by Red Helldivers.|Requires a DC 20 Dexterity check for non-Helldivers to pilot.|VERY_RARE|PLAYER_FACING
+GravBoots|Mobility|Advanced anti-gravity footwear primarily used by Golds.|Allows flight speed of 60 ft.|RARE|PLAYER_FACING
+Razor|Weapon (Martial)|The signature weapon of the Gold Color. Transitions between whip and blade.|Whip form has 10 ft reach, bonus action grapple. Illegal for non-Golds.|VERY_RARE|PLAYER_FACING
+PulseFist|Weapon (Energy)|A gauntlet-mounted energy weapon.|Stun (DC 15 CON save) or Kill (2d10 radiant damage).|RARE|PLAYER_FACING
+PulseArmor|Armor|High-tech combat armor with a built-in PulseShield.|Base AC 17. Shield absorbs first 20 points of damage per encounter.|VERY_RARE|PLAYER_FACING
+Forged Sigil|Intel/Comms|A surgical implant spoofing BoQC scanners.|Passes standard commercial manifest scans. Fails deep-scans.|VERY_RARE|SEALED
+Scorcher|Weapon (Energy)|Standard-issue energy sidearm.|Ranged weapon (30/120 ft), 1d8 radiant damage.|COMMON|PLAYER_FACING
+WhisperCrystal|Intel/Comms|Translucent crystal encoded with a single-use voice message.|Plays once at a whisper volume, then dissolves into dust.|UNCOMMON|PLAYER_FACING
+IonBlade|Weapon (Melee)|An energy sword favored by highColors who cannot wield a Razor.|Deals 1d8 slashing + 1d4 lightning damage.|RARE|PLAYER_FACING
+SlingBlade|Weapon (Melee)|A curved, sickle-like Helldiver tool repurposed as a weapon.|Deals 1d6 slashing damage. Symbol of Red rebellion.|UNCOMMON|PLAYER_FACING
+StarShell|Vehicle/Armor|A 4-meter tall orbital drop mech suit used for Iron Rains.|Grants immense strength and heavy weapons, but requires Gold-level training to pilot.|LEGENDARY|SEALED
+GhostCloak|Mobility/Stealth|Personal active camouflage device.|Grants advantage on Stealth checks. Deactivates if the wearer attacks.|VERY_RARE|GM_ONLY
+Recather|Medical|Advanced medical device for rapid cellular healing.|Heals 4d8 HP over 1 minute. Highly illegal for lowColors.|RARE|SEALED
+Pitviper Venom|Poison|Deadly neurotoxin extracted from Martian pitvipers.|DC 17 CON save. Failure causes paralysis and 3d10 poison damage.|VERY_RARE|GM_ONLY
+Haemanthus Extract|Poison/Medical|Derivative of the Martian flower, used to induce a death-like coma.|Target appears dead to basic medical scans for 24 hours.|RARE|SEALED
+Datadrop|Intel/Comms|Encrypted data storage drive used by Greens and the Syndicate.|Requires Green tools to decrypt (DC 18 Intelligence).|UNCOMMON|PLAYER_FACING
+Aegis|Armor|Heavy energy shield carried by elite Gray Lurchers.|Provides +3 AC and resistance to energy attacks when deployed.|RARE|PLAYER_FACING
+Stun Baton|Weapon (Melee)|Riot control weapon used by the Gray garrison.|Deals 1d4 bludgeoning + 1d4 lightning. Target must make a DC 13 CON save or be stunned for 1 round.|COMMON|PLAYER_FACING
+RipWing|Vehicle|Small, agile atmospheric and void fighter craft.|Armed with light scorchers and pulse missiles. Used for patrol and dogfighting.|VERY_RARE|PLAYER_FACING
+TorchShip|Vehicle|Mid-to-large interplanetary transport and warship.|Primary mode of transit between spheres. Navigated strictly by Blues.|LEGENDARY|PLAYER_FACING
+LeechCraft|Vehicle|Stealth boarding pod designed to pierce ship hulls.|Used by Obsidians, Grays, and the Sons for hostile ship takeovers.|VERY_RARE|GM_ONLY
+EMP Grenade|Weapon (Explosive)|Standard explosive for disabling PulseArmor and electronics.|Disables PulseShields and electronic devices in a 20ft radius for 1 minute.|UNCOMMON|PLAYER_FACING
+Stim-tab|Medical|Adrenaline stimulant used by Grays and lowColors for double-shifts.|Removes exhaustion for 4 hours, but causes 1 level of exhaustion when it wears off.|COMMON|PLAYER_FACING
+Obsidian Ice-Axe|Weapon (Melee)|Primitive but devastating melee weapon favored by Stained.|Deals 1d10 slashing/bludgeoning damage. Brutal criticals.|UNCOMMON|PLAYER_FACING

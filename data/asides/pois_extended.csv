@@ -1,6 +1,21 @@
 name|parent_area|faction|description|gm_instructions|visibility
-Europa (The Arcos Estate)|Jupiter System|House Arcos|A frozen moon of Jupiter, home to the retired Rage Knight, Lorn au Arcos. Guarded by genetically engineered griffins.|Lorn lives here. If players somehow reach Europa, Lorn will test them on why they fight before offering any help or wisdom.|SEALED
-Olympus (Mars Institute)|Mars|The Institute|A floating citadel hovering above the terraformed valleys of the Mars Institute. From here, the Proctors, including Fitchner (Proctor Apollo/Mars), watch the Gold students.|Fitchner operates from here. Do not let players reach Olympus unless it's the campaign finale. It is heavily guarded by Praetorians and PulseArmor-clad Grays.|LOCKED
-Lykos Mine|Mars|House Augustus|A massive, subterranean helium-3 mine under the surface of Mars. The lowReds here sing the "Song of Persephone" and work the clawDrills.|This is where Darrow currently lives as a child. He is forbidden from the campaign, but Lykos can be mentioned as a particularly harsh Augustus holding.|PLAYER_FACING
-The Bleeding Place|Luna / Ganymede|White Arbiters|A formal, white-sand arena used for honor duels between Golds using razors. Presided over by a White Arbiter.|Any dispute settled here is legally binding in Society law. A "Chance" pours the sand and snaps the elm rod to begin the duel.|PLAYER_FACING
-The Pandemonium Chair Room|Luna|House Lune|A nightmare laboratory deep in the Spire on Luna, used by the Sovereign (Octavia) to selectively wipe or alter memories.|A horrific fate for any captured Sons operative. A threat the Weaver uses to enforce operational security.|SEALED
+Faran Mine|Mars|House Augustus|Deep Helium-3 mine. Dancer's home. High mortality rate.|Hotbed for Red radicalization. Heavy Copper magistrate oversight.|PLAYER_FACING
+Agea|Mars|House Augustus|The sprawling capital city of Mars. Seat of ArchGovernor Nero.|Heavily fortified. The Spire of Agea dominates the skyline.|PLAYER_FACING
+The Spire|Luna|House Lune|The 40km tall citadel of the Sovereign. Center of Society power.|Entering requires a Gold-standard cover identity. Instant death if caught.|LOCKED
+Deepgrave|Earth|House Grimmus|Sub-oceanic prison for high-value political prisoners and rogue Obsidians.|Almost impossible to escape. The pressure outside will crush a starShell.|SEALED
+Attica|Mars|House Bellona|Major Martian city controlled by House Bellona. Rival to Agea.|Bellona stronghold. Constant skirmishes with Augustus client houses.|PLAYER_FACING
+The Dragon's Maw|Mars|Olympic Knights|A brutal proving ground in the ice where Obsidians are trained and culled.|Only the strongest survive to become Stained. Gold masters watch from heated bunkers.|SEALED
+Triton|Neptune System|Rim Dominion|Frozen moon, site of the Lovelock Engine and a massive prison colony.|Where Fitchner was briefly exiled. Harsh, unforgiving environment.|LOCKED
+Vesta Station|The Belt|The Syndicate|A massive hollowed-out asteroid serving as the primary transit hub of the Belt.|Neutral ground. Smugglers, bounty hunters, and Syndicate bosses operate openly.|PLAYER_FACING
+The Drift|The Belt|None|Lawless territory of scattered asteroids. The Society does not patrol here.|Perfect for Sons of Ares safehouses and Syndicate hidden caches.|PLAYER_FACING
+Rhea (Ruins)|Saturn System|None|A moon burned to ash by Magnus au Grimmus as punishment for a Rim uprising.|A chilling monument to Octavia's wrath. Highly radioactive.|PLAYER_FACING
+Io (Raa's Seat)|Jupiter System|House Raa|Volcanic moon. The capital of the Rim Dominion. Honorable but strict.|Rim Golds adhere tightly to martial honor codes. Outsiders are treated with intense suspicion.|LOCKED
+Phobos Refinery|Mars Orbit|Sun Industries|Quicksilver's massive Helium-3 processing hub.|Secretly the financial nerve center for the Sons of Ares.|SEALED
+Ganymede Dockyards|Jupiter System|House Codovan|The largest orbital construction yard in the outer planets.|Currently building a classified Black-Flag stealth ship for the BoQC.|PLAYER_FACING
+Whitehold (Ganymede)|Ganymede|BoQC|The Board of Quality Control's local interrogation and genetic processing center.|Where suspected Sons are taken. No one returns.|LOCKED
+The Prefect's Hall|Ganymede|House Codovan|Opulent estate of ArchPrefect Syla. Features a massive dome overlooking Jupiter.|Heavily guarded by elite Lurchers and Olympic Knight trainees.|LOCKED
+The Blue Quarter|Ganymede|Blue Navigators' Guild|Strictly controlled district where Blue pilots live and manage orbital traffic.|Blues govern themselves here. A great place to steal ship manifests.|PLAYER_FACING
+The Gyre|Ganymede|The Syndicate|A sprawling black market in the decommissioned sub-levels.|You can buy anything here: weapons, forged sigils, information, or people.|PLAYER_FACING
+Nagasos Exclusion Zone|Mars|BoQC|A sealed mine where Fitchner crushed a Red uprising.|The site of a terrible secret. Heavily monitored by the BoQC.|SEALED
+Doc's Corner|Ganymede|Unaffiliated|A small, poorly-lit medical clinic in the Underbelly run by a disgraced Yellow.|A safe haven for wounded Sons operatives who can't go to official Yellow clinics.|PLAYER_FACING
+The Spatter|Ganymede|None|A coolant-leak catchment basin in the Underbelly.|Used as a covert meeting spot by the Sons. The noise masks conversations.|PLAYER_FACING
