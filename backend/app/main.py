@@ -11,7 +11,8 @@ from app.models.base import Base
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    if get_settings().app_env == "development":
+        Base.metadata.create_all(bind=engine)
     yield
 
 

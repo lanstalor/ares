@@ -24,3 +24,5 @@ class TurnResolution(BaseModel):
     context_excerpt: str
     canon_guard_passed: bool
     canon_guard_message: str | None
+    clocks_fired: list[str] = Field(default_factory=list)
+    location_changed_to: str | None = None
