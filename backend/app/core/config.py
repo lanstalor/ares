@@ -18,6 +18,7 @@ class Settings(BaseSettings):
         alias="ARES_CORS_ORIGINS",
     )
     generation_provider: str = Field(default="stub", alias="ARES_GENERATION_PROVIDER")
+    generation_model: str = Field(default="claude-sonnet-4-6", alias="ARES_MODEL")
     embedding_provider: str = Field(default="stub", alias="ARES_EMBEDDING_PROVIDER")
     world_bible_path_raw: str | None = Field(default=None, alias="ARES_WORLD_BIBLE_PATH")
 
