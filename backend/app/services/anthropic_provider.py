@@ -126,9 +126,11 @@ class AnthropicNarrationProvider:
         self,
         *,
         messages_create: Callable[..., Any] | None = None,
-        model: str = "claude-sonnet-4-6",
+        model: str = "claude-haiku-4-5",
         max_tokens: int = 4096,
     ) -> None:
+        if not model:
+            raise ValueError("AnthropicNarrationProvider requires a non-empty model.")
         self._messages_create = messages_create
         self._model = model
         self._max_tokens = max_tokens

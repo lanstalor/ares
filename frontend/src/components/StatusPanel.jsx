@@ -61,21 +61,75 @@ function CharacterPanel({ playerCharacter }) {
   );
 }
 
-export function StatusPanel({ campaignState, healthStatus, selectedCampaign, systemStatus }) {
+function ReadinessPanel({ shellReadiness }) {
+  const readinessCards = [
+    {
+      label: "Generation Provider",
+      value: shellReadiness.provider.label,
+      detail: shellReadiness.provider.detail,
+      tone: shellReadiness.provider.tone,
+    },
+    {
+      label: "world_bible.md",
+      value: shellReadiness.worldBible.label,
+      detail: shellReadiness.worldBible.detail,
+      tone: shellReadiness.worldBible.tone,
+    },
+    {
+      label: "Canonical Campaign",
+      value: shellReadiness.campaignSeed.label,
+      detail: shellReadiness.campaignSeed.detail,
+      tone: shellReadiness.campaignSeed.tone,
+    },
+  ];
+
+  return (
+    <section className="status-panel">
+      <div className="panel-chrome">
+        <div>
+          <p className="eyebrow">Readiness</p>
+          <h2>Bootstrap Signals</h2>
+        </div>
+      </div>
+      <div className="readiness-grid">
+        {readinessCards.map((card) => (
+          <article className="readiness-card" key={card.label}>
+            <p className="panel-label">{card.label}</p>
+            <p className={`readiness-value is-${card.tone}`}>{card.value}</p>
+            <p className="hint">{card.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function StatusPanel({
+  campaignState,
+  healthStatus,
+  selectedCampaign,
+  shellReadiness,
+  systemStatus,
+}) {
+  const activeCampaign = campaignState?.campaign ?? selectedCampaign;
   const backendSections = [
     ["Health", healthStatus?.status ?? "offline"],
+    ["Application", systemStatus?.app_name ?? "unknown"],
     ["Environment", systemStatus?.environment ?? "unknown"],
-    ["GM Provider", systemStatus?.ai_generation_provider ?? "unknown"],
     ["Embeddings", systemStatus?.embedding_provider ?? "unknown"],
+    ["World Bible Path", systemStatus?.world_bible_path ?? "unavailable"],
     ["Hidden State", renderFlag(systemStatus?.hidden_state_enabled)],
     ["Multi-Agent", renderFlag(systemStatus?.multi_agent_enabled)],
   ];
 
   const campaignSections = [
-    ["Campaign", selectedCampaign?.name ?? "No active campaign"],
-    ["Tagline", selectedCampaign?.tagline ?? "None loaded"],
-    ["Current Date", selectedCampaign ? `${selectedCampaign.current_date_pce} PCE` : "N/A"],
-    ["Current Location", campaignState?.current_location ?? "Unknown"],
+    ["Campaign", activeCampaign?.name ?? "No active campaign"],
+    ["Tagline", activeCampaign?.tagline ?? "None loaded"],
+    ["Current Date", activeCampaign ? `${activeCampaign.current_date_pce} PCE` : "N/A"],
+    [
+      "Current Location",
+      campaignState?.current_location ?? activeCampaign?.current_location_label ?? "Unknown",
+    ],
     ["Active Objective", campaignState?.active_objective ?? "No objective published"],
     [
       "Hidden Summary",
@@ -85,6 +139,8 @@ export function StatusPanel({ campaignState, healthStatus, selectedCampaign, sys
 
   return (
     <aside className="status-stack">
+      <ReadinessPanel shellReadiness={shellReadiness} />
+
       <section className="status-panel">
         <div className="panel-chrome">
           <div>
@@ -113,7 +169,7 @@ export function StatusPanel({ campaignState, healthStatus, selectedCampaign, sys
             <p className="eyebrow">Campaign State</p>
             <h2>Active Cell</h2>
           </div>
-          {selectedCampaign ? <span className="panel-chip">selected</span> : null}
+          {activeCampaign ? <span className="panel-chip">selected</span> : null}
         </div>
         <dl className="status-grid">
           {campaignSections.map(([label, value]) => (

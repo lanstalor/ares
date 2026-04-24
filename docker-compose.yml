@@ -26,6 +26,11 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://ares:ares@postgres:5432/project_ares}
       ARES_CORS_ORIGINS: ${ARES_CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+      ARES_GENERATION_PROVIDER: ${ARES_GENERATION_PROVIDER:-stub}
+      ARES_MODEL: ${ARES_MODEL:-claude-haiku-4-5-20251015}
+      ARES_EMBEDDING_PROVIDER: ${ARES_EMBEDDING_PROVIDER:-stub}
+      ARES_WORLD_BIBLE_PATH: ${ARES_WORLD_BIBLE_PATH:-/app/world_bible.md}
+      ARES_DB_BOOTSTRAP: ${ARES_DB_BOOTSTRAP:-create_all}
     ports:
       - "8000:8000"
     depends_on:

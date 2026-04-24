@@ -5,8 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import get_settings
-from app.db.session import engine
-from app.models.base import Base
+from app.db.bootstrap import ensure_database_ready
 
 
 @asynccontextmanager

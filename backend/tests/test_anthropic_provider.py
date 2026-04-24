@@ -87,7 +87,10 @@ def test_provider_parses_consequences_from_tool_call() -> None:
             }
         )
 
-    provider = AnthropicNarrationProvider(messages_create=fake_messages_create)
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
 
     response = provider.narrate(_make_request())
 
@@ -134,7 +137,10 @@ def test_provider_system_prompt_includes_canon_and_hidden_state_rules() -> None:
         captured.update(kwargs)
         return _make_canned_response()
 
-    provider = AnthropicNarrationProvider(messages_create=fake_messages_create)
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
     provider.narrate(_make_request())
 
     system_blocks = captured["system"]
@@ -155,7 +161,15 @@ def test_provider_raises_when_no_tool_call_returned() -> None:
             stop_reason="end_turn",
         )
 
-    provider = AnthropicNarrationProvider(messages_create=fake_messages_create)
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
 
     with pytest.raises(RuntimeError, match="record_turn"):
         provider.narrate(_make_request())
+
+
+def test_provider_requires_non_empty_model() -> None:
+    with pytest.raises(ValueError, match="non-empty model"):
+        AnthropicNarrationProvider(messages_create=lambda **_: _make_canned_response(), model="")

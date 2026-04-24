@@ -59,4 +59,3 @@ def test_seed_service_builds_name_based_payloads_and_hidden_secrets() -> None:
     assert any(poi.name == "The Melt" and poi.parent_area_name == "Callisto Depot District" for poi in bundle.pois)
     assert any(secret.label.startswith("Faction: The Weaver’s Network") for secret in bundle.secrets)
     assert any(secret.label == "CampaignOpening: GM instructions" for secret in bundle.secrets)
-

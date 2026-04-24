@@ -1,14 +1,28 @@
+function formatSeedResult(lastSeedResult) {
+  if (!lastSeedResult) {
+    return "No seed run recorded in this browser session.";
+  }
+
+  return `${lastSeedResult.campaign_name} imported from ${lastSeedResult.source_path}`;
+}
+
 export function CampaignConsole({
   campaigns,
   createForm,
   creatingCampaign,
+  lastSeedResult,
   loadingCampaigns,
-  onSeedWorldBible,
+  loadingShell,
+  loadingState,
   onCreateCampaign,
   onFormChange,
+  onRefreshActiveCampaign,
+  onRefreshShell,
+  onSeedWorldBible,
   onSelectCampaign,
   seedingWorldBible,
   selectedCampaignId,
+  shellReadiness,
   worldBibleReady,
 }) {
   return (
@@ -40,7 +54,7 @@ export function CampaignConsole({
             ))
           ) : (
             <p className="empty-state">
-              No campaigns found. Create the first active cell to start the turn loop.
+              No campaigns found. Create one or seed from the world bible to open the turn loop.
             </p>
           )}
         </div>
@@ -83,6 +97,26 @@ export function CampaignConsole({
           >
             {seedingWorldBible ? "Seeding..." : "Seed from world bible"}
           </button>
+          <p className="hint">{formatSeedResult(lastSeedResult)}</p>
+        </div>
+
+        <div className="campaign-seed-tools">
+          <p className="panel-label">Shell sync</p>
+          <div className="console-actions">
+            <button disabled={loadingShell || loadingCampaigns} onClick={() => onRefreshShell()} type="button">
+              {loadingShell || loadingCampaigns ? "Refreshing..." : "Refresh shell"}
+            </button>
+            <button
+              disabled={!selectedCampaignId || loadingState}
+              onClick={() => onRefreshActiveCampaign(selectedCampaignId)}
+              type="button"
+            >
+              {loadingState ? "Refreshing..." : "Refresh active campaign"}
+            </button>
+          </div>
+          <p className="hint">
+            Provider: {shellReadiness.provider.label}. Campaign seed: {shellReadiness.campaignSeed.label}.
+          </p>
         </div>
       </div>
     </section>

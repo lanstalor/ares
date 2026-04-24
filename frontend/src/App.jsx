@@ -10,11 +10,14 @@ import {
   getCampaignState,
   getHealth,
   getSystemStatus,
-  listTurns,
   listCampaigns,
+  listTurns,
   seedWorldBible,
   submitTurn,
 } from "./lib/api";
+import { deriveShellReadiness } from "./lib/readiness";
+
+const DEFAULT_CAMPAIGN_DATE_PCE = 728;
 
 const createEmptyCampaignForm = () => ({
   name: "",
@@ -82,6 +85,35 @@ function normalizePersistedTurns(turns = []) {
   ]);
 }
 
+function selectCampaignId(campaigns, preferredCampaignId) {
+  if (preferredCampaignId && campaigns.some((campaign) => campaign.id === preferredCampaignId)) {
+    return preferredCampaignId;
+  }
+
+  return campaigns[0]?.id ?? "";
+}
+
+function patchTurnHistoryWithResolution(turnHistory, resolution) {
+  return normalizePersistedTurns(turnHistory).map((turn) =>
+    turn.id === `${resolution.turn.id}-gm`
+      ? {
+          ...turn,
+          label: resolution.canon_guard_passed ? "GM" : "Canon Guard",
+          location: resolution.context_excerpt,
+          meta: resolution.canon_guard_passed ? turn.meta : resolution.canon_guard_message,
+        }
+      : turn,
+  );
+}
+
+async function fetchShellSnapshot() {
+  return Promise.all([getHealth(), getSystemStatus(), listCampaigns()]);
+}
+
+async function fetchCampaignSnapshot(campaignId) {
+  return Promise.all([getCampaignState(campaignId), listTurns(campaignId)]);
+}
+
 export default function App() {
   const [healthStatus, setHealthStatus] = useState(null);
   const [systemStatus, setSystemStatus] = useState(null);
@@ -96,6 +128,7 @@ export default function App() {
   const [creatingCampaign, setCreatingCampaign] = useState(false);
   const [seedingWorldBible, setSeedingWorldBible] = useState(false);
   const [isSubmittingTurn, setIsSubmittingTurn] = useState(false);
+  const [lastSeedResult, setLastSeedResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -106,24 +139,21 @@ export default function App() {
       setErrorMessage("");
 
       try {
-        const [health, system, campaignList] = await Promise.all([
-          getHealth(),
-          getSystemStatus(),
-          listCampaigns(),
-        ]);
+        const [health, system, campaignList] = await fetchShellSnapshot();
 
         if (!isMounted) return;
 
         setHealthStatus(health);
         setSystemStatus(system);
         setCampaigns(campaignList);
-        setSelectedCampaignId((current) => current || campaignList[0]?.id || "");
+        setSelectedCampaignId((current) => selectCampaignId(campaignList, current));
       } catch (error) {
         if (!isMounted) return;
 
         setHealthStatus({ status: "offline" });
         setSystemStatus(null);
         setCampaigns([]);
+        setCampaignState(null);
         setErrorMessage(error.message);
       } finally {
         if (isMounted) {
@@ -145,7 +175,6 @@ export default function App() {
     async function loadCampaignState() {
       if (!selectedCampaignId) {
         setCampaignState(null);
-        setTurnHistoryByCampaign((current) => ({ ...current, [selectedCampaignId]: [] }));
         setLoadingState(false);
         return;
       }
@@ -153,23 +182,21 @@ export default function App() {
       setLoadingState(true);
 
       try {
-        const [state, turnHistory] = await Promise.all([
-          getCampaignState(selectedCampaignId),
-          listTurns(selectedCampaignId),
-        ]);
-        if (isMounted) {
-          setCampaignState(state);
-          setTurnHistoryByCampaign((current) => ({
-            ...current,
-            [selectedCampaignId]: normalizePersistedTurns(turnHistory),
-          }));
-          setErrorMessage("");
-        }
+        const [state, turnHistory] = await fetchCampaignSnapshot(selectedCampaignId);
+
+        if (!isMounted) return;
+
+        setCampaignState(state);
+        setTurnHistoryByCampaign((current) => ({
+          ...current,
+          [selectedCampaignId]: normalizePersistedTurns(turnHistory),
+        }));
+        setErrorMessage("");
       } catch (error) {
-        if (isMounted) {
-          setCampaignState(null);
-          setErrorMessage(error.message);
-        }
+        if (!isMounted) return;
+
+        setCampaignState(null);
+        setErrorMessage(error.message);
       } finally {
         if (isMounted) {
           setLoadingState(false);
@@ -186,18 +213,49 @@ export default function App() {
 
   const selectedCampaign = campaigns.find((campaign) => campaign.id === selectedCampaignId) ?? null;
   const turns = buildCampaignTurns(selectedCampaign, campaignState, turnHistoryByCampaign);
+  const shellReadiness = deriveShellReadiness({
+    healthStatus,
+    systemStatus,
+    campaigns,
+    lastSeedResult,
+  });
 
-  async function refreshCampaigns(nextSelectedCampaignId = selectedCampaignId) {
+  async function refreshShell(preferredCampaignId = selectedCampaignId) {
     setLoadingCampaigns(true);
+    setErrorMessage("");
 
     try {
-      const nextCampaigns = await listCampaigns();
+      const [health, system, nextCampaigns] = await fetchShellSnapshot();
+      setHealthStatus(health);
+      setSystemStatus(system);
       setCampaigns(nextCampaigns);
-      setSelectedCampaignId(nextSelectedCampaignId || nextCampaigns[0]?.id || "");
+      setSelectedCampaignId((current) => selectCampaignId(nextCampaigns, preferredCampaignId || current));
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
       setLoadingCampaigns(false);
+    }
+  }
+
+  async function refreshActiveCampaign(campaignId = selectedCampaignId) {
+    if (!campaignId) {
+      return;
+    }
+
+    setLoadingState(true);
+    setErrorMessage("");
+
+    try {
+      const [state, turnHistory] = await fetchCampaignSnapshot(campaignId);
+      setCampaignState(state);
+      setTurnHistoryByCampaign((current) => ({
+        ...current,
+        [campaignId]: normalizePersistedTurns(turnHistory),
+      }));
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setLoadingState(false);
     }
   }
 
@@ -220,11 +278,11 @@ export default function App() {
       const createdCampaign = await createCampaign({
         name: createForm.name.trim(),
         tagline: createForm.tagline.trim() || null,
-        current_date_pce: 728,
+        current_date_pce: DEFAULT_CAMPAIGN_DATE_PCE,
       });
 
       setCreateForm(createEmptyCampaignForm());
-      await refreshCampaigns(createdCampaign.id);
+      await refreshShell(createdCampaign.id);
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
@@ -254,19 +312,12 @@ export default function App() {
 
     try {
       const resolution = await submitTurn(selectedCampaign.id, { player_input: playerInput });
-      const turnHistory = await listTurns(selectedCampaign.id);
+      const [state, turnHistory] = await fetchCampaignSnapshot(selectedCampaign.id);
+
+      setCampaignState(state);
       setTurnHistoryByCampaign((current) => ({
         ...current,
-        [selectedCampaign.id]: normalizePersistedTurns(turnHistory).map((turn) =>
-          turn.id === `${resolution.turn.id}-gm`
-            ? {
-                ...turn,
-                label: resolution.canon_guard_passed ? "GM" : "Canon Guard",
-                location: resolution.context_excerpt,
-                meta: resolution.canon_guard_passed ? turn.meta : resolution.canon_guard_message,
-              }
-            : turn,
-        ),
+        [selectedCampaign.id]: patchTurnHistoryWithResolution(turnHistory, resolution),
       }));
     } catch (error) {
       setTurnHistoryByCampaign((current) => ({
@@ -287,7 +338,8 @@ export default function App() {
 
     try {
       const seeded = await seedWorldBible({});
-      await refreshCampaigns(seeded.campaign_id);
+      setLastSeedResult(seeded);
+      await refreshShell(seeded.campaign_id);
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
@@ -302,12 +354,20 @@ export default function App() {
           <p className="eyebrow">Project Ares</p>
           <h1>The Solar Society, 728 PCE</h1>
           <p className="masthead-copy">
-            CLI-built hidden-state RPG shell. Frontend uplink targeting <span>{API_BASE_URL}</span>.
+            Retro operator shell targeting <span>{API_BASE_URL}</span> with live backend readiness checks.
           </p>
         </div>
         <div className="masthead-badges">
           <div className="system-badge">{loadingShell ? "Booting shell" : "UI shell online"}</div>
-          <div className="system-badge">Phase 0/1 live play</div>
+          <div className={`system-badge is-${shellReadiness.provider.tone}`}>
+            Provider: {shellReadiness.provider.label}
+          </div>
+          <div className={`system-badge is-${shellReadiness.worldBible.tone}`}>
+            world_bible.md: {shellReadiness.worldBible.label}
+          </div>
+          <div className={`system-badge is-${shellReadiness.campaignSeed.tone}`}>
+            Campaign: {shellReadiness.campaignSeed.label}
+          </div>
         </div>
       </header>
 
@@ -341,19 +401,26 @@ export default function App() {
             campaigns={campaigns}
             createForm={createForm}
             creatingCampaign={creatingCampaign}
+            lastSeedResult={lastSeedResult}
             loadingCampaigns={loadingCampaigns}
-            onSeedWorldBible={handleSeedWorldBible}
+            loadingShell={loadingShell}
+            loadingState={loadingState}
             onCreateCampaign={handleCreateCampaign}
             onFormChange={handleCreateFormChange}
+            onRefreshActiveCampaign={refreshActiveCampaign}
+            onRefreshShell={refreshShell}
+            onSeedWorldBible={handleSeedWorldBible}
             onSelectCampaign={setSelectedCampaignId}
             seedingWorldBible={seedingWorldBible}
             selectedCampaignId={selectedCampaignId}
+            shellReadiness={shellReadiness}
             worldBibleReady={Boolean(systemStatus?.world_bible_exists)}
           />
           <StatusPanel
             campaignState={campaignState}
             healthStatus={healthStatus}
             selectedCampaign={selectedCampaign}
+            shellReadiness={shellReadiness}
             systemStatus={systemStatus}
           />
         </section>
