@@ -75,7 +75,7 @@ class Settings(BaseSettings):
         alias="DATABASE_URL",
     )
     cors_origins_raw: str = Field(
-        default="http://localhost:5173,http://localhost:3000",
+        default="http://localhost:5180,http://localhost:5173,http://localhost:3000",
         alias="ARES_CORS_ORIGINS",
     )
     generation_provider: str = Field(default="stub", alias="ARES_GENERATION_PROVIDER")

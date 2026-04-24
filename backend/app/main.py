@@ -5,13 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import get_settings
-from app.db.bootstrap import ensure_database_ready
+from app.db.bootstrap import bootstrap_database
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    if get_settings().app_env == "development":
-        Base.metadata.create_all(bind=engine)
+    bootstrap_database()
     yield
 
 
