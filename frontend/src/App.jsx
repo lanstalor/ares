@@ -93,8 +93,37 @@ function selectCampaignId(campaigns, preferredCampaignId) {
   return campaigns[0]?.id ?? "";
 }
 
+function buildConsequenceEvents(resolution) {
+  const id = resolution.turn.id;
+  const events = [];
+
+  if (resolution.location_changed_to) {
+    events.push({
+      id: `${id}-loc`,
+      speaker: "system-location",
+      label: "Location",
+      meta: "Area change",
+      text: resolution.location_changed_to,
+      timestamp: null,
+    });
+  }
+
+  for (const label of resolution.clocks_fired ?? []) {
+    events.push({
+      id: `${id}-clock-${label}`,
+      speaker: "system-clock",
+      label: "Clock",
+      meta: "Fired",
+      text: `${label} — consequence triggered`,
+      timestamp: null,
+    });
+  }
+
+  return events;
+}
+
 function patchTurnHistoryWithResolution(turnHistory, resolution) {
-  return normalizePersistedTurns(turnHistory).map((turn) =>
+  const normalized = normalizePersistedTurns(turnHistory).map((turn) =>
     turn.id === `${resolution.turn.id}-gm`
       ? {
           ...turn,
@@ -104,6 +133,7 @@ function patchTurnHistoryWithResolution(turnHistory, resolution) {
         }
       : turn,
   );
+  return [...normalized, ...buildConsequenceEvents(resolution)];
 }
 
 async function fetchShellSnapshot() {
