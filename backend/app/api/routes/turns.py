@@ -56,4 +56,6 @@ def create_turn(campaign_id: str, payload: TurnCreate, session: SessionDep) -> T
         context_excerpt=result.context_excerpt,
         canon_guard_passed=result.canon_guard_passed,
         canon_guard_message=result.canon_guard_message,
+        clocks_fired=result.clocks_fired,
+        location_changed_to=result.location_changed_to,
     )

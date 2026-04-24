@@ -177,3 +177,52 @@ def test_player_safe_brief_never_leaks_npc_hidden_agenda() -> None:
     ctx = build_turn_context(session, campaign, "Look around.")
 
     assert "informing the Greys" not in ctx.player_safe_brief
+
+
+def test_hidden_gm_brief_marks_fired_clock() -> None:
+    session = _make_session()
+    campaign = Campaign(
+        name="Fired Clock Test",
+        current_date_pce=728,
+        current_location_label="Crescent Block - Callisto Depot District",
+    )
+    session.add(campaign)
+    session.flush()
+    clock = Clock(
+        campaign_id=campaign.id,
+        label="Citadel suspicion",
+        clock_type=ClockType.THREAT,
+        current_value=4,
+        max_value=4,
+    )
+    session.add(clock)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "Look around.")
+
+    assert "FIRED" in ctx.hidden_gm_brief
+    assert "Citadel suspicion" in ctx.hidden_gm_brief
+
+
+def test_hidden_gm_brief_does_not_mark_unfired_clock() -> None:
+    session = _make_session()
+    campaign = Campaign(
+        name="Unfired Clock Test",
+        current_date_pce=728,
+        current_location_label="Crescent Block - Callisto Depot District",
+    )
+    session.add(campaign)
+    session.flush()
+    clock = Clock(
+        campaign_id=campaign.id,
+        label="Citadel suspicion",
+        clock_type=ClockType.THREAT,
+        current_value=2,
+        max_value=4,
+    )
+    session.add(clock)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "Look around.")
+
+    assert "FIRED" not in ctx.hidden_gm_brief

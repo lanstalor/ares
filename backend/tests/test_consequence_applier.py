@@ -8,6 +8,7 @@ from app.models.memory import Memory, Secret
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
+    LocationChange,
     MemoryDraft,
     SecretStatusChange,
     apply_consequences,
@@ -46,8 +47,6 @@ def test_apply_consequences_advances_clock_by_label() -> None:
         campaign,
         Consequences(
             clock_ticks=[ClockTick(label="Citadel suspicion", delta=2)],
-            secret_status_changes=[],
-            new_memories=[],
         ),
     )
     session.commit()
@@ -74,8 +73,6 @@ def test_apply_consequences_clamps_clock_to_max() -> None:
         campaign,
         Consequences(
             clock_ticks=[ClockTick(label="Reveal: Vex's deal", delta=10)],
-            secret_status_changes=[],
-            new_memories=[],
         ),
     )
     session.commit()
@@ -100,11 +97,9 @@ def test_apply_consequences_transitions_secret_status() -> None:
         session,
         campaign,
         Consequences(
-            clock_ticks=[],
             secret_status_changes=[
                 SecretStatusChange(label="NPC: Vex / Hidden agenda", new_status=SecretStatus.ELIGIBLE)
             ],
-            new_memories=[],
         ),
     )
     session.commit()
@@ -121,8 +116,6 @@ def test_apply_consequences_persists_new_memories() -> None:
         session,
         campaign,
         Consequences(
-            clock_ticks=[],
-            secret_status_changes=[],
             new_memories=[
                 MemoryDraft(
                     content="Davan saw a Grey lieutenant near the Melt.",
@@ -153,10 +146,87 @@ def test_apply_consequences_ignores_unknown_clock_label() -> None:
         campaign,
         Consequences(
             clock_ticks=[ClockTick(label="Nonexistent clock", delta=1)],
-            secret_status_changes=[],
-            new_memories=[],
         ),
     )
     session.commit()
 
     assert session.scalar(select(Clock)) is None
+
+
+def test_apply_consequences_fires_clock_when_reaching_max() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    clock = Clock(
+        campaign_id=campaign.id,
+        label="Reveal: Vex's deal",
+        clock_type=ClockType.REVEAL,
+        current_value=3,
+        max_value=4,
+    )
+    session.add(clock)
+    session.commit()
+
+    result = apply_consequences(
+        session,
+        campaign,
+        Consequences(clock_ticks=[ClockTick(label="Reveal: Vex's deal", delta=1)]),
+    )
+    session.commit()
+
+    assert result.clocks_fired == ["Reveal: Vex's deal"]
+
+
+def test_apply_consequences_does_not_refire_clock_already_at_max() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    clock = Clock(
+        campaign_id=campaign.id,
+        label="Citadel suspicion",
+        clock_type=ClockType.THREAT,
+        current_value=4,
+        max_value=4,
+    )
+    session.add(clock)
+    session.commit()
+
+    result = apply_consequences(
+        session,
+        campaign,
+        Consequences(clock_ticks=[ClockTick(label="Citadel suspicion", delta=1)]),
+    )
+
+    assert result.clocks_fired == []
+
+
+def test_apply_consequences_returns_empty_fired_list_when_no_clocks_tick() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    result = apply_consequences(session, campaign, Consequences())
+
+    assert result.clocks_fired == []
+    assert result.location_changed_to is None
+
+
+def test_apply_consequences_updates_campaign_location() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    result = apply_consequences(
+        session,
+        campaign,
+        Consequences(location_change=LocationChange(new_location_label="The Melt")),
+    )
+    session.commit()
+
+    assert campaign.current_location_label == "The Melt"
+    assert result.location_changed_to == "The Melt"
+
+
+def test_apply_consequences_no_location_change_returns_none() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    result = apply_consequences(session, campaign, Consequences())
+
+    assert result.location_changed_to is None

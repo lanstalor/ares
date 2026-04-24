@@ -1,4 +1,4 @@
-.PHONY: backend-install backend-dev backend-test frontend-install frontend-dev frontend-build check compose-up
+.PHONY: backend-install backend-dev backend-test frontend-install frontend-dev frontend-build check compose-up migrate
 
 backend-install:
 	python3 -m venv backend/.venv
@@ -26,3 +26,6 @@ check:
 
 compose-up:
 	docker compose up --build
+
+migrate:
+	cd backend && alembic upgrade head

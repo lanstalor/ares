@@ -9,6 +9,7 @@ from app.services.ai_provider import NarrationRequest, NarrationResponse
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
+    LocationChange,
     MemoryDraft,
     SecretStatusChange,
 )
@@ -172,3 +173,146 @@ def test_turn_engine_skips_consequences_when_canon_guard_fails() -> None:
     assert result.canon_guard_passed is False
     assert "Darrow" in (result.canon_guard_message or "")
     assert session.scalar(select(Clock).where(Clock.id == clock.id)).current_value == 0
+
+
+def test_turn_engine_populates_clocks_fired_when_clock_reaches_max() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    clock = Clock(
+        campaign_id=campaign.id,
+        label="Citadel suspicion",
+        clock_type=ClockType.THREAT,
+        current_value=3,
+        max_value=4,
+    )
+    session.add(clock)
+    session.commit()
+
+    provider = FakeProvider(
+        NarrationResponse(
+            narrative="The Greys close in.",
+            player_safe_summary="Tension rises.",
+            consequences=Consequences(
+                clock_ticks=[ClockTick(label="Citadel suspicion", delta=1)],
+            ),
+        )
+    )
+
+    result = resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="Look over your shoulder.",
+        narration_provider=provider,
+    )
+
+    assert "Citadel suspicion" in result.clocks_fired
+
+
+def test_turn_engine_clocks_fired_empty_when_clock_does_not_reach_max() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    clock = Clock(
+        campaign_id=campaign.id,
+        label="Citadel suspicion",
+        clock_type=ClockType.THREAT,
+        current_value=1,
+        max_value=4,
+    )
+    session.add(clock)
+    session.commit()
+
+    provider = FakeProvider(
+        NarrationResponse(
+            narrative="Nothing happens.",
+            player_safe_summary="Quiet.",
+            consequences=Consequences(
+                clock_ticks=[ClockTick(label="Citadel suspicion", delta=1)],
+            ),
+        )
+    )
+
+    result = resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="Wait.",
+        narration_provider=provider,
+    )
+
+    assert result.clocks_fired == []
+
+
+def test_turn_engine_location_change_updates_campaign_and_result() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    provider = FakeProvider(
+        NarrationResponse(
+            narrative="Davan slips through the hatch into the Melt.",
+            player_safe_summary="Davan moved to the Melt.",
+            consequences=Consequences(
+                location_change=LocationChange(new_location_label="The Melt"),
+            ),
+        )
+    )
+
+    result = resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="Go to the Melt.",
+        narration_provider=provider,
+    )
+    session.commit()
+
+    assert result.location_changed_to == "The Melt"
+    assert campaign.current_location_label == "The Melt"
+
+
+def test_turn_engine_location_unchanged_when_no_location_consequence() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    original_location = campaign.current_location_label
+
+    provider = FakeProvider(
+        NarrationResponse(
+            narrative="Quiet.",
+            player_safe_summary="Nothing moved.",
+            consequences=Consequences(),
+        )
+    )
+
+    result = resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="Stay put.",
+        narration_provider=provider,
+    )
+
+    assert result.location_changed_to is None
+    assert campaign.current_location_label == original_location
+
+
+def test_turn_engine_skips_location_change_when_canon_guard_fails() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    original_location = campaign.current_location_label
+
+    provider = FakeProvider(
+        NarrationResponse(
+            narrative="Darrow steps from the shadows.",
+            player_safe_summary="A figure appears.",
+            consequences=Consequences(
+                location_change=LocationChange(new_location_label="The Melt"),
+            ),
+        )
+    )
+
+    result = resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="Watch.",
+        narration_provider=provider,
+    )
+
+    assert result.canon_guard_passed is False
+    assert result.location_changed_to is None
+    assert campaign.current_location_label == original_location

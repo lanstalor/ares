@@ -7,6 +7,7 @@ from app.services.ai_provider import NarrationRequest, NarrationResponse
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
+    LocationChange,
     MemoryDraft,
     SecretStatusChange,
 )
@@ -26,7 +27,7 @@ Hidden-state discipline:
 - The player_safe_summary you produce will be shown to the player. It must contain nothing that the player would not already know from the narrative.
 
 Canon constraints (enforce silently — never violate, never mention as rules):
-- Campaign window: 728-732 PCE on or near Ganymede. No Darrow, Eo, Cassius, Virginia, or Mustang. No artificial intelligence. No faster-than-light travel. No magic.
+- Campaign window: 728-732 PCE on or near Ganymede. No Darrow, Eo, Cassius, Virginia au Augustus, or Mustang. No artificial intelligence. No faster-than-light travel. No magic.
 - Fixed canon events from Pierce Brown's novels remain fixed.
 
 Tool use:
@@ -34,6 +35,8 @@ Tool use:
 - consequences.clock_ticks: list of {label, delta}. Only reference clock labels that appear in the hidden GM brief. Each delta is a small positive integer (typically 1, sometimes 2).
 - consequences.secret_status_changes: list of {label, new_status}. new_status is one of: dormant, eligible, revealed. Only reference secret labels that appear in the hidden GM brief.
 - consequences.new_memories: list of {content, visibility}. Visibility is one of: player_facing, gm_only, sealed, locked. Use player_facing for things the player saw or heard. Use gm_only for things you noted but the player did not perceive.
+- consequences.location_change: {new_location_label}. Emit only when the player physically moves to a different named area this turn. new_location_label must match an area name from the world context. Omit entirely if the player does not change location.
+- A clock marked "FIRED — consequence due" has reached its maximum. Act on its in-fiction consequence immediately this turn: escalate the threat, surface the reveal, or break the tension the label implies. Do not tick a FIRED clock again.
 - Omit any field whose list is empty rather than emitting placeholder entries.
 """
 
@@ -98,6 +101,17 @@ _TOOL_SCHEMA = {
                             },
                             "required": ["content", "visibility"],
                         },
+                    },
+                    "location_change": {
+                        "type": "object",
+                        "description": "Emit only when the player physically moves to a different named area.",
+                        "properties": {
+                            "new_location_label": {
+                                "type": "string",
+                                "description": "Exact name of the destination area.",
+                            },
+                        },
+                        "required": ["new_location_label"],
                     },
                 },
             },
@@ -169,6 +183,12 @@ def _find_tool_block(message: Any) -> Any | None:
 
 def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
     raw_consequences = tool_input.get("consequences") or {}
+    raw_location = raw_consequences.get("location_change")
+    location_change = (
+        LocationChange(new_location_label=raw_location["new_location_label"])
+        if raw_location
+        else None
+    )
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
@@ -191,5 +211,6 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
                 )
                 for item in raw_consequences.get("new_memories", [])
             ],
+            location_change=location_change,
         ),
     )

@@ -171,9 +171,10 @@ def _render_hidden_gm_brief(
     if clocks:
         lines.append("Active clocks:")
         for clock in clocks:
+            status = " — FIRED — consequence due" if clock.current_value >= clock.max_value else ""
             lines.append(
                 f"  - {clock.label} [{clock.clock_type.value}]: "
-                f"{clock.current_value}/{clock.max_value}"
+                f"{clock.current_value}/{clock.max_value}{status}"
             )
     if eligible_secrets:
         lines.append("Eligible secrets (reveal only when condition is met):")
