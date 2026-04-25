@@ -14,29 +14,42 @@ This is **not** a chatbot wrapper. The value is in the hidden-state engine: cloc
 
 ## Latest Session Summary
 
-Date: 2026-04-25
+Date: 2026-04-25 (afternoon)
 
-What changed:
+What changed (Scene Presence pass):
+
+- Renamed the participant strip from "Roster" to **Scene Presence** and removed the redundant "Participants" eyebrow
+- Fixed character-detail popup clipping by portalling `ParticipantModal` to `document.body` via `react-dom`'s `createPortal` (escapes the `overflow: hidden` on `.app-shell`)
+- Polished the modal: backdrop blur + stronger dim, `×` close button, entrance animation, atmospheric border/glow that matches the shell aesthetic
+- Fixed avatar/name overlap in dev-ui-mode cards (avatar was 56px in a 28px grid column; now a matching 40px avatar with proper grid track)
+- **Added per-character stats** to the Scene Presence cards and modal:
+  - `level` — small mono badge overlaid on the avatar (top-right)
+  - `hp` — colored thin bar on cards, full meter with `current/max` numerics in modal (good ≥66%, warn ≥33%, bad below)
+  - `disposition` — 5-step scale (`hostile / suspicious / unaware / friendly / allied`); compact colored chip on cards, 5-segment lit-track meter in modal
+- The player character has level + HP only (no disposition toward themselves); the system entity (Ares Relay) shows no stats
+- Mock data for stats lives in `buildSceneParticipants` (`frontend/src/lib/uiTheme.js`); ready to swap for real backend NPC state when that lands
+
+Earlier 2026-04-25 work (cinematic shell):
 
 - Added a Vite HMR-friendly UI dev route at `/ui-dev` and `?ui-dev=1` for layout-only iteration
 - Seeded the dev route with mock campaign state so the game UI can be exercised without the backend
-- Kept the main app flow intact while tightening the live scene layout and backdrop emphasis
 - Reworked typography toward a display/body split instead of a mono-heavy shell
 - Compressed the staging and UI-dev chrome so the scene/backdrop gets the majority of the vertical budget
 
 How to use it next session:
 
-- Start the frontend with `make frontend-dev` or the repo's Vite workflow
-- Open `http://localhost:5173/` for the full shell or `http://localhost:5173/ui-dev` for UI-only work
-- Prefer `/ui-dev` when iterating on spacing, typography, and composition
-- Use tablet-sized browser captures to verify that the backdrop remains visible before widening the shell again
-- Keep operator/readiness data tied to real backend payloads outside dev mode
+- Start the frontend with `make frontend-dev`. Vite tries 5173 first; if occupied (familyquest project) it auto-increments. Use the printed Network URL.
+- Open `/ui-dev` for layout-only work (mock state, no backend needed)
+- For visual verification while editing, use Playwright MCP `browser_navigate` + `browser_take_screenshot`. **Never claim UI work is done without a screenshot.**
+- Disposition meter colors live as `.tone-bad/warn/muted/good/ally` on `.participant-disposition-chip` and `.participant-disposition-meter`
+- Backend wiring for NPC stats is the natural next step — `buildSceneParticipants` already accepts them; backend just needs to emit `level`, `hp`, `disposition` per scene participant
 
 Current branch guidance:
 
 - Keep follow-up UI work isolated to the dedicated dev route unless you are fixing shared components
 - Do not broaden the admin shell during play mode; treat it as secondary chrome
 - Preserve hidden-state boundaries and the retro text-first tone
+- Disposition is **player-facing** (it's the player's read on the NPC). True hidden NPC intent stays sealed in GM-only state.
 
 ---
 
@@ -98,6 +111,7 @@ All core phases are complete and playable as of 2026-04-25.
 | `components/PlayerInput.jsx` | Text input + submit |
 | `components/CampaignConsole.jsx` | Campaign selector, seed button, create form |
 | `components/StatusPanel.jsx` | Character state, location, active objective |
+| `components/ParticipantStrip.jsx` | Scene Presence cards + per-character modal (level, HP, disposition) |
 | `components/IntroOverlay.jsx` | First-time player onboarding overlay |
 
 ### Tests (`backend/tests/`)
@@ -186,12 +200,13 @@ Four states used throughout the codebase (`app/core/enums.py`):
 
 ## What's Next (as of 2026-04-25)
 
-Core loop is playable. Logical next slices in priority order:
+Core loop is playable and Scene Presence cards now visualize per-character state. Logical next slices in priority order:
 
-1. **Memory rendering** — surface player-relevant memories from past turns in the status panel or turn feed
-2. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
-3. **Character stat updates** — refresh HP, cover integrity, and relationship scores in `StatusPanel` after each turn without a full page reload
-4. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
-5. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
+1. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine so `buildSceneParticipants` can drop the mock fallback. Disposition must be the player-facing read (derived from observable behavior), not the sealed GM intent.
+2. **Memory rendering** — surface player-relevant memories from past turns in the status panel or turn feed
+3. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
+4. **Live stat updates after turns** — patch `participant.hp` / `participant.disposition` from `TurnResolution` consequences without a full refresh, mirroring how `clocks_fired` and `location_changed_to` surface today
+5. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
+6. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
 
 Do not build Phase 5 items (multiplayer, admin dashboard, map UI) until the items above are solid.

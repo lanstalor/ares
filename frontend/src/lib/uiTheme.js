@@ -70,15 +70,31 @@ export function deriveSceneTone({ campaignState, selectedCampaign, turns }) {
   return "friendly";
 }
 
+export const DISPOSITION_ORDER = ["hostile", "suspicious", "unaware", "friendly", "allied"];
+
+export const DISPOSITION_META = {
+  hostile: { label: "Hostile", index: 0, tone: "bad" },
+  suspicious: { label: "Suspicious", index: 1, tone: "warn" },
+  unaware: { label: "Unaware", index: 2, tone: "muted" },
+  friendly: { label: "Friendly", index: 3, tone: "good" },
+  allied: { label: "Allied", index: 4, tone: "ally" },
+};
+
 export function buildSceneParticipants({ campaignState, selectedCampaign, sceneTone }) {
-  const player = campaignState?.player_character
+  const playerCharacter = campaignState?.player_character;
+  const player = playerCharacter
     ? {
-        id: campaignState.player_character.id,
-        name: campaignState.player_character.name,
-        caste: campaignState.player_character.race ?? "HighRed",
-        role: campaignState.player_character.character_class ?? "Operative",
+        id: playerCharacter.id,
+        name: playerCharacter.name,
+        caste: playerCharacter.race ?? "HighRed",
+        role: playerCharacter.character_class ?? "Operative",
         tone: "player",
         active: true,
+        level: playerCharacter.level ?? 3,
+        hp: {
+          current: playerCharacter.current_hp ?? 38,
+          max: playerCharacter.max_hp ?? 38,
+        },
       }
     : null;
 
@@ -92,6 +108,9 @@ export function buildSceneParticipants({ campaignState, selectedCampaign, sceneT
             role: "Official presence",
             tone: "watcher",
             active: false,
+            level: 9,
+            hp: { current: 64, max: 64 },
+            disposition: "suspicious",
           },
           {
             id: "gray-escort",
@@ -100,6 +119,9 @@ export function buildSceneParticipants({ campaignState, selectedCampaign, sceneT
             role: "Security escort",
             tone: "support",
             active: false,
+            level: 5,
+            hp: { current: 42, max: 42 },
+            disposition: "hostile",
           },
         ]
       : [
@@ -110,6 +132,9 @@ export function buildSceneParticipants({ campaignState, selectedCampaign, sceneT
             role: "Dock contact",
             tone: "support",
             active: false,
+            level: 2,
+            hp: { current: 22, max: 28 },
+            disposition: "friendly",
           },
           {
             id: "blue-handler",
@@ -118,6 +143,9 @@ export function buildSceneParticipants({ campaignState, selectedCampaign, sceneT
             role: "Relay analyst",
             tone: "support",
             active: false,
+            level: 4,
+            hp: { current: 24, max: 26 },
+            disposition: "allied",
           },
         ];
 

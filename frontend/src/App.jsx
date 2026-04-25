@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-import { ActionBar } from "./components/ActionBar";
 import { CampaignConsole } from "./components/CampaignConsole";
 import { IntroOverlay } from "./components/IntroOverlay";
 import { ParticipantStrip } from "./components/ParticipantStrip";
@@ -947,6 +946,7 @@ export default function App() {
               turns={turns}
             />
             <SceneBackdrop
+              campaignState={campaignState}
               currentLocation={campaignState?.current_location ?? selectedCampaign?.current_location_label}
               objective={campaignState?.active_objective}
               sceneTone={sceneTone}
@@ -955,15 +955,18 @@ export default function App() {
           </section>
           <ParticipantStrip participants={participants} sceneTone={sceneTone} />
           <PlayerInput
+            actions={actionPresets}
             disabled={!selectedCampaign}
             isSubmitting={isSubmittingTurn}
+            onSelectAction={handleSelectAction}
             onSubmit={handleSubmitTurn}
             onValueChange={setInputValue}
             placeholder={
               selectedCampaign
-                ? "State what the cell does next. The hidden state remains server-side."
-                : "Select or seed a campaign to open the live narrative feed."
+                ? "ares> execute cell directive..."
+                : "ares> campaign link required"
             }
+            sceneTone={sceneTone}
             value={inputValue}
           />
         </section>
@@ -1019,13 +1022,6 @@ export default function App() {
           </section>
         )}
       </main>
-
-      <ActionBar
-        actions={actionPresets}
-        disabled={!selectedCampaign}
-        onSelectAction={handleSelectAction}
-        sceneTone={sceneTone}
-      />
 
       {devUiMode ? (
         <section className="dev-ui-helper">

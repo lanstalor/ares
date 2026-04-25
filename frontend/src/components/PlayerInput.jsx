@@ -1,4 +1,16 @@
-export function PlayerInput({ disabled, isSubmitting, onSubmit, onValueChange, placeholder, value }) {
+import { ActionBar } from "./ActionBar";
+
+export function PlayerInput({
+  actions,
+  disabled,
+  isSubmitting,
+  onSelectAction,
+  onSubmit,
+  onValueChange,
+  placeholder,
+  sceneTone,
+  value,
+}) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (disabled || isSubmitting) return;
@@ -12,25 +24,33 @@ export function PlayerInput({ disabled, isSubmitting, onSubmit, onValueChange, p
 
   return (
     <form className="input-panel" onSubmit={handleSubmit}>
-      <label className="panel-label" htmlFor="player-input">
-        Your move
-      </label>
-      <textarea
-        disabled={disabled || isSubmitting}
-        id="player-input"
-        onChange={(event) => onValueChange(event.target.value)}
-        placeholder={placeholder}
-        rows={4}
-        value={value}
-      />
-      <div className="input-actions">
+      <div className="input-terminal-bar">
+        <label className="panel-label" htmlFor="player-input">
+          Command line
+        </label>
         <span className="hint">
           {disabled
-            ? "Load a campaign before transmitting actions to the GM."
-            : "Player-safe output only. Hidden state remains server-side."}
+            ? "Campaign link required."
+            : "Secure relay. Hidden state remains server-side."}
         </span>
+      </div>
+      <div className="command-row">
+        <ActionBar
+          actions={actions}
+          disabled={disabled}
+          onSelectAction={onSelectAction}
+          sceneTone={sceneTone}
+        />
+        <textarea
+          disabled={disabled || isSubmitting}
+          id="player-input"
+          onChange={(event) => onValueChange(event.target.value)}
+          placeholder={placeholder}
+          rows={1}
+          value={value}
+        />
         <button disabled={disabled || isSubmitting || !value.trim()} type="submit">
-          {isSubmitting ? "Transmitting..." : "Send to GM"}
+          {isSubmitting ? "Transmitting..." : "Execute"}
         </button>
       </div>
     </form>

@@ -9,6 +9,46 @@ function formatTimestamp(value) {
   return date.toLocaleString();
 }
 
+function getTurnAvatar(turn, speakerName, speakerCaste) {
+  if (turn.speaker === "player") {
+    return {
+      initials: (speakerName ?? "DA").slice(0, 2).toUpperCase(),
+      name: speakerName ?? "Player",
+      caste: speakerCaste ?? "HighRed",
+    };
+  }
+
+  if (turn.speaker === "gm") {
+    return {
+      initials: "GM",
+      name: "Ares Relay",
+      caste: "System",
+    };
+  }
+
+  if (turn.speaker === "system-location") {
+    return {
+      initials: "LO",
+      name: "Location",
+      caste: "Blue",
+    };
+  }
+
+  if (turn.speaker === "system-clock") {
+    return {
+      initials: "CL",
+      name: "Clock",
+      caste: "Gold",
+    };
+  }
+
+  return {
+    initials: "AR",
+    name: turn.label ?? "System",
+    caste: "System",
+  };
+}
+
 export function TurnFeed({ campaignName, speakerCaste, speakerName, speakerRole, statusText, turns }) {
   return (
     <section className="turn-feed">
@@ -39,23 +79,37 @@ export function TurnFeed({ campaignName, speakerCaste, speakerName, speakerRole,
       <div className="turn-feed-scroll">
         <div className="turn-list">
           {turns.length ? (
-            turns.map((turn) => (
-              <article className={`turn turn-${turn.speaker}`} key={turn.id}>
-                <div className="turn-meta">
-                  <span>{turn.label}</span>
-                  <span>{formatTimestamp(turn.timestamp) ?? turn.meta ?? "Live"}</span>
-                </div>
-                {turn.location ? <p className="turn-location">{turn.location}</p> : null}
-                <p>{turn.text}</p>
-              </article>
-            ))
+            turns.map((turn) => {
+              const avatar = getTurnAvatar(turn, speakerName, speakerCaste);
+
+              return (
+                <article className={`turn turn-${turn.speaker}`} key={turn.id}>
+                  <div className="turn-avatar" style={{ borderColor: getCasteColorToken(avatar.caste) }}>
+                    <span>{avatar.initials}</span>
+                  </div>
+                  <div className="turn-copy">
+                    <div className="turn-meta">
+                      <span style={{ color: getCasteColorToken(avatar.caste) }}>{avatar.name}</span>
+                      <span>{formatTimestamp(turn.timestamp) ?? turn.meta ?? "Live"}</span>
+                    </div>
+                    {turn.location ? <p className="turn-location">{turn.location}</p> : null}
+                    <p>{turn.text}</p>
+                  </div>
+                </article>
+              );
+            })
           ) : (
             <article className="turn turn-system">
-              <div className="turn-meta">
-                <span>System</span>
-                <span>Awaiting campaign</span>
+              <div className="turn-avatar">
+                <span>AR</span>
               </div>
-              <p>Load the canonical campaign or select a cell to open the live narrative channel.</p>
+              <div className="turn-copy">
+                <div className="turn-meta">
+                  <span>System</span>
+                  <span>Awaiting campaign</span>
+                </div>
+                <p>Load the canonical campaign or select a cell to open the live narrative channel.</p>
+              </div>
             </article>
           )}
         </div>
