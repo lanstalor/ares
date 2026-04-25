@@ -221,7 +221,7 @@ textarea {
   isolation: isolate;
 }
 
-.dev-ui-mode {
+.mode-live, .mode-staging {
   grid-template-rows: auto minmax(0, 1fr) auto auto;
 }
 
@@ -483,15 +483,12 @@ textarea {
   gap: 16px;
 }
 
-.mode-live .layout {
-  grid-template-columns: minmax(0, 1.72fr) minmax(300px, 0.72fr);
-}
 
 .mode-staging .layout {
   grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.78fr);
 }
 
-.dev-ui-mode .layout {
+.mode-live .layout {
   grid-template-columns: 1fr;
 }
 
@@ -511,7 +508,7 @@ textarea {
   grid-template-rows: minmax(0, 1fr) auto;
 }
 
-.dev-ui-mode .play-column {
+.mode-live .play-column {
   grid-template-rows: minmax(0, 1fr) auto;
 }
 
@@ -519,13 +516,7 @@ textarea {
   grid-template-rows: auto minmax(250px, 0.8fr) minmax(0, 1fr);
 }
 
-.mode-live .side-column .status-panel {
-  opacity: 0.86;
-}
 
-.mode-live .side-column .status-panel:hover {
-  opacity: 1;
-}
 
 .story-grid {
   min-height: 0;
@@ -534,16 +525,13 @@ textarea {
   gap: 10px;
 }
 
-.mode-live .story-grid {
-  grid-template-columns: minmax(0, 1.16fr) minmax(400px, 1fr);
-}
 
 .mode-staging .story-grid {
   min-height: 460px;
   grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
 }
 
-.dev-ui-mode .story-grid {
+.mode-live .story-grid {
   min-height: clamp(280px, 44vh, 520px);
   grid-template-columns: minmax(320px, 0.74fr) minmax(520px, 1.26fr);
 }
@@ -579,20 +567,20 @@ textarea {
   display: none;
 }
 
-.dev-ui-mode .participant-strip,
-.dev-ui-mode .action-bar {
+.mode-live, .mode-staging .participant-strip,
+.mode-live, .mode-staging .action-bar {
   display: flex;
 }
 
-.dev-ui-mode .turn-feed,
-.dev-ui-mode .scene-backdrop-panel {
+.mode-live, .mode-staging .turn-feed,
+.mode-live, .mode-staging .scene-backdrop-panel {
   min-height: 0;
 }
 
-.dev-ui-mode .turn-feed,
-.dev-ui-mode .participant-strip,
-.dev-ui-mode .action-bar,
-.dev-ui-mode .input-panel {
+.mode-live, .mode-staging .turn-feed,
+.mode-live, .mode-staging .participant-strip,
+.mode-live, .mode-staging .action-bar,
+.mode-live, .mode-staging .input-panel {
   padding: 9px 11px;
 }
 
@@ -605,182 +593,182 @@ textarea {
   overflow: visible;
 }
 
-.dev-ui-mode .topbar {
+.mode-live, .mode-staging .topbar {
   gap: 14px;
   padding: 10px 14px;
 }
 
-.dev-ui-mode .topbar h1 {
+.mode-live, .mode-staging .topbar h1 {
   font-size: 1.45rem;
 }
 
-.dev-ui-mode .topbar-tagline {
+.mode-live, .mode-staging .topbar-tagline {
   font-size: 0.7rem;
 }
 
-.dev-ui-mode .topbar-stat span {
+.mode-live, .mode-staging .topbar-stat span {
   font-size: 0.64rem;
 }
 
-.dev-ui-mode .topbar-stat strong {
+.mode-live, .mode-staging .topbar-stat strong {
   font-size: 0.82rem;
 }
 
-.dev-ui-mode .scene-tone-button {
+.mode-live, .mode-staging .scene-tone-button {
   min-height: 42px;
   padding: 8px 12px;
 }
 
-.dev-ui-mode .turn-feed-scroll,
-.dev-ui-mode .campaign-console {
+.mode-live, .mode-staging .turn-feed-scroll,
+.mode-live, .mode-staging .campaign-console {
   margin-top: 10px;
 }
 
-.dev-ui-mode .panel-chrome h2 {
+.mode-live, .mode-staging .panel-chrome h2 {
   font-size: 0.82rem;
 }
 
-.dev-ui-mode .panel-chip,
-.dev-ui-mode .eyebrow,
-.dev-ui-mode .panel-label {
+.mode-live, .mode-staging .panel-chip,
+.mode-live, .mode-staging .eyebrow,
+.mode-live, .mode-staging .panel-label {
   font-size: 0.62rem;
 }
 
-.dev-ui-mode .speaker-card {
+.mode-live, .mode-staging .speaker-card {
   grid-template-columns: 62px minmax(0, 1fr) 72px;
   gap: 12px;
   margin-top: 10px;
   padding: 12px;
 }
 
-.dev-ui-mode .speaker-name {
+.mode-live, .mode-staging .speaker-name {
   font-size: 0.9rem;
 }
 
-.dev-ui-mode .speaker-meta,
-.dev-ui-mode .participant-meta,
-.dev-ui-mode .turn-meta {
+.mode-live, .mode-staging .speaker-meta,
+.mode-live, .mode-staging .participant-meta,
+.mode-live, .mode-staging .turn-meta {
   font-size: 0.72rem;
 }
 
-.dev-ui-mode .turn p {
+.mode-live, .mode-staging .turn p {
   font-size: 0.92rem;
   line-height: 1.62;
 }
 
-.dev-ui-mode .scene-backdrop-art {
+.mode-live, .mode-staging .scene-backdrop-art {
   min-height: 100%;
 }
 
-.dev-ui-mode .scene-backdrop-copy {
+.mode-live, .mode-staging .scene-backdrop-copy {
   bottom: 72px;
 }
 
-.dev-ui-mode .scene-backdrop-copy h2 {
+.mode-live, .mode-staging .scene-backdrop-copy h2 {
   font-size: clamp(1.18rem, 2.2vw, 1.7rem);
 }
 
-.dev-ui-mode .scene-backdrop-copy p {
+.mode-live, .mode-staging .scene-backdrop-copy p {
   margin-top: 8px;
   line-height: 1.55;
 }
 
-.dev-ui-mode .scene-backdrop-meta {
+.mode-live, .mode-staging .scene-backdrop-meta {
   bottom: 14px;
   left: 14px;
   right: 14px;
   gap: 8px;
 }
 
-.dev-ui-mode .scene-backdrop-meta div {
+.mode-live, .mode-staging .scene-backdrop-meta div {
   padding: 8px 10px;
 }
 
-.dev-ui-mode .participant-scroll {
+.mode-live, .mode-staging .participant-scroll {
   gap: 8px;
   margin-top: 0;
 }
 
-.dev-ui-mode .participant-strip {
+.mode-live, .mode-staging .participant-strip {
   max-height: none;
 }
 
-.dev-ui-mode .participant-card {
+.mode-live, .mode-staging .participant-card {
   grid-template-columns: 40px minmax(0, 1fr);
   gap: 10px;
   padding: 10px 12px;
   min-width: 220px;
 }
 
-.dev-ui-mode .participant-avatar-button {
+.mode-live, .mode-staging .participant-avatar-button {
   min-width: 40px;
   min-height: 40px;
   width: 40px;
   height: 40px;
 }
 
-.dev-ui-mode .participant-avatar-button span {
+.mode-live, .mode-staging .participant-avatar-button span {
   font-size: 0.78rem;
 }
 
-.dev-ui-mode .participant-name {
+.mode-live, .mode-staging .participant-name {
   font-size: 0.68rem;
 }
 
-.dev-ui-mode .participant-status {
+.mode-live, .mode-staging .participant-status {
   display: none;
 }
 
-.dev-ui-mode .participant-meta {
+.mode-live, .mode-staging .participant-meta {
   gap: 2px;
   margin-top: 3px;
   font-size: 0.58rem;
 }
 
-.dev-ui-mode .participant-detail {
+.mode-live, .mode-staging .participant-detail {
   display: none;
 }
 
-.dev-ui-mode .participant-subtext {
+.mode-live, .mode-staging .participant-subtext {
   font-size: 0.56rem;
 }
 
-.dev-ui-mode .action-grid {
+.mode-live, .mode-staging .action-grid {
   gap: 8px;
   margin-top: 0;
 }
 
-.dev-ui-mode .quick-ops-terminal h2 {
+.mode-live, .mode-staging .quick-ops-terminal h2 {
   font-size: 0.72rem;
 }
 
-.dev-ui-mode .action-button {
+.mode-live, .mode-staging .action-button {
   min-height: 34px;
   gap: 7px;
   padding-inline: 8px;
 }
 
-.dev-ui-mode .action-label {
+.mode-live, .mode-staging .action-label {
   font-size: 0.7rem;
 }
 
-.dev-ui-mode .action-index,
-.dev-ui-mode .action-icon {
+.mode-live, .mode-staging .action-index,
+.mode-live, .mode-staging .action-icon {
   font-size: 0.64rem;
 }
 
-.dev-ui-mode .input-panel textarea {
+.mode-live, .mode-staging .input-panel textarea {
   min-height: 34px;
   height: 34px;
   margin: 0;
   padding: 7px 10px;
 }
 
-.dev-ui-mode .input-terminal-bar .hint {
+.mode-live, .mode-staging .input-terminal-bar .hint {
   font-size: 0.64rem;
 }
 
-.dev-ui-mode .command-row button {
+.mode-live, .mode-staging .command-row button {
   min-width: 108px;
   min-height: 34px;
   padding: 5px 9px;
@@ -2605,7 +2593,7 @@ textarea::-webkit-scrollbar-thumb {
     grid-template-columns: 1fr;
   }
 
-  .dev-ui-mode .story-grid {
+  .mode-live .story-grid {
     grid-template-columns: minmax(280px, 0.72fr) minmax(340px, 1.28fr);
   }
 
@@ -2648,11 +2636,11 @@ textarea::-webkit-scrollbar-thumb {
     grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   }
 
-  .dev-ui-mode .layout {
+  .mode-live .layout {
     grid-template-rows: minmax(0, 1fr);
   }
 
-  .dev-ui-mode .story-grid {
+  .mode-live .story-grid {
     grid-template-columns: 1fr;
   }
 

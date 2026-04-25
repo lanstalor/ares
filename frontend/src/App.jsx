@@ -847,7 +847,7 @@ export default function App() {
   const shellMode = devUiMode ? "live" : selectedCampaign ? "live" : "staging";
 
   return (
-    <div className={`app-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""}`}>
+    <div className={`app-shell scene-theme-${sceneTone} mode-${shellMode}`}>
       {devUiMode ? null : (
         <IntroOverlay
           activeSceneIndex={storySceneIndex}
@@ -902,10 +902,24 @@ export default function App() {
           <button className="secondary-button scene-tone-button" onClick={handleCycleSceneTone} type="button">
             Tone: {manualSceneTone}
           </button>
+          {shellMode === "live" && !devUiMode ? (
+            <>
+              <button className="secondary-button topbar-session-button" onClick={handleToggleAudio} type="button">
+                {audioMuted ? "Muted" : "Audio"}
+              </button>
+              <button
+                className="secondary-button topbar-session-button"
+                onClick={() => setSelectedCampaignId("")}
+                type="button"
+              >
+                Console
+              </button>
+            </>
+          ) : null}
         </div>
       </header>
 
-      {devUiMode ? null : (
+      {shellMode === "live" ? null : (
         <section className="hud-ribbon">
           <article className="hud-card">
             <span className="panel-label">Campaign</span>
@@ -971,7 +985,7 @@ export default function App() {
           />
         </section>
 
-        {devUiMode ? null : (
+        {shellMode === "live" ? null : (
           <section className="side-column">
             <section className="status-panel topbar-panel-tools">
               <div className="panel-chrome">
