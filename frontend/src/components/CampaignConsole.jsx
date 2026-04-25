@@ -29,10 +29,10 @@ export function CampaignConsole({
     <section className="status-panel">
       <div className="panel-chrome">
         <div>
-          <p className="eyebrow">Campaign Console</p>
-          <h2>Operations</h2>
+          <p className="eyebrow">GM Control</p>
+          <h2>Campaign Lattice</h2>
         </div>
-        <span className="panel-chip">{loadingCampaigns ? "Syncing" : `${campaigns.length} loaded`}</span>
+        <span className="panel-chip">{loadingCampaigns ? "Syncing" : `${campaigns.length} cells loaded`}</span>
       </div>
 
       <div className="campaign-console">
@@ -54,14 +54,14 @@ export function CampaignConsole({
             ))
           ) : (
             <p className="empty-state">
-              No active campaign found. Seed the world bible to begin, or create a new cell.
+              No campaign is loaded yet. Seed the canonical world bible or stage a fallback cell.
             </p>
           )}
         </div>
 
         <form className="campaign-form" onSubmit={onCreateCampaign}>
           <label className="panel-label" htmlFor="campaign-name">
-            New campaign
+            Draft fallback campaign
           </label>
           <input
             id="campaign-name"
@@ -79,15 +79,15 @@ export function CampaignConsole({
             value={createForm.tagline}
           />
           <button disabled={creatingCampaign || !createForm.name.trim()} type="submit">
-            {creatingCampaign ? "Creating..." : "Create campaign"}
+            {creatingCampaign ? "Creating..." : "Create fallback"}
           </button>
         </form>
 
         <div className="campaign-seed-tools">
-          <p className="panel-label">World Setup</p>
+          <p className="panel-label">Canonical Loadout</p>
           <p className="hint">
             {worldBibleReady
-              ? "Seed a campaign directly from world_bible.md."
+              ? "Import the authored campaign frame directly from world_bible.md."
               : "Backend cannot see world_bible.md yet."}
           </p>
           <button
@@ -95,13 +95,13 @@ export function CampaignConsole({
             onClick={onSeedWorldBible}
             type="button"
           >
-            {seedingWorldBible ? "Seeding..." : "Seed from world bible"}
+            {seedingWorldBible ? "Seeding..." : "Load canonical campaign"}
           </button>
           <p className="hint">{formatSeedResult(lastSeedResult)}</p>
         </div>
 
         <div className="campaign-seed-tools">
-          <p className="panel-label">Shell sync</p>
+          <p className="panel-label">Uplink Sync</p>
           <div className="console-actions">
             <button disabled={loadingShell || loadingCampaigns} onClick={() => onRefreshShell()} type="button">
               {loadingShell || loadingCampaigns ? "Refreshing..." : "Refresh shell"}
@@ -115,7 +115,7 @@ export function CampaignConsole({
             </button>
           </div>
           <p className="hint">
-            Provider: {shellReadiness.provider.label}. Campaign seed: {shellReadiness.campaignSeed.label}.
+            Provider: {shellReadiness.provider.label}. Canon frame: {shellReadiness.campaignSeed.label}.
           </p>
         </div>
       </div>
