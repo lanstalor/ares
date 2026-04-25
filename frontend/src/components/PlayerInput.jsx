@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-export function PlayerInput({ disabled, isSubmitting, onSubmit, placeholder }) {
-  const [value, setValue] = useState("");
-
+export function PlayerInput({ disabled, isSubmitting, onSubmit, onValueChange, placeholder, value }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (disabled || isSubmitting) return;
@@ -11,18 +7,18 @@ export function PlayerInput({ disabled, isSubmitting, onSubmit, placeholder }) {
     if (!nextValue) return;
 
     onSubmit(nextValue);
-    setValue("");
+    onValueChange("");
   };
 
   return (
     <form className="input-panel" onSubmit={handleSubmit}>
       <label className="panel-label" htmlFor="player-input">
-        Action
+        Your move
       </label>
       <textarea
         disabled={disabled || isSubmitting}
         id="player-input"
-        onChange={(event) => setValue(event.target.value)}
+        onChange={(event) => onValueChange(event.target.value)}
         placeholder={placeholder}
         rows={4}
         value={value}
@@ -30,11 +26,11 @@ export function PlayerInput({ disabled, isSubmitting, onSubmit, placeholder }) {
       <div className="input-actions">
         <span className="hint">
           {disabled
-            ? "Select or create a campaign to begin."
-            : "Player-safe output only. Hidden state stays server-side."}
+            ? "Load a campaign before transmitting actions to the GM."
+            : "Player-safe output only. Hidden state remains server-side."}
         </span>
         <button disabled={disabled || isSubmitting || !value.trim()} type="submit">
-          {isSubmitting ? "Transmitting..." : "Transmit"}
+          {isSubmitting ? "Transmitting..." : "Send to GM"}
         </button>
       </div>
     </form>

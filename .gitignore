@@ -15,3 +15,5 @@ data/postgres/
 ares.db
 .env
 ebooks/
+.playwright-mcp/
+.superpowers/

@@ -42,8 +42,8 @@ function CharacterPanel({ playerCharacter }) {
     <section className="status-panel">
       <div className="panel-chrome">
         <div>
-          <p className="eyebrow">Character Status</p>
-          <h2>Operative Readout</h2>
+          <p className="eyebrow">Operative Status</p>
+          <h2>Field Readout</h2>
         </div>
         {playerCharacter ? <span className="panel-chip">live</span> : null}
       </div>
@@ -88,7 +88,7 @@ function ReadinessPanel({ shellReadiness }) {
       <div className="panel-chrome">
         <div>
           <p className="eyebrow">Readiness</p>
-          <h2>Bootstrap Signals</h2>
+          <h2>GM Stack</h2>
         </div>
       </div>
       <div className="readiness-grid">
@@ -145,7 +145,7 @@ export function StatusPanel({
         <div className="panel-chrome">
           <div>
             <p className="eyebrow">System Status</p>
-            <h2>Backend Link</h2>
+            <h2>Machine State</h2>
           </div>
           <span className={`panel-chip ${healthStatus?.status === "ok" ? "is-good" : "is-bad"}`}>
             {healthStatus?.status === "ok" ? "Connected" : "Offline"}
@@ -167,7 +167,7 @@ export function StatusPanel({
         <div className="panel-chrome">
           <div>
             <p className="eyebrow">Campaign State</p>
-            <h2>Active Cell</h2>
+            <h2>Current Brief</h2>
           </div>
           {activeCampaign ? <span className="panel-chip">selected</span> : null}
         </div>
