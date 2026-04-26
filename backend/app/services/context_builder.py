@@ -18,7 +18,7 @@ class TurnContext:
     hidden_gm_brief: str
 
 
-_RECENT_TURN_LIMIT = 5
+_RECENT_TURN_LIMIT = 10
 
 
 def build_turn_context(session: Session, campaign: Campaign, player_input: str) -> TurnContext:
