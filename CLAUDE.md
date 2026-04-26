@@ -218,11 +218,12 @@ Four states used throughout the codebase (`app/core/enums.py`):
 
 UI is now the canonical game shell. Core loop is fully playable. Next engineering slices in priority order:
 
-1. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine. `buildSceneParticipants` already has the hook; just replace mock fallback with real values. Disposition must be player-facing read (from observable NPC behavior), not sealed GM intent.
-2. **Live stat patching after turns** — patch `participant.hp` and `participant.disposition` from `TurnResolution` without a full refresh, mirroring how `clocks_fired` and `location_changed_to` already surface as feed events.
-3. **Memory rendering** — surface player-relevant turn memories in the status panel or turn feed
-4. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
-5. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
-6. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
+1. **GM clarify sidebar chat** — add a `?` entry point in the live shell that opens a non-persisted GM sidebar conversation. The backend endpoint should explain the current story plainly, break the fourth wall if needed, and must not create a turn or mutate campaign state.
+2. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine. `buildSceneParticipants` already has the hook; just replace mock fallback with real values. Disposition must be player-facing read (from observable NPC behavior), not sealed GM intent.
+3. **Live stat patching after turns** — patch `participant.hp` and `participant.disposition` from `TurnResolution` without a full refresh, mirroring how `clocks_fired` and `location_changed_to` already surface as feed events.
+4. **Memory rendering** — surface player-relevant turn memories in the status panel or turn feed
+5. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
+6. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
+7. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
 
 Do not build Phase 5 items (multiplayer, admin dashboard, map UI) until the items above are solid.

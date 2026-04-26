@@ -8,17 +8,17 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |
 |---|---|---|---|---|---|---|
-| #5 | [GM scene context + action guidance](./workstreams/gm-scene-context-and-guidance.md) | `feat-5-gm-scene-context` | #6 | Codex | In progress | Commit the final verification-backed pass, update PR #6 notes, then split the GM clarify sidebar into a separate branch/issue/PR |
+| TBD | `GM clarify sidebar chat` | `TBD` | `TBD` | Next coding session | Ready to start | Open a new issue/branch/PR for a non-persisted GM sidebar chat that explains the current story state without creating a turn |
 
 ## Next
 
 | Priority | Slice | Why now |
 |---|---|---|
-| 1 | Backend NPC stats in live scene participants | It is already the top slice in `CLAUDE.md` and the frontend hook is in place |
-| 2 | Live participant stat patching after turns | It completes the Scene Presence loop without requiring a full refresh |
-| 3 | Memory rendering in status/feed | It exposes player-relevant continuity without leaking hidden state |
-| 4 | Secret reveal display events | It improves narrative clarity when sealed facts become player-facing |
-| 5 | GM clarify sidebar | It addresses player confusion directly and should stay separate from the current scene-context plumbing slice |
+| 1 | GM clarify sidebar chat | It is the next user-facing clarity feature and now has a clean branch boundary after the scene-context slice |
+| 2 | Backend NPC stats in live scene participants | The scene-context plumbing is in place and the frontend hook is ready for real values |
+| 3 | Live participant stat patching after turns | It completes the Scene Presence loop without requiring a full refresh |
+| 4 | Memory rendering in status/feed | It exposes player-relevant continuity without leaking hidden state |
+| 5 | Secret reveal display events | It improves narrative clarity when sealed facts become player-facing |
 
 ## Later
 
@@ -36,6 +36,7 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-04-26 | GM scene context + action guidance | Added `suggested_actions` and `scene_participants`, tightened feed rendering, wired scene art into the main app, and verified the Docker runtime on `:5180` |
 | 2026-04-26 | Cinematic UI promoted to canonical live shell | `mode-live` is now the default play UI; `mode-staging` remains the operator entry point |
 | 2026-04-24 | Runtime/bootstrap reconciliation | Backend bootstrap, provider wiring, and frontend readiness were aligned to real status fields |
 

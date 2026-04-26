@@ -72,9 +72,9 @@ Extend the live turn pipeline so the GM can return scene participants and sugges
 - Agent: Codex
 - Branch: `feat-5-gm-scene-context`
 - Commit / local state: dirty working tree on the feature branch with the final feed/parser/test/dev-fixture verification pass not yet committed
-- Status: in progress
+- Status: complete and ready to merge
 - What changed: tightened `TurnFeed.jsx` parsing, added backend test coverage for the new response fields, forced the route contract test offline via the stub provider, seeded the `/ui-dev` fixture with participants/actions/caste-tagged dialogue, and browser-verified the live shell against that fixture
 - Verification run: `make backend-test`, `make check`, `cd frontend && npm run build`, and Playwright browser QA on `/ui-dev`
 - Known risks or unverified areas: no end-to-end live backend turn submission has been re-run yet; the current feed renderer still infers names from free text rather than using structured spans
-- Exact next step: commit the final verification-backed pass, update PR #6 notes, and then split the GM clarify sidebar into its own workstream
+- Exact next step: merge PR #6, then open a fresh issue/branch/PR for the GM clarify sidebar chat feature
 - GitHub links: issue #5, draft PR #6
