@@ -185,6 +185,7 @@ export function TurnFeed({
 
     const prevCount = prevTurnCountRef.current;
     const currCount = turns.length;
+    prevTurnCountRef.current = currCount;
 
     if (currCount > prevCount) {
       const newSlice = turns.slice(prevCount);
@@ -194,15 +195,15 @@ export function TurnFeed({
         const absIndex = prevCount + firstNewGmOffset;
         const el = scrollEl.querySelector(`[data-turn-index="${absIndex}"]`);
         if (el) {
-          scrollEl.scrollTop = el.offsetTop - scrollEl.offsetTop;
-          prevTurnCountRef.current = currCount;
+          const elTop = el.getBoundingClientRect().top;
+          const containerTop = scrollEl.getBoundingClientRect().top;
+          scrollEl.scrollTop += elTop - containerTop;
           return;
         }
       }
     }
 
     scrollEl.scrollTop = scrollEl.scrollHeight;
-    prevTurnCountRef.current = currCount;
   }, [turns, isThinking]);
 
   const nameColorMap = buildNameColorMap(participants, speakerName, speakerCaste);
