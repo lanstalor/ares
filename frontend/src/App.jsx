@@ -20,44 +20,12 @@ import { buildActionPresets, buildSceneParticipants, deriveSceneTone } from "./l
 const STORY_SCENE_DURATION_MS = 5400;
 const STORY_BLACKOUT_OFFSET_MS = 4500;
 
-function createOpeningNotice(selectedCampaign) {
-  if (!selectedCampaign) {
-    return [];
-  }
-
-  return [
-    {
-      id: `system-${selectedCampaign.id}`,
-      speaker: "system",
-      label: "System",
-      meta: "Link primed",
-      text: `Operative channel open — ${selectedCampaign.name}. You are Davan, a HighRed running cells for the Sons of Ares in the Callisto Depot District. The Society is everywhere. Move carefully.`,
-    },
-  ];
-}
-
-function normalizeRecentTurns(recentTurns = []) {
-  return recentTurns.map((entry, index) => ({
-    id: `recent-${index}`,
-    speaker: "system",
-    label: "Archive",
-    meta: "State snapshot",
-    text: entry,
-  }));
-}
-
 function buildCampaignTurns(selectedCampaign, campaignState, turnHistoryByCampaign) {
   if (!selectedCampaign) {
     return [];
   }
 
-  const recentTurns = normalizeRecentTurns(campaignState?.recent_turns);
-  const liveTurns = turnHistoryByCampaign[selectedCampaign.id] ?? [];
-
-  return [
-    ...createOpeningNotice(selectedCampaign),
-    ...(liveTurns.length ? liveTurns : recentTurns),
-  ];
+  return turnHistoryByCampaign[selectedCampaign.id] ?? [];
 }
 
 function normalizePersistedTurns(turns = []) {
@@ -723,6 +691,8 @@ export default function App() {
           <section className="story-grid">
             <TurnFeed
               campaignName={selectedCampaign?.name}
+              isThinking={isSubmittingTurn}
+              objective={campaignState?.active_objective}
               speakerCaste={campaignState?.player_character?.race}
               speakerName={campaignState?.player_character?.name}
               speakerRole={campaignState?.player_character?.character_class}

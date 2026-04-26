@@ -45,6 +45,12 @@ export function PlayerInput({
           disabled={disabled || isSubmitting}
           id="player-input"
           onChange={(event) => onValueChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              handleSubmit(event);
+            }
+          }}
           placeholder={placeholder}
           rows={1}
           value={value}

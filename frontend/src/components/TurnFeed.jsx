@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { getCasteColorToken } from "../lib/uiTheme";
 
 function formatTimestamp(value) {
@@ -49,7 +50,57 @@ function getTurnAvatar(turn, speakerName, speakerCaste) {
   };
 }
 
-export function TurnFeed({ campaignName, speakerCaste, speakerName, speakerRole, statusText, turns }) {
+function renderText(text, speaker) {
+  if (!text) return null;
+
+  const segments = [];
+  const quoteRe = /"[^"]*"/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = quoteRe.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: "text", value: text.slice(lastIndex, match.index) });
+    }
+    segments.push({ type: "quote", value: match[0] });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ type: "text", value: text.slice(lastIndex) });
+  }
+
+  if (segments.every((s) => s.type === "text")) {
+    return text;
+  }
+
+  return segments.map((seg, i) =>
+    seg.type === "quote" ? (
+      <span key={i} className={`turn-dialogue turn-dialogue-${speaker}`}>{seg.value}</span>
+    ) : (
+      seg.value
+    ),
+  );
+}
+
+export function TurnFeed({
+  campaignName,
+  isThinking,
+  objective,
+  speakerCaste,
+  speakerName,
+  speakerRole,
+  statusText,
+  turns,
+}) {
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [turns, isThinking]);
+
   return (
     <section className="turn-feed">
       <div className="panel-chrome">
@@ -76,9 +127,27 @@ export function TurnFeed({ campaignName, speakerCaste, speakerName, speakerRole,
         <div className="speaker-waveform" aria-hidden="true" />
       </article>
 
-      <div className="turn-feed-scroll">
+      <div className="turn-feed-scroll" ref={scrollRef}>
         <div className="turn-list">
-          {turns.length ? (
+          {turns.length === 0 ? (
+            <article className="turn turn-gm turn-opening">
+              <div className="turn-avatar" style={{ borderColor: getCasteColorToken("System") }}>
+                <span>GM</span>
+              </div>
+              <div className="turn-copy">
+                <div className="turn-meta">
+                  <span style={{ color: getCasteColorToken("System") }}>Ares Relay</span>
+                  <span>Channel open</span>
+                </div>
+                {objective ? (
+                  <p className="turn-objective-prompt">
+                    <span className="turn-objective-label">Objective — </span>{objective}
+                  </p>
+                ) : null}
+                <p>The relay is armed and the hidden-state engine is live. Describe your first move.</p>
+              </div>
+            </article>
+          ) : (
             turns.map((turn) => {
               const avatar = getTurnAvatar(turn, speakerName, speakerCaste);
 
@@ -93,25 +162,31 @@ export function TurnFeed({ campaignName, speakerCaste, speakerName, speakerRole,
                       <span>{formatTimestamp(turn.timestamp) ?? turn.meta ?? "Live"}</span>
                     </div>
                     {turn.location ? <p className="turn-location">{turn.location}</p> : null}
-                    <p>{turn.text}</p>
+                    <p>{renderText(turn.text, turn.speaker)}</p>
                   </div>
                 </article>
               );
             })
-          ) : (
-            <article className="turn turn-system">
-              <div className="turn-avatar">
-                <span>AR</span>
+          )}
+
+          {isThinking ? (
+            <article className="turn turn-gm turn-thinking">
+              <div className="turn-avatar" style={{ borderColor: getCasteColorToken("System") }}>
+                <span>GM</span>
               </div>
               <div className="turn-copy">
                 <div className="turn-meta">
-                  <span>System</span>
-                  <span>Awaiting campaign</span>
+                  <span style={{ color: getCasteColorToken("System") }}>Ares Relay</span>
+                  <span>Processing</span>
                 </div>
-                <p>Load the canonical campaign or select a cell to open the live narrative channel.</p>
+                <p className="thinking-dots" aria-label="GM is thinking">
+                  <span className="thinking-dot" />
+                  <span className="thinking-dot" />
+                  <span className="thinking-dot" />
+                </p>
               </div>
             </article>
-          )}
+          ) : null}
         </div>
       </div>
     </section>
