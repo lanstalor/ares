@@ -6,7 +6,7 @@ This file is the daily control surface for active development. Use it after `CLA
 
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |
 |---|---|---|---|---|---|---|
-| #5 | [GM scene context + action guidance](./workstreams/gm-scene-context-and-guidance.md) | `feat-5-gm-scene-context` | TBD | Codex / interrupted Claude session | In progress | Finish the current slice by wiring the remaining `TurnFeed` rendering changes, then add the GM clarify sidebar as a separate branch/issue/PR |
+| #5 | [GM scene context + action guidance](./workstreams/gm-scene-context-and-guidance.md) | `feat-5-gm-scene-context` | #6 | Codex / interrupted Claude session | In progress | Finish the current slice by wiring the remaining `TurnFeed` rendering changes, then add the GM clarify sidebar as a separate branch/issue/PR |
 
 ## Next
 

@@ -15,6 +15,7 @@ Extend the live turn pipeline so the GM can return scene participants and sugges
 - Backend turn resolution already carries `suggested_actions` and `scene_participants`.
 - Frontend `App.jsx` already persists both fields into session storage and feeds dynamic actions into `PlayerInput`.
 - `buildSceneParticipants()` now accepts GM-provided participants and applies guardrails for malformed data.
+- `SceneBackdrop.jsx` now uses the provided sample scene art via `frontend/public/scene-art/` instead of the abstract placeholder-only backdrop.
 - `TurnFeed.jsx` is still mid-edit and is the most likely place where the interrupted session left unfinished work.
 
 ## Decisions Already Made
@@ -54,7 +55,7 @@ Extend the live turn pipeline so the GM can return scene participants and sugges
 ## GitHub Links
 
 - Issue: #5 https://github.com/lanstalor/ares/issues/5
-- Draft PR: TBD
+- Draft PR: #6 https://github.com/lanstalor/ares/pull/6
 - Branch target: `feat-5-gm-scene-context`
 
 ## Session Update
@@ -64,8 +65,8 @@ Extend the live turn pipeline so the GM can return scene participants and sugges
 - Branch: `feat-5-gm-scene-context`
 - Commit / local state: dirty working tree on the feature branch with backend/frontend edits related to scene participants and suggested actions plus repo workflow scaffolding
 - Status: in progress
-- What changed: bootstrap workstream doc created, GitHub issue opened, and local work moved onto a flat feature branch so the interrupted slice can be resumed without reading prior chat first
+- What changed: bootstrap workstream doc created, GitHub issue opened, local work moved onto a flat feature branch, sample scene art wired into the live shell, and draft PR #6 opened so the interrupted slice can be resumed without reading prior chat first
 - Verification run: existing local state passes `make check` and `cd frontend && npm run build`
 - Known risks or unverified areas: `TurnFeed.jsx` changes were interrupted mid-session; no live browser verification has been recorded for the final feed behavior
 - Exact next step: inspect and finish the `TurnFeed.jsx` rendering pass before starting the clarify sidebar work
-- GitHub links: issue created at #5; draft PR still needs to be created
+- GitHub links: issue #5, draft PR #6
