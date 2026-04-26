@@ -1,35 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 
-import { CampaignConsole } from "./components/CampaignConsole";
 import { IntroOverlay } from "./components/IntroOverlay";
 import { ParticipantStrip } from "./components/ParticipantStrip";
 import { PlayerInput } from "./components/PlayerInput";
 import { SceneBackdrop } from "./components/SceneBackdrop";
-import { StatusPanel } from "./components/StatusPanel";
 import { TurnFeed } from "./components/TurnFeed";
 import {
-  createCampaign,
   getCampaignState,
   getHealth,
   getSystemStatus,
   listCampaigns,
   listTurns,
-  seedWorldBible,
   submitTurn,
 } from "./lib/api";
 import { createDevUiSnapshot, DEV_UI_QUERY, DEV_UI_ROUTE, isDevUiMode } from "./lib/devUiFixture";
 import { UNIVERSAL_STORY_SCENES } from "./lib/introContent";
-import { deriveShellReadiness } from "./lib/readiness";
 import { buildActionPresets, buildSceneParticipants, deriveSceneTone } from "./lib/uiTheme";
 
-const DEFAULT_CAMPAIGN_DATE_PCE = 728;
 const STORY_SCENE_DURATION_MS = 5400;
 const STORY_BLACKOUT_OFFSET_MS = 4500;
-
-const createEmptyCampaignForm = () => ({
-  name: "",
-  tagline: "",
-});
 
 function createOpeningNotice(selectedCampaign) {
   if (!selectedCampaign) {
@@ -287,14 +276,9 @@ export default function App() {
   });
   const [campaignState, setCampaignState] = useState(null);
   const [turnHistoryByCampaign, setTurnHistoryByCampaign] = useState({});
-  const [createForm, setCreateForm] = useState(createEmptyCampaignForm);
   const [loadingShell, setLoadingShell] = useState(true);
-  const [loadingCampaigns, setLoadingCampaigns] = useState(false);
   const [loadingState, setLoadingState] = useState(false);
-  const [creatingCampaign, setCreatingCampaign] = useState(false);
-  const [seedingWorldBible, setSeedingWorldBible] = useState(false);
   const [isSubmittingTurn, setIsSubmittingTurn] = useState(false);
-  const [lastSeedResult, setLastSeedResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [presentationStage, setPresentationStage] = useState("boot");
   const [bootProgress, setBootProgress] = useState(0);
@@ -411,9 +395,7 @@ export default function App() {
     setSelectedCampaignId(snapshot.selectedCampaignId);
     setCampaignState(snapshot.campaignStateById[snapshot.selectedCampaignId]);
     setTurnHistoryByCampaign(snapshot.turnHistoryByCampaign);
-    setLastSeedResult(snapshot.lastSeedResult);
     setLoadingShell(false);
-    setLoadingCampaigns(false);
     setLoadingState(false);
     setPresentationStage("game");
     setBootProgress(100);
@@ -512,167 +494,11 @@ export default function App() {
 
   const selectedCampaign = campaigns.find((campaign) => campaign.id === selectedCampaignId) ?? null;
   const turns = buildCampaignTurns(selectedCampaign, campaignState, turnHistoryByCampaign);
-  const shellReadiness = deriveShellReadiness({
-    healthStatus,
-    systemStatus,
-    campaigns,
-    lastSeedResult,
-  });
   const shellStatusText = buildShellStatusText(loadingShell, healthStatus);
   const inferredSceneTone = deriveSceneTone({ campaignState, selectedCampaign, turns });
   const sceneTone = manualSceneTone === "auto" ? inferredSceneTone : manualSceneTone;
   const participants = buildSceneParticipants({ campaignState, selectedCampaign, sceneTone });
   const actionPresets = buildActionPresets(sceneTone);
-
-  async function refreshShell(preferredCampaignId = selectedCampaignId) {
-    if (devUiMode) {
-      const snapshot = createDevUiSnapshot();
-      devUiSnapshotRef.current = snapshot;
-      setHealthStatus(snapshot.healthStatus);
-      setSystemStatus(snapshot.systemStatus);
-      setCampaigns(snapshot.campaigns);
-      setSelectedCampaignId(snapshot.selectedCampaignId);
-      setCampaignState(snapshot.campaignStateById[snapshot.selectedCampaignId]);
-      setTurnHistoryByCampaign(snapshot.turnHistoryByCampaign);
-      setLastSeedResult(snapshot.lastSeedResult);
-      return;
-    }
-
-    setLoadingCampaigns(true);
-    setErrorMessage("");
-
-    try {
-      const [health, system, nextCampaigns] = await fetchShellSnapshot();
-      setHealthStatus(health);
-      setSystemStatus(system);
-      setCampaigns(nextCampaigns);
-      setSelectedCampaignId((current) => selectCampaignId(nextCampaigns, preferredCampaignId || current));
-    } catch (error) {
-      setErrorMessage(error.message);
-    } finally {
-      setLoadingCampaigns(false);
-    }
-  }
-
-  async function refreshActiveCampaign(campaignId = selectedCampaignId) {
-    if (devUiMode) {
-      const nextState = devUiSnapshotRef.current?.campaignStateById?.[campaignId] ?? null;
-      setCampaignState(nextState);
-      return;
-    }
-
-    if (!campaignId) {
-      return;
-    }
-
-    setLoadingState(true);
-    setErrorMessage("");
-
-    try {
-      const [state, turnHistory] = await fetchCampaignSnapshot(campaignId);
-      setCampaignState(state);
-      setTurnHistoryByCampaign((current) => ({
-        ...current,
-        [campaignId]: normalizePersistedTurns(turnHistory),
-      }));
-    } catch (error) {
-      setErrorMessage(error.message);
-    } finally {
-      setLoadingState(false);
-    }
-  }
-
-  function handleCreateFormChange(event) {
-    const { name, value } = event.target;
-    setCreateForm((current) => ({
-      ...current,
-      [name]: value,
-    }));
-  }
-
-  async function handleCreateCampaign(event) {
-    event.preventDefault();
-    if (!createForm.name.trim()) return;
-
-    if (devUiMode) {
-      const now = new Date().toISOString();
-      const newCampaign = {
-        id: `dev-${Date.now()}`,
-        name: createForm.name.trim(),
-        tagline: createForm.tagline.trim() || "Mock UI-only campaign",
-        current_date_pce: DEFAULT_CAMPAIGN_DATE_PCE,
-        hidden_state_enabled: true,
-        current_location_label: "Crescent Block / Callisto Depot District",
-        created_at: now,
-        updated_at: now,
-      };
-      const nextState = {
-        campaign: newCampaign,
-        current_location: newCampaign.current_location_label,
-        active_objective: "Sketch the scene rhythm and pressure using local mock data.",
-        recent_turns: ["Mock campaign created for UI iteration."],
-        player_character: {
-          id: `dev-character-${Date.now()}`,
-          campaign_id: newCampaign.id,
-          name: "Davan of Tharsis",
-          race: "HighRed",
-          character_class: "Operative",
-          cover_identity: "Dav of Vashti",
-          current_hp: 38,
-          max_hp: 38,
-          cover_integrity: 8,
-          inventory_summary: "Forged sigil, ledger, relay wafer.",
-          notes: "Local mock character",
-          created_at: now,
-          updated_at: now,
-        },
-        hidden_state_summary: "Hidden state remains server-only.",
-      };
-      const nextCampaigns = [newCampaign];
-      devUiSnapshotRef.current = {
-        ...(devUiSnapshotRef.current ?? createDevUiSnapshot()),
-        campaigns: nextCampaigns,
-        selectedCampaignId: newCampaign.id,
-        campaignStateById: { [newCampaign.id]: nextState },
-        turnHistoryByCampaign: {
-          [newCampaign.id]: [
-            {
-              id: `system-${newCampaign.id}`,
-              speaker: "system",
-              label: "System",
-              meta: "Mock scene",
-              text: "UI dev campaign created locally.",
-              timestamp: now,
-            },
-          ],
-        },
-      };
-      setCampaigns(nextCampaigns);
-      setSelectedCampaignId(newCampaign.id);
-      setCampaignState(nextState);
-      setTurnHistoryByCampaign(devUiSnapshotRef.current.turnHistoryByCampaign);
-      setCreateForm(createEmptyCampaignForm());
-      return;
-    }
-
-    setCreatingCampaign(true);
-    setErrorMessage("");
-
-    try {
-      const createdCampaign = await createCampaign({
-        name: createForm.name.trim(),
-        tagline: createForm.tagline.trim() || null,
-        current_date_pce: DEFAULT_CAMPAIGN_DATE_PCE,
-      });
-
-      setCreateForm(createEmptyCampaignForm());
-      await refreshShell(createdCampaign.id);
-    } catch (error) {
-      setErrorMessage(error.message);
-    } finally {
-      setCreatingCampaign(false);
-    }
-  }
 
   async function handleSubmitTurn(playerInput) {
     if (!selectedCampaign) return;
@@ -747,30 +573,6 @@ export default function App() {
     }
   }
 
-  async function handleSeedWorldBible() {
-    if (devUiMode) {
-      setLastSeedResult({
-        campaign_id: selectedCampaignId,
-        campaign_name: selectedCampaign?.name ?? "Mock campaign",
-        source_path: "/home/lans/ares/world_bible.md",
-      });
-      return;
-    }
-
-    setSeedingWorldBible(true);
-    setErrorMessage("");
-
-    try {
-      const seeded = await seedWorldBible({});
-      setLastSeedResult(seeded);
-      await refreshShell(seeded.campaign_id);
-    } catch (error) {
-      setErrorMessage(error.message);
-    } finally {
-      setSeedingWorldBible(false);
-    }
-  }
-
   async function handlePressStart() {
     if (devUiMode) {
       setPresentationStage("game");
@@ -813,7 +615,6 @@ export default function App() {
       setSelectedCampaignId(snapshot.selectedCampaignId);
       setCampaignState(snapshot.campaignStateById[snapshot.selectedCampaignId]);
       setTurnHistoryByCampaign(snapshot.turnHistoryByCampaign);
-      setLastSeedResult(snapshot.lastSeedResult);
       setInputValue("");
       setManualSceneTone("auto");
       return;
@@ -844,7 +645,7 @@ export default function App() {
     });
   }
 
-  const shellMode = devUiMode ? "live" : selectedCampaign ? "live" : "staging";
+  const shellMode = "live";
 
   return (
     <div className={`app-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""}`}>
@@ -902,43 +703,14 @@ export default function App() {
           <button className="secondary-button scene-tone-button" onClick={handleCycleSceneTone} type="button">
             Tone: {manualSceneTone}
           </button>
-          {shellMode === "live" && !devUiMode ? (
-            <>
-              <button className="secondary-button topbar-session-button" onClick={handleToggleAudio} type="button">
-                {audioMuted ? "Muted" : "Audio"}
-              </button>
-              <button
-                className="secondary-button topbar-session-button"
-                onClick={() => setSelectedCampaignId("")}
-                type="button"
-              >
-                Console
-              </button>
-            </>
-          ) : null}
+          {devUiMode ? null : (
+            <button className="secondary-button topbar-session-button" onClick={handleToggleAudio} type="button">
+              {audioMuted ? "Muted" : "Audio"}
+            </button>
+          )}
         </div>
       </header>
 
-      {shellMode === "live" ? null : (
-        <section className="hud-ribbon">
-          <article className="hud-card">
-            <span className="panel-label">Campaign</span>
-            <strong>{selectedCampaign?.name ?? "No active cell"}</strong>
-          </article>
-          <article className="hud-card">
-            <span className="panel-label">Objective</span>
-            <strong>{campaignState?.active_objective ?? "Load or seed the canonical campaign"}</strong>
-          </article>
-          <article className="hud-card">
-            <span className="panel-label">AI core</span>
-            <strong>{shellReadiness.provider.label}</strong>
-          </article>
-          <article className="hud-card">
-            <span className="panel-label">Canon frame</span>
-            <strong>{shellReadiness.campaignSeed.label}</strong>
-          </article>
-        </section>
-      )}
 
       {errorMessage ? (
         <section className="alert-banner" role="alert">
@@ -984,57 +756,6 @@ export default function App() {
             value={inputValue}
           />
         </section>
-
-        {shellMode === "live" ? null : (
-          <section className="side-column">
-            <section className="status-panel topbar-panel-tools">
-              <div className="panel-chrome">
-                <div>
-                  <p className="eyebrow">Shell controls</p>
-                  <h2>Session</h2>
-                </div>
-                <span className={`panel-chip is-${shellReadiness.provider.tone}`}>{shellStatusText}</span>
-              </div>
-              <div className="control-cluster">
-                <button className="secondary-button" onClick={handleReplayIntro} type="button">
-                  Replay intro
-                </button>
-                <button className="secondary-button" onClick={handleToggleAudio} type="button">
-                  {audioMuted ? "Audio muted" : "Audio live"}
-                </button>
-                <button className="secondary-button" onClick={() => refreshShell()} type="button">
-                  Refresh shell
-                </button>
-              </div>
-            </section>
-            <CampaignConsole
-              campaigns={campaigns}
-              createForm={createForm}
-              creatingCampaign={creatingCampaign}
-              lastSeedResult={lastSeedResult}
-              loadingCampaigns={loadingCampaigns}
-              loadingShell={loadingShell}
-              loadingState={loadingState}
-              onCreateCampaign={handleCreateCampaign}
-              onFormChange={handleCreateFormChange}
-              onRefreshActiveCampaign={refreshActiveCampaign}
-              onRefreshShell={refreshShell}
-              onSeedWorldBible={handleSeedWorldBible}
-              onSelectCampaign={setSelectedCampaignId}
-              seedingWorldBible={seedingWorldBible}
-              selectedCampaignId={selectedCampaignId}
-              shellReadiness={shellReadiness}
-              worldBibleReady={Boolean(systemStatus?.world_bible_exists)}
-            />
-            <StatusPanel
-              campaignState={campaignState}
-              healthStatus={healthStatus}
-              selectedCampaign={selectedCampaign}
-              shellReadiness={shellReadiness}
-              systemStatus={systemStatus}
-            />
-          </section>
-        )}
       </main>
 
       {devUiMode ? (
