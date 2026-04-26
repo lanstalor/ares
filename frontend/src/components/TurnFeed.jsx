@@ -93,16 +93,18 @@ function buildNameColorMap(participants, speakerName, speakerCaste) {
 
 const CASTE_QUOTE_RE = /^\[(\w+)\]("[^"]*")$/;
 
-function renderText(text, speaker, nameColorMap) {
-  if (!text) return null;
-
+function renderInline(text, speaker, nameColorMap, baseKey) {
   const names = nameColorMap ? [...nameColorMap.keys()].sort((a, b) => b.length - a.length) : [];
   const namePattern = names.length
     ? `(?<![\\w-])(?:${names.map(escapeRegExp).join("|")})(?![\\w-])`
     : null;
 
-  // Match: [Caste]"quote", plain "quote", or known names, in priority order.
-  const patternParts = [`\\[\\w+\\]"[^"]*"`, `"[^"]*"`];
+  const patternParts = [
+    `\\[\\w+\\]"[^"]*"`,  // [Caste]"quote"
+    `"[^"]*"`,              // plain "quote"
+    `\\*\\*[^*]+\\*\\*`,   // **bold**
+    `\\*[^*]+\\*`,          // *italic*
+  ];
   if (namePattern) patternParts.push(namePattern);
   const fullPattern = new RegExp(patternParts.join("|"), "g");
 
@@ -114,17 +116,19 @@ function renderText(text, speaker, nameColorMap) {
     if (match.index > lastIndex) {
       segments.push({ type: "text", value: text.slice(lastIndex, match.index) });
     }
-
     const value = match[0];
     if (value.startsWith("[")) {
       const parsed = CASTE_QUOTE_RE.exec(value);
       segments.push({ type: "caste-quote", caste: parsed?.[1] ?? "System", quote: parsed?.[2] ?? value });
     } else if (value.startsWith('"')) {
       segments.push({ type: "quote", value });
+    } else if (value.startsWith("**")) {
+      segments.push({ type: "bold", value: value.slice(2, -2) });
+    } else if (value.startsWith("*")) {
+      segments.push({ type: "italic", value: value.slice(1, -1) });
     } else {
       segments.push({ type: "name", value, color: nameColorMap?.get(value) });
     }
-
     lastIndex = match.index + value.length;
   }
 
@@ -135,30 +139,30 @@ function renderText(text, speaker, nameColorMap) {
   if (segments.every((s) => s.type === "text")) return text;
 
   return segments.map((seg, i) => {
+    const key = `${baseKey}-${i}`;
     if (seg.type === "caste-quote") {
       const color = getCasteColorToken(seg.caste);
-      return (
-        <span key={i} style={{ color, textShadow: `0 0 8px ${color}55` }}>
-          {seg.quote}
-        </span>
-      );
+      return <span key={key} style={{ color, textShadow: `0 0 8px ${color}55` }}>{seg.quote}</span>;
     }
     if (seg.type === "quote") {
-      return (
-        <span key={i} className={`turn-dialogue turn-dialogue-${speaker}`}>
-          {seg.value}
-        </span>
-      );
+      return <span key={key} className="turn-dialogue-plain">{seg.value}</span>;
     }
-    if (seg.type === "name") {
-      return (
-        <span key={i} style={{ color: seg.color, fontWeight: 500 }}>
-          {seg.value}
-        </span>
-      );
-    }
+    if (seg.type === "bold") return <strong key={key}>{seg.value}</strong>;
+    if (seg.type === "italic") return <em key={key}>{seg.value}</em>;
+    if (seg.type === "name") return <span key={key} style={{ color: seg.color, fontWeight: 500 }}>{seg.value}</span>;
     return seg.value;
   });
+}
+
+function renderText(text, speaker, nameColorMap) {
+  if (!text) return null;
+  const paragraphs = text.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
+  if (paragraphs.length <= 1) {
+    return <p>{renderInline(text.trim(), speaker, nameColorMap, 0)}</p>;
+  }
+  return paragraphs.map((para, i) => (
+    <p key={i}>{renderInline(para, speaker, nameColorMap, i)}</p>
+  ));
 }
 
 export function TurnFeed({
@@ -267,7 +271,7 @@ export function TurnFeed({
                       <span style={{ color: getCasteColorToken(avatar.caste) }}>{avatar.name}</span>
                       <span>{formatTimestamp(turn.timestamp) ?? turn.meta ?? "Live"}</span>
                     </div>
-                    <p>{renderText(turn.text, turn.speaker, nameColorMap)}</p>
+                    <div className="turn-body">{renderText(turn.text, turn.speaker, nameColorMap)}</div>
                   </div>
                 </article>
               );

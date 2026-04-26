@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+import { ClarifySidebar } from "./components/ClarifySidebar";
 import { IntroOverlay } from "./components/IntroOverlay";
 import { ParticipantStrip } from "./components/ParticipantStrip";
 import { PlayerInput } from "./components/PlayerInput";
@@ -11,6 +12,7 @@ import {
   getSystemStatus,
   listCampaigns,
   listTurns,
+  submitClarification,
   submitTurn,
 } from "./lib/api";
 import { createDevUiSnapshot, DEV_UI_QUERY, DEV_UI_ROUTE, isDevUiMode } from "./lib/devUiFixture";
@@ -255,6 +257,7 @@ export default function App() {
       return Array.isArray(parsed) ? parsed : [];
     } catch { return []; }
   });
+  const [isClarifySidebarOpen, setIsClarifySidebarOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [presentationStage, setPresentationStage] = useState(() => {
     if (typeof localStorage !== "undefined" && localStorage.getItem("ares_intro_seen")) {
@@ -273,6 +276,16 @@ export default function App() {
   const devUiSnapshotRef = useRef(null);
 
   useEffect(() => () => disposeAmbientAudio(audioRuntimeRef), []);
+
+  useEffect(() => {
+    const topbar = document.querySelector(".topbar");
+    if (!topbar) return;
+    const sync = () => document.documentElement.style.setProperty("--topbar-height", `${topbar.offsetHeight}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(topbar);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     if (devUiMode) {
@@ -643,6 +656,10 @@ export default function App() {
     });
   }
 
+  function handleToggleClarify() {
+    setIsClarifySidebarOpen((current) => !current);
+  }
+
   const shellMode = "live";
 
   return (
@@ -701,6 +718,14 @@ export default function App() {
           <button className="secondary-button scene-tone-button" onClick={handleCycleSceneTone} type="button">
             Tone: {manualSceneTone}
           </button>
+          <button
+            className={`secondary-button topbar-clarify-button ${isClarifySidebarOpen ? "active" : ""}`}
+            onClick={handleToggleClarify}
+            title="Get GM clarification"
+            type="button"
+          >
+            ?
+          </button>
           {devUiMode ? null : (
             <button className="secondary-button topbar-session-button" onClick={handleToggleAudio} type="button">
               {audioMuted ? "Muted" : "Audio"}
@@ -758,6 +783,13 @@ export default function App() {
           />
         </section>
       </main>
+
+      <ClarifySidebar
+        campaignId={selectedCampaignId}
+        isOpen={isClarifySidebarOpen}
+        onClarify={submitClarification}
+        onClose={() => setIsClarifySidebarOpen(false)}
+      />
 
       {devUiMode ? (
         <section className="dev-ui-helper">

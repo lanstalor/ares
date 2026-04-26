@@ -22,7 +22,7 @@
 1. [Solar System — Areas & Districts](#areas)
 1. [Points of Interest](#pois)
 1. [Canon NPCs](#canon-npcs)
-1. [Player Characters — Davan of Tharsis](#player-characters)
+1. [Player Characters — Davan o' Tharsis](#player-characters)
 1. [Items & Technology](#items)
 1. [Lore Pages](#lore)
 1. [Campaign Opening](#campaign-opening)
@@ -980,7 +980,7 @@ A 400-meter iron-nickel asteroid in the Drift’s outer arc. Single pressurized 
 
 -----
 
-### Davan of Tharsis
+### Davan o' Tharsis
 
 **Race:** HighRed | **Class:** Operative (Shadow subclass) | **Faction:** Sons of Ares | **Level:** 3
 
@@ -1242,7 +1242,7 @@ Standard-issue gear for a Sons of Ares cell operating on Ganymede. Most of this 
 ### GM Instructions (AI reads, player does not see)
 
 ```
-Opening scene. Player is Davan of Tharsis — highRed
+Opening scene. Player is Davan o' Tharsis — highRed
 dock worker, Rotation 7, Crescent Block barracks. Sons
 of Ares cell member for 8 months under a forged sigil
 identity. Establish: the weight of the ordinary. This
@@ -1333,7 +1333,7 @@ Status tracker for all campaign images.
 |Io                     |Planet map icon   |⏳ Pending    |Volcanic, sulfur yellow-orange, Jupiter edge.                    |
 |Phobos                 |Planet map icon   |⏳ Pending    |Irregular potato shape, Mars looming at edge.                    |
 |The Belt               |Planet map icon   |⏳ Pending    |Asteroid field, no single sphere.                                |
-|Davan of Tharsis       |Character portrait|⏳ Pending    |See portrait prompt in Section 11.                               |
+|Davan o' Tharsis       |Character portrait|⏳ Pending    |See portrait prompt in Section 11.                               |
 |Crescent Block Barracks|POI cover image   |⏳ Pending    |See prompt in campaign notes.                                    |
 |The Melt               |POI cover image   |⏳ Pending    |Decommissioned industrial corridor, panel J-14.                  |
 |The Gyre               |POI cover image   |⏳ Pending    |Underground market, amber lighting, diverse Colors.              |

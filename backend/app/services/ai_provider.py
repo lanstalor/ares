@@ -26,6 +26,9 @@ class NarrationProvider(Protocol):
     def narrate(self, request: NarrationRequest) -> NarrationResponse:
         ...
 
+    def clarify(self, request: NarrationRequest) -> str:
+        ...
+
 
 class NullNarrationProvider:
     def narrate(self, request: NarrationRequest) -> NarrationResponse:
@@ -37,4 +40,12 @@ class NullNarrationProvider:
             ),
             player_safe_summary=f"Player attempted: {request.player_input[:180]}",
             consequences=Consequences(),
+        )
+
+    def clarify(self, request: NarrationRequest) -> str:
+        return (
+            "The GM clarification engine is not implemented yet. "
+            "In a real session, I would explain the current story state, "
+            "break the fourth wall if needed, and help you understand the scene "
+            "without advancing the game clocks."
         )

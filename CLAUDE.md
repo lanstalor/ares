@@ -16,45 +16,40 @@ This is **not** a chatbot wrapper. The value is in the hidden-state engine: cloc
 
 Date: 2026-04-26
 
-### Official game UI promotion + Gemini CSS regression fix
+### GM Clarify sidebar + narrative feed quality pass
 
-The cinematic layout developed in the `/ui-dev` iteration route is now the canonical `mode-live` game UI. Two sessions of work combined:
+**GM Clarify sidebar (`feat-7-gm-clarify-sidebar` → merged to main):**
+- Backend `POST /api/v1/campaigns/{id}/clarify` endpoint — non-persisted, no state mutation.
+- `ClarifySidebar` React component: markdown rendering (paragraphs, headings, lists, bold/italic), ESC closes, `?` topbar button.
+- Fixed sidebar header scroll bug: `--topbar-height` CSS variable was never defined; added ResizeObserver in `App.jsx` to set it dynamically from the actual topbar element.
+- Clarify system prompt rewritten: no markdown headers, no chatbot-style endings ("What would you like to do?"), brevity-first, 2–3 sentence target for simple questions.
 
-**2026-04-25 — Cinematic shell and Scene Presence pass:**
-- Added `/ui-dev` route for backend-free layout iteration with full mock state
-- Renamed "Roster" → **Scene Presence**, removed redundant "Participants" eyebrow
-- Fixed all modal/popover overflow clipping via `createPortal` to `document.body` (escapes `overflow: hidden` on `.app-shell`)
-- Added per-character stats to Scene Presence cards and detail modal:
-  - `level` — mono badge overlaid on avatar (top-right corner)
-  - `hp` — thin color-coded bar on cards (`good ≥66% / warn ≥33% / bad`), full meter with `current/max` readout in modal
-  - `disposition` — 5-step scale (hostile / suspicious / unaware / friendly / allied); chip on cards, 5-segment lit-track in modal
-- Mock data in `buildSceneParticipants` (`lib/uiTheme.js`); hooks ready for real backend NPC state
+**Narrative feed rendering:**
+- GM turn text now splits on `\n\n` into separate `<p>` elements inside a `.turn-body` div — multi-paragraph responses render as readable prose, not a wall of text.
+- `renderText` → `renderInline` refactor: handles `**bold**`, `*italic*`, `[Caste]"quote"` (caste color), and plain `"quote"` (neutral italic) inline within each paragraph.
+- Dialogue coloring fixed: only `[Caste]"..."` tagged lines get a caste color; plain quotes are neutral italic. The old `.turn-dialogue-gm` gold class is removed.
 
-**2026-04-26 — Promoted dev-UI to official game UI:**
-- `mode-live` (campaign selected) now uses single-column full-width layout: no side panel, no hud-ribbon
-- `mode-staging` (no campaign selected) keeps the two-column layout with CampaignConsole, StatusPanel, and Session controls — the operator entry point
-- **Audio** toggle and **Console** button (returns to staging) added to topbar in live mode
-- Fixed a Gemini-introduced CSS regression: all `dev-ui-mode` selectors were incorrectly rewritten as `.mode-live, .mode-staging .X` — a fundamentally broken CSS selector pattern that applied `display: flex` to the entire app-shell element. All ~30 rules corrected to proper `.mode-live .X` descendant selectors
-- Fixed `.mode-live .play-column` row count (was changed to 2 rows, cutting off the participant strip; restored to 3 rows: story-grid / participant-strip / input)
-- Restored `dev-ui-mode` class on app-shell (Gemini had dropped it, breaking the dev helper bar)
+**GM system prompt improvements:**
+- Pacing discipline: calibrate length to action scope; don't re-establish ambient facts.
+- Anti-filler rule: stacked atmospheric sentences ("The station hums… Jupiter hangs…") are explicitly banned unless they advance action, tension, character, or information.
+- Sentence rhythm: vary length fluidly; not uniform staccato, not uniform purple prose.
+- Naming conventions: Gold `au`, Copper `cu`, Silver `si`, Gray `te`, Red `ne`, Blue `de`, Obsidian `ka`. "Ares" banned as a family name.
+- Clarify prompt: brevity-first, no headers, no chatbot endings.
 
-**The two-mode contract:**
-- `mode-staging`: two-column, side panel visible (Session + Campaign Lattice + Readiness), hud-ribbon showing. Entry point for seeding, campaign selection, shell status.
-- `mode-live`: single-column, full-width. Cinematic layout with backdrop dominating, Scene Presence strip, compact input bar. Audio toggle + Console button in topbar to access staging.
+**Canon fix:**
+- Player character renamed **Davan o' Tharsis** (correct lowRed apostrophe convention, like Darrow o' Lykos) in `world_bible.md`, all DB rows, and tests.
 
-How to use it next session:
+**How to use next session:**
+- Use `make compose-up` for the full stack (postgres + backend at 8000 + frontend at 5180 via Docker). **Always test at 5180**, not the standalone Vite dev server at 5173/5174.
+- Always verify UI changes with Playwright MCP `browser_navigate` + `browser_take_screenshot` — **never claim UI work done without a screenshot**.
+- Frontend Docker image must be rebuilt after source changes: `docker compose up --build --no-deps -d frontend`.
 
-- Use `make compose-up` for the full stack (postgres + backend at 8000 + frontend at 5180 via Docker)
-- Use `make frontend-dev` for frontend-only iteration (Vite on 5173; auto-increments if occupied by familyquest)
-- Open `/ui-dev` for backend-free layout work
-- Always verify UI changes with Playwright MCP `browser_navigate` + `browser_take_screenshot` — **never claim UI work done without a screenshot**
-- Disposition meter CSS: `.tone-bad/warn/muted/good/ally` on `.participant-disposition-chip` and `.participant-disposition-meter`
-
-Current branch guidance:
-
-- `mode-live` styling lives in `.mode-live .X` selectors — do NOT use `.mode-live, .mode-staging .X` (broken selector)
-- Do not re-add the side panel or hud-ribbon to live mode — operator chrome lives in staging
-- Preserve hidden-state boundaries; disposition is player-facing read, sealed GM intent stays server-only
+**What's next (priority order from master plan):**
+1. Backend NPC stats — emit `level`, `current_hp`/`max_hp`, `disposition` from turn engine into `scene_participants`; replace mock fallback in `buildSceneParticipants`.
+2. Live stat patching after turns — patch participant HP/disposition from `TurnResolution` without full refresh.
+3. Memory rendering — surface player-relevant memories in the status panel or feed.
+4. Secret reveal display — in-feed event when a sealed secret becomes player-facing.
+5. Update the active objective from GM responses — currently stuck at "Check the Melt before shift" across 34 turns.
 
 ---
 
