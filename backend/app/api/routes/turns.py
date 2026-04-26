@@ -23,10 +23,10 @@ def list_turns(
     statement = (
         select(Turn)
         .where(Turn.campaign_id == campaign_id)
-        .order_by(Turn.created_at.asc())
+        .order_by(Turn.created_at.desc())
         .limit(limit)
     )
-    return list(session.scalars(statement))
+    return list(reversed(list(session.scalars(statement))))
 
 
 @router.post("/{campaign_id}/turns", response_model=TurnResolution, status_code=201)
