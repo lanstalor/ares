@@ -59,6 +59,26 @@ function selectCampaignId(campaigns, preferredCampaignId) {
   return campaigns[0]?.id ?? "";
 }
 
+function mergeParticipants(existing, incoming) {
+  const roster = existing.map((p) => ({ ...p }));
+  for (const np of incoming) {
+    const firstName = np.name.split(/\s+/)[0].toLowerCase();
+    const match = roster.find(
+      (p) => p.name === np.name || p.name.toLowerCase().startsWith(firstName)
+    );
+    if (match) {
+      match.disposition = np.disposition;
+      match.role = np.role;
+    } else {
+      roster.push(np);
+    }
+  }
+  // keep only participants seen in this turn's incoming list (by canonical name match)
+  return roster.filter((p) =>
+    incoming.some((np) => np.name === p.name || p.name.toLowerCase().startsWith(np.name.split(/\s+/)[0].toLowerCase()))
+  );
+}
+
 function buildConsequenceEvents(resolution) {
   const id = resolution.turn.id;
   const events = [];
@@ -566,8 +586,13 @@ export default function App() {
         sessionStorage.setItem("ares_suggested_actions", JSON.stringify(resolution.suggested_actions));
       }
       if (resolution.scene_participants?.length) {
-        setGmSceneParticipants(resolution.scene_participants);
-        sessionStorage.setItem("ares_scene_participants", JSON.stringify(resolution.scene_participants));
+        setGmSceneParticipants((current) => mergeParticipants(current, resolution.scene_participants));
+        sessionStorage.setItem("ares_scene_participants", JSON.stringify(
+          mergeParticipants(
+            JSON.parse(sessionStorage.getItem("ares_scene_participants") ?? "[]"),
+            resolution.scene_participants
+          )
+        ));
       }
       setInputValue("");
     } catch (error) {

@@ -63,7 +63,7 @@ Tool use:
 - Omit any field whose list is empty rather than emitting placeholder entries.
 - Dialogue formatting: Every line of direct in-character speech must be prefixed with that character's Red Rising color caste in square brackets, immediately before the opening quote — for example [Red]"I need a drink." or [Gold]"You dare address me?" or [Obsidian]"Move." Use the character's actual caste color. Never add the prefix to the player character's speech or to narration — only to spoken words that belong to an NPC or named character in the scene.
 - suggested_actions: Exactly 3 short next-action suggestions that fit the current scene. Each has a `label` (2-4 words, title-case) and a `prompt` (one player-voice sentence the player would type). Ground them in what the scene presents — do not repeat the player's last action.
-- scene_participants: 1–4 named characters the player can directly observe in this scene (do not include the player character). For each, provide their exact name as used in the narrative, their Red Rising color caste (Red, Gold, Gray, Obsidian, Blue, Copper, etc.), a brief role descriptor, and their current disposition toward the player.
+- scene_participants: 1–4 named characters the player can directly observe in this scene (do not include the player character). For each, provide their exact name as used in the narrative, their Red Rising color caste (Red, Gold, Gray, Obsidian, Blue, Copper, etc.), a brief role descriptor, and their current disposition toward the player. Use the full canonical name every single turn — never abbreviate, shorten, or vary it. If you introduced a character as "Kess cu Mercator", every subsequent turn must use "Kess cu Mercator", not "Kess" or "Kess Mercator".
 """
 
 
