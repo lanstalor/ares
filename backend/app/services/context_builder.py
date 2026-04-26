@@ -143,10 +143,12 @@ def _render_player_safe_brief(
     if objectives:
         lines.append("Active objectives: " + "; ".join(o.title for o in objectives))
     if recent_turns:
-        lines.append("Recent turns:")
+        lines.append("Recent turns (player action → GM narrative excerpt):")
         for turn in reversed(recent_turns):
-            summary = turn.player_safe_summary or turn.gm_response[:160]
-            lines.append(f"  - {summary}")
+            player_line = (turn.player_input or "")[:120]
+            gm_excerpt = (turn.gm_response or "")[:300]
+            lines.append(f"  Player: {player_line}")
+            lines.append(f"  GM: {gm_excerpt}")
     if recent_memories:
         lines.append("Player-known memories:")
         for memory in reversed(recent_memories):

@@ -109,7 +109,7 @@ def test_player_safe_brief_includes_visible_state() -> None:
 
     assert "Crescent Block - Callisto Depot District" in ctx.player_safe_brief
     assert "Check the Melt before shift" in ctx.player_safe_brief
-    assert "Davan walked into the Melt." in ctx.player_safe_brief
+    assert "Davan steps into the warm dark of the Melt." in ctx.player_safe_brief
     assert "Dav of Vashti" in ctx.player_safe_brief
 
 
