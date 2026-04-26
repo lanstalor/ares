@@ -43,6 +43,7 @@ Date: 2026-04-26
 - Use `make compose-up` for the full stack (postgres + backend at 8000 + frontend at 5180 via Docker). **Always test at 5180**, not the standalone Vite dev server at 5173/5174.
 - Always verify UI changes with Playwright MCP `browser_navigate` + `browser_take_screenshot` — **never claim UI work done without a screenshot**.
 - Frontend Docker image must be rebuilt after source changes: `docker compose up --build --no-deps -d frontend`.
+- Backend Docker image must also be rebuilt after source changes: `docker compose up --build --no-deps -d backend`. `--no-deps -d` alone does NOT rebuild — source changes (prompts, routes, services) will be silently ignored.
 
 **What's next (priority order from master plan):**
 1. Backend NPC stats — emit `level`, `current_hp`/`max_hp`, `disposition` from turn engine into `scene_participants`; replace mock fallback in `buildSceneParticipants`.
