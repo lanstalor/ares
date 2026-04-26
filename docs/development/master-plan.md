@@ -2,6 +2,8 @@
 
 This file is the daily control surface for active development. Use it after `CLAUDE.md` and before opening chat history.
 
+If you are switching agents after an interruption, use `docs/development/resume-cheatsheet.md` for the current file paths and copy-paste resume prompts.
+
 ## Now
 
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |

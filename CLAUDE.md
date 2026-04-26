@@ -67,6 +67,7 @@ Current branch guidance:
 | `CLAUDE.md` (this file) | Current implementation state, file map, dev workflow, hard constraints |
 | `docs/development/master-plan.md` | Current priorities, active workstreams, and the fastest way to see what should happen next |
 | `docs/development/workstreams/` | Canonical resume docs for interrupted feature slices; read the linked workstream before chat history |
+| `docs/development/resume-cheatsheet.md` | Copy-paste prompts and current local chat artifact paths for resuming with Codex, Gemini, or Claude |
 
 ## Development Workflow Defaults
 
