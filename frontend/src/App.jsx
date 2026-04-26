@@ -376,6 +376,8 @@ export default function App() {
     setCampaigns(snapshot.campaigns);
     setSelectedCampaignId(snapshot.selectedCampaignId);
     setCampaignState(snapshot.campaignStateById[snapshot.selectedCampaignId]);
+    setSuggestedActions(snapshot.suggestedActionsByCampaign?.[snapshot.selectedCampaignId] ?? []);
+    setGmSceneParticipants(snapshot.sceneParticipantsByCampaign?.[snapshot.selectedCampaignId] ?? []);
     setTurnHistoryByCampaign(snapshot.turnHistoryByCampaign);
     setLoadingShell(false);
     setLoadingState(false);
@@ -429,6 +431,8 @@ export default function App() {
     if (devUiMode) {
       const nextState = devUiSnapshotRef.current?.campaignStateById?.[selectedCampaignId] ?? null;
       setCampaignState(nextState);
+      setSuggestedActions(devUiSnapshotRef.current?.suggestedActionsByCampaign?.[selectedCampaignId] ?? []);
+      setGmSceneParticipants(devUiSnapshotRef.current?.sceneParticipantsByCampaign?.[selectedCampaignId] ?? []);
       setLoadingState(false);
       return undefined;
     }

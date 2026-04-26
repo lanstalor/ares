@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 import { getCasteColorToken } from "../lib/uiTheme";
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function formatTimestamp(value) {
   if (!value) return null;
 
@@ -53,22 +57,35 @@ function getTurnAvatar(turn, speakerName, speakerCaste) {
 function buildNameColorMap(participants, speakerName, speakerCaste) {
   const map = new Map();
 
+  function addVariant(name, color) {
+    if (!name || typeof name !== "string") {
+      return;
+    }
+
+    const trimmed = name.trim();
+    if (trimmed.length < 3) {
+      return;
+    }
+
+    if (!map.has(trimmed)) {
+      map.set(trimmed, color);
+    }
+  }
+
   if (speakerName) {
     const color = getCasteColorToken(speakerCaste);
-    map.set(speakerName, color);
-    const short = speakerName.split(" ")[0];
-    if (short.length > 2) map.set(short, color);
+    const parts = speakerName.split(/\s+/).filter(Boolean);
+    addVariant(speakerName, color);
+    addVariant(parts[0], color);
   }
 
   for (const p of participants ?? []) {
     if (!p.name || p.tone === "system" || p.tone === "player") continue;
     const color = getCasteColorToken(p.caste);
-    map.set(p.name, color);
-    const parts = p.name.split(/\s+/);
-    const lastName = parts[parts.length - 1];
-    if (lastName.length > 2 && !map.has(lastName)) {
-      map.set(lastName, color);
-    }
+    const parts = p.name.split(/\s+/).filter(Boolean);
+    addVariant(p.name, color);
+    addVariant(parts[0], color);
+    addVariant(parts[parts.length - 1], color);
   }
 
   return map;
@@ -81,10 +98,10 @@ function renderText(text, speaker, nameColorMap) {
 
   const names = nameColorMap ? [...nameColorMap.keys()].sort((a, b) => b.length - a.length) : [];
   const namePattern = names.length
-    ? names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")
+    ? `(?<![\\w-])(?:${names.map(escapeRegExp).join("|")})(?![\\w-])`
     : null;
 
-  // Match: [Caste]"quote", plain "quote", or known names — in priority order
+  // Match: [Caste]"quote", plain "quote", or known names, in priority order.
   const patternParts = [`\\[\\w+\\]"[^"]*"`, `"[^"]*"`];
   if (namePattern) patternParts.push(namePattern);
   const fullPattern = new RegExp(patternParts.join("|"), "g");

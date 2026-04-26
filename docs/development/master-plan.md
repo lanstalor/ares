@@ -8,7 +8,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |
 |---|---|---|---|---|---|---|
-| #5 | [GM scene context + action guidance](./workstreams/gm-scene-context-and-guidance.md) | `feat-5-gm-scene-context` | #6 | Codex / interrupted Claude session | In progress | Finish the current slice by wiring the remaining `TurnFeed` rendering changes, then add the GM clarify sidebar as a separate branch/issue/PR |
+| #5 | [GM scene context + action guidance](./workstreams/gm-scene-context-and-guidance.md) | `feat-5-gm-scene-context` | #6 | Codex | In progress | Commit the final verification-backed pass, update PR #6 notes, then split the GM clarify sidebar into a separate branch/issue/PR |
 
 ## Next
 

@@ -661,7 +661,7 @@ textarea {
 }
 
 .mode-live .scene-backdrop-copy {
-  bottom: 72px;
+  bottom: 186px;
 }
 
 .mode-live .scene-backdrop-copy h2 {
@@ -1565,11 +1565,11 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .scene-backdrop-copy {
-  bottom: 86px;
+  bottom: 186px;
 }
 
 .mode-staging .scene-backdrop-copy {
-  bottom: 104px;
+  bottom: 204px;
 }
 
 .scene-backdrop-copy h2 {

@@ -1,5 +1,6 @@
 from app.api.routes.campaigns import create_campaign, get_campaign_state
 from app.api.routes.turns import create_turn
+from app.core.config import get_settings
 from app.models.base import Base
 from app.schemas.campaign import CampaignCreate
 from app.schemas.turn import TurnCreate
@@ -25,7 +26,9 @@ def test_create_campaign_bootstraps_default_character() -> None:
     assert state.player_character.name == "Davan of Tharsis"
 
 
-def test_create_turn_persists_response() -> None:
+def test_create_turn_persists_response(monkeypatch) -> None:
+    monkeypatch.setenv("ARES_GENERATION_PROVIDER", "stub")
+    get_settings.cache_clear()
     session = _make_session()
     campaign = create_campaign(CampaignCreate(name="Turn Test"), session)
 
