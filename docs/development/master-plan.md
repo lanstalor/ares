@@ -8,17 +8,15 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |
 |---|---|---|---|---|---|---|
-| TBD | `GM clarify sidebar chat` | `TBD` | `TBD` | Next coding session | Ready to start | Open a new issue/branch/PR for a non-persisted GM sidebar chat that explains the current story state without creating a turn |
+| TBD | `Backend NPC stats` | `TBD` | `TBD` | Next session | Ready to start | Define the backend data structure for real level/HP/disposition values |
 
 ## Next
 
 | Priority | Slice | Why now |
 |---|---|---|
-| 1 | GM clarify sidebar chat | It is the next user-facing clarity feature and now has a clean branch boundary after the scene-context slice |
-| 2 | Backend NPC stats in live scene participants | The scene-context plumbing is in place and the frontend hook is ready for real values |
-| 3 | Live participant stat patching after turns | It completes the Scene Presence loop without requiring a full refresh |
-| 4 | Memory rendering in status/feed | It exposes player-relevant continuity without leaking hidden state |
-| 5 | Secret reveal display events | It improves narrative clarity when sealed facts become player-facing |
+| 1 | Live participant stat patching after turns | It completes the Scene Presence loop without requiring a full refresh |
+| 2 | Memory rendering in status/feed | It exposes player-relevant continuity without leaking hidden state |
+| 3 | Secret reveal display events | It improves narrative clarity when sealed facts become player-facing |
 
 ## Later
 
@@ -36,8 +34,8 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-04-26 | GM clarify sidebar chat | Added a non-persisted `?` sidebar for story clarification without advancing the game clock |
 | 2026-04-26 | GM scene context + action guidance | Added `suggested_actions` and `scene_participants`, tightened feed rendering, wired scene art into the main app, and verified the Docker runtime on `:5180` |
-| 2026-04-26 | Cinematic UI promoted to canonical live shell | `mode-live` is now the default play UI; `mode-staging` remains the operator entry point |
 | 2026-04-24 | Runtime/bootstrap reconciliation | Backend bootstrap, provider wiring, and frontend readiness were aligned to real status fields |
 
 ## Working Rules

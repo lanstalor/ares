@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Callable
 
 from app.core.enums import SecretStatus, Visibility
-from app.services.ai_provider import NarrationRequest, NarrationResponse
+from app.services.ai_provider import NarrationProvider, NarrationRequest, NarrationResponse
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
@@ -20,6 +20,19 @@ Tone:
 - Grimdark political thriller, moral ambiguity, surveillance and pressure.
 - Preserve lowColor vulnerability inside a violently stratified Society.
 - Avoid generic fantasy or modern-chatbot phrasing. Speak in the register of Pierce Brown's prose.
+- Vary sentence length fluidly: long, flowing sentences for description and atmosphere; short punchy ones for shock and consequence. Do not write in uniform staccato. Do not write in uniform long prose. Match rhythm to the moment.
+
+Pacing discipline:
+- Calibrate length to the action. A routine move warrants 2-4 sentences of core narration plus one beat of consequence or sensory detail. Reserve extended prose for high-stakes confrontations and reveals.
+- Do NOT re-establish ambient facts the player already knows — the station's industrial hum, Jupiter's appearance, recycled-air smell, the weight of the Society — unless something about them changes or becomes directly relevant this turn.
+- Do not repeat descriptive phrases used in recent turns. Trust the player's accumulated context.
+- Avoid stacked atmospheric sentences that list sensory details without advancing the scene ("The station hums with X. Through the viewport, Y hangs Z. The air smells of W."). Each sentence must earn its place by moving something — action, tension, character, or information. Cut anything that just paints the furniture.
+
+Naming conventions (enforce silently, never explain):
+- Gold characters use "au" as their middle name: e.g., Vaia au Lysander.
+- Copper characters use "cu": e.g., Venn cu Mercator.
+- Silver characters use "si", Gray use "te", Red use "ne", Blue use "de", Obsidian use "ka".
+- "Ares" must never appear as a family name — it is the resistance movement, not a bloodline.
 
 Hidden-state discipline:
 - The hidden GM brief contains secrets, clocks, NPC agendas, and reveal conditions. Use this material to drive the scene, but never quote it back to the player verbatim and never name the underlying mechanic.
@@ -162,6 +175,20 @@ _TOOL_SCHEMA = {
     },
 }
 
+_CLARIFY_SYSTEM_PROMPT = """You are the hidden-state Game Master for Project Ares, answering a direct out-of-character question from the player.
+
+Your job: explain the current situation plainly, in plain prose, in as few words as the question needs. No more.
+
+Rules:
+- Do NOT use markdown headers or structured sections. Write in short paragraphs only.
+- Do NOT end with a question asking what the player wants to do next. That is not your role here.
+- Do NOT restate what the player already knows unless they are clearly confused about it.
+- You MAY break the fourth wall to explain mechanics or story context if needed.
+- You have access to the hidden GM brief. Use it to give accurate context, but do NOT reveal sealed secrets unless they have already surfaced in the turn history.
+- Maintain Red Rising tone, but prioritize brevity and clarity over atmosphere.
+- If the question is simple, answer in two or three sentences. If it is complex, a short paragraph or two. Never longer.
+"""
+
 
 class AnthropicNarrationProvider:
     def __init__(
@@ -206,6 +233,26 @@ class AnthropicNarrationProvider:
                 f"Anthropic provider expected a {_TOOL_NAME} tool call but got none."
             )
         return _build_response(tool_block.input)
+
+    def clarify(self, request: NarrationRequest) -> str:
+        message = self._get_messages_create()(
+            model=self._model,
+            max_tokens=self._max_tokens,
+            system=[
+                {
+                    "type": "text",
+                    "text": _CLARIFY_SYSTEM_PROMPT,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+            messages=[{"role": "user", "content": _format_user_message(request)}],
+        )
+
+        content = getattr(message, "content", [])
+        if not content or content[0].type != "text":
+            raise RuntimeError("Anthropic provider expected a text response for clarification.")
+        
+        return content[0].text
 
 
 def _format_user_message(request: NarrationRequest) -> str:

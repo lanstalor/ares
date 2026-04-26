@@ -66,6 +66,13 @@ export function submitTurn(campaignId, payload) {
   }, "Turn submission failed");
 }
 
+export function submitClarification(campaignId, payload) {
+  return request(`/campaigns/${campaignId}/clarify`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }, "Clarification request failed");
+}
+
 export function seedWorldBible(payload = {}) {
   return request("/seed/world-bible", {
     method: "POST",

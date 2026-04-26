@@ -24,7 +24,7 @@ def test_parse_world_bible_extracts_primary_sections() -> None:
     assert len(seed.npcs) >= 8
     assert len(seed.lore_pages) >= 5
     assert seed.player_character is not None
-    assert seed.player_character.name == "Davan of Tharsis"
+    assert seed.player_character.name == "Davan o' Tharsis"
     assert seed.campaign_opening is not None
     assert "Shift starts in ninety minutes." in seed.campaign_opening.opening_message
 
