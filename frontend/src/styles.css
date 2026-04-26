@@ -697,7 +697,10 @@ textarea {
 }
 
 .mode-live .participant-scroll {
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
+  overflow-x: hidden;
+  overflow-y: auto;
   margin-top: 0;
 }
 
@@ -705,11 +708,17 @@ textarea {
   max-height: none;
 }
 
+.mode-live .participant-strip-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .mode-live .participant-card {
   grid-template-columns: 40px minmax(0, 1fr);
   gap: 10px;
   padding: 10px 12px;
-  min-width: 220px;
+  min-width: 0;
 }
 
 .mode-live .participant-avatar-button {
@@ -725,6 +734,19 @@ textarea {
 
 .mode-live .participant-name {
   font-size: 0.68rem;
+}
+
+.mode-live .participant-strip-header .panel-chrome {
+  padding: 0 0 4px;
+  border-bottom: none;
+}
+
+.mode-live .participant-strip-header h2 {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .mode-live .participant-status {
