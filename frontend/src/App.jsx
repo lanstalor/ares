@@ -757,15 +757,17 @@ export default function App() {
               }
               turns={turns}
             />
-            <SceneBackdrop
-              campaignState={campaignState}
-              currentLocation={campaignState?.current_location ?? selectedCampaign?.current_location_label}
-              objective={campaignState?.active_objective}
-              sceneTone={sceneTone}
-              selectedCampaign={selectedCampaign}
-            />
+            <div className="scene-column">
+              <SceneBackdrop
+                campaignState={campaignState}
+                currentLocation={campaignState?.current_location ?? selectedCampaign?.current_location_label}
+                objective={campaignState?.active_objective}
+                sceneTone={sceneTone}
+                selectedCampaign={selectedCampaign}
+              />
+              <ParticipantStrip participants={participants} sceneTone={sceneTone} />
+            </div>
           </section>
-          <ParticipantStrip participants={participants} sceneTone={sceneTone} />
           <PlayerInput
             actions={activeActions}
             disabled={!selectedCampaign}

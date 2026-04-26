@@ -509,7 +509,7 @@ textarea {
 }
 
 .mode-live .play-column {
-  grid-template-rows: minmax(0, 1fr) auto auto;
+  grid-template-rows: minmax(0, 1fr) auto;
 }
 
 .side-column {
@@ -532,8 +532,20 @@ textarea {
 }
 
 .mode-live .story-grid {
-  min-height: clamp(280px, 44vh, 520px);
+  min-height: 0;
   grid-template-columns: minmax(320px, 0.74fr) minmax(520px, 1.26fr);
+}
+
+.mode-live .scene-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.mode-live .scene-column .scene-backdrop-panel {
+  flex: 1;
+  min-height: 0;
 }
 
 .turn-feed,

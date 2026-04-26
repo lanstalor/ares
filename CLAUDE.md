@@ -159,6 +159,18 @@ make check
 
 The Vite dev server runs on **5173** locally but is remapped to **5180** in docker-compose. Both ports must be in `ARES_CORS_ORIGINS`.
 
+### Frontend changes at port 5180 (Docker)
+
+**Port 5180 runs a Docker container that bakes frontend source files at build time.** Editing `frontend/src/` on the host does NOT hot-reload at 5180. You must rebuild the container after every frontend change:
+
+```bash
+docker compose up --build --no-deps -d frontend
+```
+
+This rebuilds only the frontend image (postgres and backend stay running). Takes ~15 seconds. Always verify with a Playwright screenshot at `http://localhost:5180/` after rebuilding — do not claim UI work is done without a screenshot.
+
+Use `make frontend-dev` (port 5173/5174) only for layout iteration that doesn't need a live backend. For any work requiring real API calls (turns, clarify, seed), use the full stack at 5180.
+
 ### Environment (`.env`, not committed)
 
 ```
