@@ -10,14 +10,55 @@ const TABS = [
   { id: "map", label: "Map" },
 ];
 
+const SCENE_ART_LIBRARY = [
+  { src: "/scene-art/gold_throne_room.png", label: "Gold throne room", tone: "gold", keywords: ["throne", "citadel", "senate", "governor", "palace"] },
+  { src: "/scene-art/gold_palace_balcony.png", label: "Palace balcony", tone: "gold", keywords: ["balcony", "villa", "estate", "garden", "terrace"] },
+  { src: "/scene-art/royal_landing_pad.png", label: "Royal landing pad", tone: "gold", keywords: ["landing", "pad", "shuttle", "arrival", "hangar"] },
+  { src: "/scene-art/light_bringer.png", label: "Starship exterior", tone: "gold", keywords: ["dreadnought", "torchship", "warship", "flagship"] },
+  { src: "/scene-art/space_docks.png", label: "Orbital docks", tone: "friendly", keywords: ["dock", "docks", "port", "shipyard", "orbital"] },
+  { src: "/scene-art/mars_docks.png", label: "Industrial docks", tone: "friendly", keywords: ["freight", "cargo", "loading", "warehouse"] },
+  { src: "/scene-art/ship_halls.png", label: "Ship interior", tone: "friendly", keywords: ["hall", "corridor", "interior", "bulkhead"] },
+  { src: "/scene-art/tram.png", label: "Tram line", tone: "friendly", keywords: ["tram", "rail", "transit", "spine"] },
+  { src: "/scene-art/red_bar.png", label: "Low-district bar", tone: "friendly", keywords: ["bar", "cantina", "taproom", "club"] },
+  { src: "/scene-art/factory.png", label: "Factory district", tone: "friendly", keywords: ["factory", "plant", "forge", "refinery"] },
+  { src: "/scene-art/mars_district.png", label: "Dense district", tone: "friendly", keywords: ["district", "block", "market", "street", "row"] },
+  { src: "/scene-art/luna_low_district.png", label: "Low district", tone: "friendly", keywords: ["low district", "undercity", "tenement", "slum"] },
+  { src: "/scene-art/red_miner.png", label: "Worker quarter", tone: "friendly", keywords: ["mine", "miner", "pit", "worker"] },
+];
+
+function resolveSceneArt({ currentLocation, objective, sceneTone, selectedCampaign }) {
+  const searchText = [
+    currentLocation,
+    objective,
+    selectedCampaign?.name,
+    selectedCampaign?.tagline,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const exactMatch = SCENE_ART_LIBRARY.find((entry) => entry.keywords.some((keyword) => searchText.includes(keyword)));
+  if (exactMatch) {
+    return exactMatch;
+  }
+
+  return SCENE_ART_LIBRARY.find((entry) => entry.tone === sceneTone) ?? SCENE_ART_LIBRARY[0];
+}
+
 function SceneArt({ currentLocation, objective, sceneTone, selectedCampaign }) {
+  const art = resolveSceneArt({ currentLocation, objective, sceneTone, selectedCampaign });
+
   return (
     <>
       <div className="scene-backdrop-art">
+        <img
+          alt={art.label}
+          className="scene-backdrop-image"
+          loading="eager"
+          src={art.src}
+        />
+        <div className="scene-image-wash" />
         <div className="scene-grid" />
-        <div className="scene-planet" />
-        <div className="scene-ring" />
-        <div className="scene-cityline" />
         <div className="scene-lights" />
         <div className="scene-sigil">ARES</div>
         <div className="scene-horizon" />
@@ -28,7 +69,7 @@ function SceneArt({ currentLocation, objective, sceneTone, selectedCampaign }) {
         <h2>{currentLocation ?? "Crescent Block / Callisto Depot District"}</h2>
         <p>
           {selectedCampaign?.tagline ??
-            "Atmospheric placeholder backdrop. Replace with painted environment art once the scene asset pipeline lands."}
+            "Live scene art is selected from the current location and objective packet."}
         </p>
       </div>
 

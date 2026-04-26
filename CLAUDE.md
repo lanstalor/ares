@@ -65,6 +65,17 @@ Current branch guidance:
 | `readme.md` | Original product spec, design principles, domain model, architecture layers, agent playbooks, acceptance criteria — the canonical "why" document |
 | `world_bible.md` | Campaign source material: factions, areas, POIs, NPCs, secrets, lore, player character (Davan of Tharsis), clocks — seeded into the DB on first run |
 | `CLAUDE.md` (this file) | Current implementation state, file map, dev workflow, hard constraints |
+| `docs/development/master-plan.md` | Current priorities, active workstreams, and the fastest way to see what should happen next |
+| `docs/development/workstreams/` | Canonical resume docs for interrupted feature slices; read the linked workstream before chat history |
+| `docs/development/resume-cheatsheet.md` | Copy-paste prompts and current local chat artifact paths for resuming with Codex, Gemini, or Claude |
+
+## Development Workflow Defaults
+
+- Start each coding session with: `CLAUDE.md` -> `docs/development/master-plan.md` -> target workstream doc -> linked PR/issue -> `git status`
+- Each non-trivial feature slice should have one GitHub issue, one flat branch, one draft PR, and one workstream doc under `docs/development/workstreams/`
+- `CLAUDE.md` holds durable repo context and constraints; active TODO churn belongs in the master plan and workstream docs
+- Before pausing or switching agents, update the workstream doc with current state, verification, risks, and the exact next step
+- If GitHub artifacts are missing for an active slice, record `TBD` in the doc temporarily, then create the missing issue/branch/PR before substantial new work
 
 ---
 
@@ -207,11 +218,12 @@ Four states used throughout the codebase (`app/core/enums.py`):
 
 UI is now the canonical game shell. Core loop is fully playable. Next engineering slices in priority order:
 
-1. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine. `buildSceneParticipants` already has the hook; just replace mock fallback with real values. Disposition must be player-facing read (from observable NPC behavior), not sealed GM intent.
-2. **Live stat patching after turns** — patch `participant.hp` and `participant.disposition` from `TurnResolution` without a full refresh, mirroring how `clocks_fired` and `location_changed_to` already surface as feed events.
-3. **Memory rendering** — surface player-relevant turn memories in the status panel or turn feed
-4. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
-5. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
-6. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
+1. **GM clarify sidebar chat** — add a `?` entry point in the live shell that opens a non-persisted GM sidebar conversation. The backend endpoint should explain the current story plainly, break the fourth wall if needed, and must not create a turn or mutate campaign state.
+2. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine. `buildSceneParticipants` already has the hook; just replace mock fallback with real values. Disposition must be player-facing read (from observable NPC behavior), not sealed GM intent.
+3. **Live stat patching after turns** — patch `participant.hp` and `participant.disposition` from `TurnResolution` without a full refresh, mirroring how `clocks_fired` and `location_changed_to` already surface as feed events.
+4. **Memory rendering** — surface player-relevant turn memories in the status panel or turn feed
+5. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
+6. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
+7. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
 
 Do not build Phase 5 items (multiplayer, admin dashboard, map UI) until the items above are solid.

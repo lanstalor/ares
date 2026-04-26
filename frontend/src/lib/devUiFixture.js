@@ -88,8 +88,42 @@ export function createDevUiSnapshot() {
         speaker: "gm",
         label: "GM",
         meta: "Player-safe",
-        text: "\"Only the wrong people,\" she says. A siren rises somewhere deeper in the block, not loud yet, but near enough that everyone in the market hears it and pretends not to.",
+        text: '[Red]"Only the wrong people," she says. [Gray]"Keep moving," a lurcher barks from the tram cut as the siren starts to rise somewhere deeper in the block.',
         timestamp: isoAt(-4),
+      },
+    ],
+  };
+
+  const suggestedActionsByCampaign = {
+    [primaryCampaignId]: [
+      {
+        label: "Press The Contact",
+        prompt: "I keep my voice low and press the contact to tell me who is already hunting the ledger.",
+      },
+      {
+        label: "Slip To Transit",
+        prompt: "I break from the stall line and angle toward the tram spine before the Gray sweep closes.",
+      },
+      {
+        label: "Read The Room",
+        prompt: "I stay still for a beat and read the market for who is acting scared, armed, or too calm.",
+      },
+    ],
+  };
+
+  const sceneParticipantsByCampaign = {
+    [primaryCampaignId]: [
+      {
+        name: "Tavi of Ceres Row",
+        caste: "Red",
+        role: "Dock contact",
+        disposition: "friendly",
+      },
+      {
+        name: "Lurcher Vexa ti Rhone",
+        caste: "Gray",
+        role: "Security sweep lead",
+        disposition: "suspicious",
       },
     ],
   };
@@ -112,6 +146,8 @@ export function createDevUiSnapshot() {
     campaigns,
     selectedCampaignId: primaryCampaignId,
     campaignStateById,
+    sceneParticipantsByCampaign,
+    suggestedActionsByCampaign,
     turnHistoryByCampaign,
     lastSeedResult: {
       campaign_id: primaryCampaignId,

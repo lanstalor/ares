@@ -92,7 +92,6 @@ function patchTurnHistoryWithResolution(turnHistory, resolution) {
       ? {
           ...turn,
           label: resolution.canon_guard_passed ? "GM" : "Canon Guard",
-          location: resolution.context_excerpt,
           meta: resolution.canon_guard_passed ? turn.meta : resolution.canon_guard_message,
         }
       : turn,
@@ -247,8 +246,22 @@ export default function App() {
   const [loadingShell, setLoadingShell] = useState(true);
   const [loadingState, setLoadingState] = useState(false);
   const [isSubmittingTurn, setIsSubmittingTurn] = useState(false);
+  const [suggestedActions, setSuggestedActions] = useState(() => {
+    try { return JSON.parse(sessionStorage.getItem("ares_suggested_actions") ?? "[]"); } catch { return []; }
+  });
+  const [gmSceneParticipants, setGmSceneParticipants] = useState(() => {
+    try {
+      const parsed = JSON.parse(sessionStorage.getItem("ares_scene_participants") ?? "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  });
   const [errorMessage, setErrorMessage] = useState("");
-  const [presentationStage, setPresentationStage] = useState("boot");
+  const [presentationStage, setPresentationStage] = useState(() => {
+    if (typeof localStorage !== "undefined" && localStorage.getItem("ares_intro_seen")) {
+      return "game";
+    }
+    return "boot";
+  });
   const [bootProgress, setBootProgress] = useState(0);
   const [storySceneIndex, setStorySceneIndex] = useState(0);
   const [scenePhase, setScenePhase] = useState("steady");
@@ -312,6 +325,7 @@ export default function App() {
       setScenePhase("steady");
 
       if (storySceneIndex >= UNIVERSAL_STORY_SCENES.length - 1) {
+        localStorage.setItem("ares_intro_seen", "1");
         setPresentationStage("game");
         return;
       }
@@ -362,6 +376,8 @@ export default function App() {
     setCampaigns(snapshot.campaigns);
     setSelectedCampaignId(snapshot.selectedCampaignId);
     setCampaignState(snapshot.campaignStateById[snapshot.selectedCampaignId]);
+    setSuggestedActions(snapshot.suggestedActionsByCampaign?.[snapshot.selectedCampaignId] ?? []);
+    setGmSceneParticipants(snapshot.sceneParticipantsByCampaign?.[snapshot.selectedCampaignId] ?? []);
     setTurnHistoryByCampaign(snapshot.turnHistoryByCampaign);
     setLoadingShell(false);
     setLoadingState(false);
@@ -415,6 +431,8 @@ export default function App() {
     if (devUiMode) {
       const nextState = devUiSnapshotRef.current?.campaignStateById?.[selectedCampaignId] ?? null;
       setCampaignState(nextState);
+      setSuggestedActions(devUiSnapshotRef.current?.suggestedActionsByCampaign?.[selectedCampaignId] ?? []);
+      setGmSceneParticipants(devUiSnapshotRef.current?.sceneParticipantsByCampaign?.[selectedCampaignId] ?? []);
       setLoadingState(false);
       return undefined;
     }
@@ -465,8 +483,11 @@ export default function App() {
   const shellStatusText = buildShellStatusText(loadingShell, healthStatus);
   const inferredSceneTone = deriveSceneTone({ campaignState, selectedCampaign, turns });
   const sceneTone = manualSceneTone === "auto" ? inferredSceneTone : manualSceneTone;
-  const participants = buildSceneParticipants({ campaignState, selectedCampaign, sceneTone });
-  const actionPresets = buildActionPresets(sceneTone);
+  const participants = buildSceneParticipants({ campaignState, gmSceneParticipants, selectedCampaign, sceneTone });
+  const staticPresets = buildActionPresets(sceneTone);
+  const activeActions = suggestedActions.length
+    ? suggestedActions.map((a, i) => ({ id: `gm-${i}`, key: String(i + 1), icon: "→", ...a }))
+    : staticPresets;
 
   async function handleSubmitTurn(playerInput) {
     if (!selectedCampaign) return;
@@ -527,6 +548,14 @@ export default function App() {
         ...current,
         [selectedCampaign.id]: patchTurnHistoryWithResolution(turnHistory, resolution),
       }));
+      if (resolution.suggested_actions?.length) {
+        setSuggestedActions(resolution.suggested_actions);
+        sessionStorage.setItem("ares_suggested_actions", JSON.stringify(resolution.suggested_actions));
+      }
+      if (resolution.scene_participants?.length) {
+        setGmSceneParticipants(resolution.scene_participants);
+        sessionStorage.setItem("ares_scene_participants", JSON.stringify(resolution.scene_participants));
+      }
       setInputValue("");
     } catch (error) {
       setTurnHistoryByCampaign((current) => ({
@@ -569,6 +598,7 @@ export default function App() {
   }
 
   function handleSkipIntro() {
+    localStorage.setItem("ares_intro_seen", "1");
     setScenePhase("steady");
     setPresentationStage("game");
   }
@@ -693,6 +723,7 @@ export default function App() {
               campaignName={selectedCampaign?.name}
               isThinking={isSubmittingTurn}
               objective={campaignState?.active_objective}
+              participants={participants}
               speakerCaste={campaignState?.player_character?.race}
               speakerName={campaignState?.player_character?.name}
               speakerRole={campaignState?.player_character?.character_class}
@@ -711,7 +742,7 @@ export default function App() {
           </section>
           <ParticipantStrip participants={participants} sceneTone={sceneTone} />
           <PlayerInput
-            actions={actionPresets}
+            actions={activeActions}
             disabled={!selectedCampaign}
             isSubmitting={isSubmittingTurn}
             onSelectAction={handleSelectAction}

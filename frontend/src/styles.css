@@ -661,7 +661,7 @@ textarea {
 }
 
 .mode-live .scene-backdrop-copy {
-  bottom: 72px;
+  bottom: 186px;
 }
 
 .mode-live .scene-backdrop-copy h2 {
@@ -1270,10 +1270,28 @@ textarea::-webkit-scrollbar-thumb {
   flex: 1;
   min-height: 380px;
   overflow: hidden;
+  background: linear-gradient(135deg, rgba(21, 27, 35, 0.92), rgba(11, 15, 20, 0.98));
+}
+
+.scene-backdrop-image,
+.scene-image-wash {
+  position: absolute;
+  inset: 0;
+}
+
+.scene-backdrop-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) brightness(0.74);
+}
+
+.scene-image-wash {
   background:
-    radial-gradient(circle at 70% 18%, color-mix(in srgb, var(--scene-accent) 30%, transparent), transparent 14%),
-    linear-gradient(180deg, color-mix(in srgb, var(--scene-accent-secondary) 22%, transparent), transparent 42%),
-    linear-gradient(135deg, rgba(21, 27, 35, 0.92), rgba(11, 15, 20, 0.98));
+    radial-gradient(circle at 72% 18%, color-mix(in srgb, var(--scene-accent) 24%, transparent), transparent 16%),
+    linear-gradient(180deg, rgba(7, 11, 15, 0.08), rgba(7, 11, 15, 0.2) 30%, rgba(7, 11, 15, 0.76) 100%),
+    linear-gradient(90deg, rgba(5, 8, 11, 0.52), rgba(5, 8, 11, 0.1) 35%, rgba(5, 8, 11, 0.42) 100%);
+  z-index: 0;
 }
 
 .scene-data-panel,
@@ -1443,6 +1461,7 @@ textarea::-webkit-scrollbar-thumb {
     repeating-linear-gradient(90deg, transparent 0, transparent 64px, rgba(255, 255, 255, 0.05) 64px, rgba(255, 255, 255, 0.05) 65px),
     repeating-linear-gradient(180deg, transparent 0, transparent 56px, rgba(255, 255, 255, 0.03) 56px, rgba(255, 255, 255, 0.03) 57px);
   opacity: 0.32;
+  z-index: 1;
 }
 
 .scene-planet {
@@ -1513,6 +1532,7 @@ textarea::-webkit-scrollbar-thumb {
     radial-gradient(circle at 79% 50%, color-mix(in srgb, var(--scene-accent-secondary) 90%, white) 0 1px, transparent 2px);
   filter: blur(0.1px);
   opacity: 0.95;
+  z-index: 1;
 }
 
 .scene-horizon {
@@ -1522,6 +1542,7 @@ textarea::-webkit-scrollbar-thumb {
   background:
     linear-gradient(180deg, transparent 0, rgba(11, 15, 20, 0.35) 18%, rgba(11, 15, 20, 0.96) 100%),
     radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--scene-accent) 18%, transparent), transparent 26%);
+  z-index: 1;
 }
 
 .scene-sigil {
@@ -1532,6 +1553,7 @@ textarea::-webkit-scrollbar-thumb {
   font-size: 0.86rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
+  z-index: 1;
 }
 
 .scene-backdrop-copy,
@@ -1543,11 +1565,11 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .scene-backdrop-copy {
-  bottom: 86px;
+  bottom: 186px;
 }
 
 .mode-staging .scene-backdrop-copy {
-  bottom: 104px;
+  bottom: 204px;
 }
 
 .scene-backdrop-copy h2 {
@@ -2048,6 +2070,10 @@ textarea::-webkit-scrollbar-thumb {
 
 .participant-portrait.tone-player {
   border-color: color-mix(in srgb, var(--accent-friendly-red) 42%, var(--border));
+}
+
+.participant-portrait.tone-npc {
+  border-color: color-mix(in srgb, var(--scene-accent) 48%, var(--border));
 }
 
 .action-grid {

@@ -80,7 +80,9 @@ export const DISPOSITION_META = {
   allied: { label: "Allied", index: 4, tone: "ally" },
 };
 
-export function buildSceneParticipants({ campaignState, selectedCampaign, sceneTone }) {
+export function buildSceneParticipants({ campaignState, gmSceneParticipants, selectedCampaign, sceneTone }) {
+  const safeGmParticipants = Array.isArray(gmSceneParticipants) ? gmSceneParticipants : [];
+
   const playerCharacter = campaignState?.player_character;
   const player = playerCharacter
     ? {
@@ -98,56 +100,17 @@ export function buildSceneParticipants({ campaignState, selectedCampaign, sceneT
       }
     : null;
 
-  const placeholderParticipants =
-    sceneTone === "gold"
-      ? [
-          {
-            id: "gold-proxy",
-            name: "Dominus Severa au Cador",
-            caste: "Gold",
-            role: "Official presence",
-            tone: "watcher",
-            active: false,
-            level: 9,
-            hp: { current: 64, max: 64 },
-            disposition: "suspicious",
-          },
-          {
-            id: "gray-escort",
-            name: "Lurcher Vexa ti Rhone",
-            caste: "Gray",
-            role: "Security escort",
-            tone: "support",
-            active: false,
-            level: 5,
-            hp: { current: 42, max: 42 },
-            disposition: "hostile",
-          },
-        ]
-      : [
-          {
-            id: "red-contact",
-            name: "Tavi of Ceres Row",
-            caste: "Red",
-            role: "Dock contact",
-            tone: "support",
-            active: false,
-            level: 2,
-            hp: { current: 22, max: 28 },
-            disposition: "friendly",
-          },
-          {
-            id: "blue-handler",
-            name: "Lys xe Morrow",
-            caste: "Blue",
-            role: "Relay analyst",
-            tone: "support",
-            active: false,
-            level: 4,
-            hp: { current: 24, max: 26 },
-            disposition: "allied",
-          },
-        ];
+  const gmNpcs = safeGmParticipants
+    .filter((npc) => npc && typeof npc.name === "string" && npc.name.length > 0)
+    .map((npc, i) => ({
+      id: `gm-npc-${i}-${npc.name}`,
+      name: npc.name,
+      caste: npc.caste ?? "Gray",
+      role: npc.role ?? "Unknown",
+      tone: "npc",
+      active: false,
+      disposition: npc.disposition ?? "unaware",
+    }));
 
   const systemParticipant = {
     id: "relay",
@@ -158,7 +121,7 @@ export function buildSceneParticipants({ campaignState, selectedCampaign, sceneT
     active: !player,
   };
 
-  return [player, ...placeholderParticipants, systemParticipant].filter(Boolean);
+  return [player, ...gmNpcs, systemParticipant].filter(Boolean);
 }
 
 export function buildActionPresets(sceneTone) {

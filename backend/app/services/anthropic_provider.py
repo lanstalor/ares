@@ -38,6 +38,9 @@ Tool use:
 - consequences.location_change: {new_location_label}. Emit only when the player physically moves to a different named area this turn. new_location_label must match an area name from the world context. Omit entirely if the player does not change location.
 - A clock marked "FIRED — consequence due" has reached its maximum. Act on its in-fiction consequence immediately this turn: escalate the threat, surface the reveal, or break the tension the label implies. Do not tick a FIRED clock again.
 - Omit any field whose list is empty rather than emitting placeholder entries.
+- Dialogue formatting: Every line of direct in-character speech must be prefixed with that character's Red Rising color caste in square brackets, immediately before the opening quote — for example [Red]"I need a drink." or [Gold]"You dare address me?" or [Obsidian]"Move." Use the character's actual caste color. Never add the prefix to the player character's speech or to narration — only to spoken words that belong to an NPC or named character in the scene.
+- suggested_actions: Exactly 3 short next-action suggestions that fit the current scene. Each has a `label` (2-4 words, title-case) and a `prompt` (one player-voice sentence the player would type). Ground them in what the scene presents — do not repeat the player's last action.
+- scene_participants: 1–4 named characters the player can directly observe in this scene (do not include the player character). For each, provide their exact name as used in the narrative, their Red Rising color caste (Red, Gold, Gray, Obsidian, Blue, Copper, etc.), a brief role descriptor, and their current disposition toward the player.
 """
 
 
@@ -115,8 +118,47 @@ _TOOL_SCHEMA = {
                     },
                 },
             },
+            "scene_participants": {
+                "type": "array",
+                "description": "Named characters the player can observe in this scene (1–4, exclude player).",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string", "description": "Full name as used in narrative."},
+                        "caste": {"type": "string", "description": "Red Rising color caste (Red, Gold, Gray, Obsidian, Blue, Copper, etc.)."},
+                        "role": {"type": "string", "description": "Brief role descriptor, 2–5 words."},
+                        "disposition": {
+                            "type": "string",
+                            "enum": ["hostile", "suspicious", "unaware", "friendly", "allied"],
+                            "description": "Current attitude toward the player character.",
+                        },
+                    },
+                    "required": ["name", "caste", "role", "disposition"],
+                },
+                "maxItems": 4,
+            },
+            "suggested_actions": {
+                "type": "array",
+                "description": "Exactly 3 suggested next actions for the player, grounded in the current scene.",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "label": {
+                            "type": "string",
+                            "description": "Short action label (2-4 words, title-case).",
+                        },
+                        "prompt": {
+                            "type": "string",
+                            "description": "Full player-voice sentence the action sends as input.",
+                        },
+                    },
+                    "required": ["label", "prompt"],
+                },
+                "minItems": 3,
+                "maxItems": 3,
+            },
         },
-        "required": ["narrative", "player_safe_summary", "consequences"],
+        "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants"],
     },
 }
 
@@ -191,9 +233,30 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
         if raw_location
         else None
     )
+    raw_suggested = tool_input.get("suggested_actions") or []
+    suggested_actions = [
+        {"label": item["label"], "prompt": item["prompt"]}
+        for item in raw_suggested
+        if isinstance(item, dict) and "label" in item and "prompt" in item
+    ]
+
+    raw_participants = tool_input.get("scene_participants") or []
+    scene_participants = [
+        {
+            "name": item["name"],
+            "caste": item["caste"],
+            "role": item["role"],
+            "disposition": item["disposition"],
+        }
+        for item in raw_participants
+        if isinstance(item, dict) and "name" in item and "caste" in item
+    ]
+
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
+        suggested_actions=suggested_actions,
+        scene_participants=scene_participants,
         consequences=Consequences(
             clock_ticks=[
                 ClockTick(label=item["label"], delta=int(item.get("delta", 1)))

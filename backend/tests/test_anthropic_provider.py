@@ -41,6 +41,28 @@ def _make_canned_response(consequences: dict[str, Any] | None = None) -> _FakeMe
                 input={
                     "narrative": "Vex flinches as Davan watches.",
                     "player_safe_summary": "Vex looks unsettled.",
+                    "suggested_actions": [
+                        {
+                            "label": "Watch Vex",
+                            "prompt": "I keep my eyes on Vex and wait for the tell.",
+                        },
+                        {
+                            "label": "Press Quietly",
+                            "prompt": "I lower my voice and press Vex for the truth.",
+                        },
+                        {
+                            "label": "Scan Exits",
+                            "prompt": "I scan the exits and look for the cleanest way out.",
+                        },
+                    ],
+                    "scene_participants": [
+                        {
+                            "name": "Vex ti Rhone",
+                            "caste": "Gray",
+                            "role": "Security escort",
+                            "disposition": "suspicious",
+                        }
+                    ],
                     "consequences": consequences
                     or {
                         "clock_ticks": [],
@@ -68,6 +90,25 @@ def test_provider_parses_narrative_and_summary_from_tool_call() -> None:
 
     assert response.narrative == "Vex flinches as Davan watches."
     assert response.player_safe_summary == "Vex looks unsettled."
+
+
+def test_provider_parses_suggested_actions_and_scene_participants() -> None:
+    def fake_messages_create(**kwargs: Any) -> _FakeMessage:
+        return _make_canned_response()
+
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
+
+    response = provider.narrate(_make_request())
+
+    assert len(response.suggested_actions) == 3
+    assert response.suggested_actions[0]["label"] == "Watch Vex"
+    assert response.suggested_actions[1]["prompt"] == "I lower my voice and press Vex for the truth."
+    assert len(response.scene_participants) == 1
+    assert response.scene_participants[0]["name"] == "Vex ti Rhone"
+    assert response.scene_participants[0]["disposition"] == "suspicious"
 
 
 def test_provider_parses_consequences_from_tool_call() -> None:
