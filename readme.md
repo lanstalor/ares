@@ -8,21 +8,28 @@
 
 ## What This Document Is
 
-This repository does not contain the application yet. Right now it contains the planning documents that define it:
+This README is the canonical spec and operations guide for Project Ares v1. It covers:
 
-- `world_bible.md` - the campaign source material
-- `readme.md` - this build and operations spec
-
-This README is the canonical execution document for Project Ares v1. It defines:
-
-- the product shape
-- the architecture
-- the domain model
+- the product shape and design principles
+- the architecture and domain model
 - the live play loop
 - the operator workflows
 - the Codex CLI agent playbooks used to build and maintain the system
 
-It is intentionally written as a target spec, not as a description of code that already exists.
+**Current status (as of 2026-04-26):** The application is fully implemented and playable. All core phases — seed pipeline, GM engine, canon guard, consequence tracking, and the cinematic web UI — are complete. See `CLAUDE.md` for the precise implementation state and next engineering slices.
+
+### Quick Start
+
+```bash
+# 1. Copy .env.example to .env and fill in your Anthropic API key
+# 2. Start the full stack
+make compose-up
+
+# App is available at http://localhost:5180
+# Backend API at http://localhost:8000
+```
+
+On first run, click **Seed World Bible** in the Campaign Lattice panel to import `world_bible.md` into the database. Select the seeded campaign to enter live play mode.
 
 ---
 
@@ -116,18 +123,19 @@ This is necessary because live play creates state the markdown file does not con
 
 ### Player Surface
 
-The first live-play interface is a minimal web app. It should feel like an old DOS text RPG with restrained pixel-art chrome.
+The live-play interface is a single-screen cinematic terminal shell. It renders in two distinct modes:
 
-The UI direction for v1:
+**Staging mode** (no campaign selected): two-column layout with operator controls on the right — Campaign Lattice, Session panel, and system Readiness. This is the entry point for seeding, campaign selection, and shell status checks.
 
-- text-first
-- low-friction
-- readable over long sessions
-- retro terminal mood without fake gimmicks
-- pixel-art framing and UI elements where useful
-- future-friendly for character, item, and world pixel assets
+**Live mode** (campaign selected): single-column, full-width cinematic layout. The scene backdrop and GM narration feed dominate the vertical space. Below sits the Scene Presence strip — a horizontal row of character cards showing level badge, HP bar, and disposition chip for each participant in the scene. The input bar runs across the bottom with a contextual action preset popover (lightbulb button). The operator side panel is gone; Audio and Console controls surface in the topbar instead.
 
-The UI should not depend on final art to be usable.
+The UI direction:
+
+- text-first, readable over long sessions
+- cinematic terminal aesthetic: dark panels, scan-line textures, clipped-corner chrome, atmospheric glow
+- scene tone drives color accent (friendly green vs. gold authority palette)
+- retro without fake gimmicks — no blinking cursors or CRT noise
+- no hidden-state leakage: the player sees only what the GM engine has cleared as player-facing
 
 ### Operator Surface
 

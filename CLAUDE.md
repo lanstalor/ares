@@ -14,42 +14,47 @@ This is **not** a chatbot wrapper. The value is in the hidden-state engine: cloc
 
 ## Latest Session Summary
 
-Date: 2026-04-25 (afternoon)
+Date: 2026-04-26
 
-What changed (Scene Presence pass):
+### Official game UI promotion + Gemini CSS regression fix
 
-- Renamed the participant strip from "Roster" to **Scene Presence** and removed the redundant "Participants" eyebrow
-- Fixed character-detail popup clipping by portalling `ParticipantModal` to `document.body` via `react-dom`'s `createPortal` (escapes the `overflow: hidden` on `.app-shell`)
-- Polished the modal: backdrop blur + stronger dim, `×` close button, entrance animation, atmospheric border/glow that matches the shell aesthetic
-- Fixed avatar/name overlap in dev-ui-mode cards (avatar was 56px in a 28px grid column; now a matching 40px avatar with proper grid track)
-- **Added per-character stats** to the Scene Presence cards and modal:
-  - `level` — small mono badge overlaid on the avatar (top-right)
-  - `hp` — colored thin bar on cards, full meter with `current/max` numerics in modal (good ≥66%, warn ≥33%, bad below)
-  - `disposition` — 5-step scale (`hostile / suspicious / unaware / friendly / allied`); compact colored chip on cards, 5-segment lit-track meter in modal
-- The player character has level + HP only (no disposition toward themselves); the system entity (Ares Relay) shows no stats
-- Mock data for stats lives in `buildSceneParticipants` (`frontend/src/lib/uiTheme.js`); ready to swap for real backend NPC state when that lands
+The cinematic layout developed in the `/ui-dev` iteration route is now the canonical `mode-live` game UI. Two sessions of work combined:
 
-Earlier 2026-04-25 work (cinematic shell):
+**2026-04-25 — Cinematic shell and Scene Presence pass:**
+- Added `/ui-dev` route for backend-free layout iteration with full mock state
+- Renamed "Roster" → **Scene Presence**, removed redundant "Participants" eyebrow
+- Fixed all modal/popover overflow clipping via `createPortal` to `document.body` (escapes `overflow: hidden` on `.app-shell`)
+- Added per-character stats to Scene Presence cards and detail modal:
+  - `level` — mono badge overlaid on avatar (top-right corner)
+  - `hp` — thin color-coded bar on cards (`good ≥66% / warn ≥33% / bad`), full meter with `current/max` readout in modal
+  - `disposition` — 5-step scale (hostile / suspicious / unaware / friendly / allied); chip on cards, 5-segment lit-track in modal
+- Mock data in `buildSceneParticipants` (`lib/uiTheme.js`); hooks ready for real backend NPC state
 
-- Added a Vite HMR-friendly UI dev route at `/ui-dev` and `?ui-dev=1` for layout-only iteration
-- Seeded the dev route with mock campaign state so the game UI can be exercised without the backend
-- Reworked typography toward a display/body split instead of a mono-heavy shell
-- Compressed the staging and UI-dev chrome so the scene/backdrop gets the majority of the vertical budget
+**2026-04-26 — Promoted dev-UI to official game UI:**
+- `mode-live` (campaign selected) now uses single-column full-width layout: no side panel, no hud-ribbon
+- `mode-staging` (no campaign selected) keeps the two-column layout with CampaignConsole, StatusPanel, and Session controls — the operator entry point
+- **Audio** toggle and **Console** button (returns to staging) added to topbar in live mode
+- Fixed a Gemini-introduced CSS regression: all `dev-ui-mode` selectors were incorrectly rewritten as `.mode-live, .mode-staging .X` — a fundamentally broken CSS selector pattern that applied `display: flex` to the entire app-shell element. All ~30 rules corrected to proper `.mode-live .X` descendant selectors
+- Fixed `.mode-live .play-column` row count (was changed to 2 rows, cutting off the participant strip; restored to 3 rows: story-grid / participant-strip / input)
+- Restored `dev-ui-mode` class on app-shell (Gemini had dropped it, breaking the dev helper bar)
+
+**The two-mode contract:**
+- `mode-staging`: two-column, side panel visible (Session + Campaign Lattice + Readiness), hud-ribbon showing. Entry point for seeding, campaign selection, shell status.
+- `mode-live`: single-column, full-width. Cinematic layout with backdrop dominating, Scene Presence strip, compact input bar. Audio toggle + Console button in topbar to access staging.
 
 How to use it next session:
 
-- Start the frontend with `make frontend-dev`. Vite tries 5173 first; if occupied (familyquest project) it auto-increments. Use the printed Network URL.
-- Open `/ui-dev` for layout-only work (mock state, no backend needed)
-- For visual verification while editing, use Playwright MCP `browser_navigate` + `browser_take_screenshot`. **Never claim UI work is done without a screenshot.**
-- Disposition meter colors live as `.tone-bad/warn/muted/good/ally` on `.participant-disposition-chip` and `.participant-disposition-meter`
-- Backend wiring for NPC stats is the natural next step — `buildSceneParticipants` already accepts them; backend just needs to emit `level`, `hp`, `disposition` per scene participant
+- Use `make compose-up` for the full stack (postgres + backend at 8000 + frontend at 5180 via Docker)
+- Use `make frontend-dev` for frontend-only iteration (Vite on 5173; auto-increments if occupied by familyquest)
+- Open `/ui-dev` for backend-free layout work
+- Always verify UI changes with Playwright MCP `browser_navigate` + `browser_take_screenshot` — **never claim UI work done without a screenshot**
+- Disposition meter CSS: `.tone-bad/warn/muted/good/ally` on `.participant-disposition-chip` and `.participant-disposition-meter`
 
 Current branch guidance:
 
-- Keep follow-up UI work isolated to the dedicated dev route unless you are fixing shared components
-- Do not broaden the admin shell during play mode; treat it as secondary chrome
-- Preserve hidden-state boundaries and the retro text-first tone
-- Disposition is **player-facing** (it's the player's read on the NPC). True hidden NPC intent stays sealed in GM-only state.
+- `mode-live` styling lives in `.mode-live .X` selectors — do NOT use `.mode-live, .mode-staging .X` (broken selector)
+- Do not re-add the side panel or hud-ribbon to live mode — operator chrome lives in staging
+- Preserve hidden-state boundaries; disposition is player-facing read, sealed GM intent stays server-only
 
 ---
 
@@ -198,14 +203,14 @@ Four states used throughout the codebase (`app/core/enums.py`):
 
 ---
 
-## What's Next (as of 2026-04-25)
+## What's Next (as of 2026-04-26)
 
-Core loop is playable and Scene Presence cards now visualize per-character state. Logical next slices in priority order:
+UI is now the canonical game shell. Core loop is fully playable. Next engineering slices in priority order:
 
-1. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine so `buildSceneParticipants` can drop the mock fallback. Disposition must be the player-facing read (derived from observable behavior), not the sealed GM intent.
-2. **Memory rendering** — surface player-relevant memories from past turns in the status panel or turn feed
-3. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
-4. **Live stat updates after turns** — patch `participant.hp` / `participant.disposition` from `TurnResolution` consequences without a full refresh, mirroring how `clocks_fired` and `location_changed_to` surface today
+1. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine. `buildSceneParticipants` already has the hook; just replace mock fallback with real values. Disposition must be player-facing read (from observable NPC behavior), not sealed GM intent.
+2. **Live stat patching after turns** — patch `participant.hp` and `participant.disposition` from `TurnResolution` without a full refresh, mirroring how `clocks_fired` and `location_changed_to` already surface as feed events.
+3. **Memory rendering** — surface player-relevant turn memories in the status panel or turn feed
+4. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
 5. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
 6. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
 

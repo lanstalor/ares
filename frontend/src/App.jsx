@@ -847,7 +847,7 @@ export default function App() {
   const shellMode = devUiMode ? "live" : selectedCampaign ? "live" : "staging";
 
   return (
-    <div className={`app-shell scene-theme-${sceneTone} mode-${shellMode}`}>
+    <div className={`app-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""}`}>
       {devUiMode ? null : (
         <IntroOverlay
           activeSceneIndex={storySceneIndex}

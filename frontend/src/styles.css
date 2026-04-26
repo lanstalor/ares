@@ -509,7 +509,7 @@ textarea {
 }
 
 .mode-live .play-column {
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
 }
 
 .side-column {
@@ -567,20 +567,20 @@ textarea {
   display: none;
 }
 
-.mode-live, .mode-staging .participant-strip,
-.mode-live, .mode-staging .action-bar {
+.mode-live .participant-strip,
+.mode-live .action-bar {
   display: flex;
 }
 
-.mode-live, .mode-staging .turn-feed,
-.mode-live, .mode-staging .scene-backdrop-panel {
+.mode-live .turn-feed,
+.mode-live .scene-backdrop-panel {
   min-height: 0;
 }
 
-.mode-live, .mode-staging .turn-feed,
-.mode-live, .mode-staging .participant-strip,
-.mode-live, .mode-staging .action-bar,
-.mode-live, .mode-staging .input-panel {
+.mode-live .turn-feed,
+.mode-live .participant-strip,
+.mode-live .action-bar,
+.mode-live .input-panel {
   padding: 9px 11px;
 }
 
@@ -593,182 +593,182 @@ textarea {
   overflow: visible;
 }
 
-.mode-live, .mode-staging .topbar {
+.mode-live .topbar {
   gap: 14px;
   padding: 10px 14px;
 }
 
-.mode-live, .mode-staging .topbar h1 {
+.mode-live .topbar h1 {
   font-size: 1.45rem;
 }
 
-.mode-live, .mode-staging .topbar-tagline {
+.mode-live .topbar-tagline {
   font-size: 0.7rem;
 }
 
-.mode-live, .mode-staging .topbar-stat span {
+.mode-live .topbar-stat span {
   font-size: 0.64rem;
 }
 
-.mode-live, .mode-staging .topbar-stat strong {
+.mode-live .topbar-stat strong {
   font-size: 0.82rem;
 }
 
-.mode-live, .mode-staging .scene-tone-button {
+.mode-live .scene-tone-button {
   min-height: 42px;
   padding: 8px 12px;
 }
 
-.mode-live, .mode-staging .turn-feed-scroll,
-.mode-live, .mode-staging .campaign-console {
+.mode-live .turn-feed-scroll,
+.mode-live .campaign-console {
   margin-top: 10px;
 }
 
-.mode-live, .mode-staging .panel-chrome h2 {
+.mode-live .panel-chrome h2 {
   font-size: 0.82rem;
 }
 
-.mode-live, .mode-staging .panel-chip,
-.mode-live, .mode-staging .eyebrow,
-.mode-live, .mode-staging .panel-label {
+.mode-live .panel-chip,
+.mode-live .eyebrow,
+.mode-live .panel-label {
   font-size: 0.62rem;
 }
 
-.mode-live, .mode-staging .speaker-card {
+.mode-live .speaker-card {
   grid-template-columns: 62px minmax(0, 1fr) 72px;
   gap: 12px;
   margin-top: 10px;
   padding: 12px;
 }
 
-.mode-live, .mode-staging .speaker-name {
+.mode-live .speaker-name {
   font-size: 0.9rem;
 }
 
-.mode-live, .mode-staging .speaker-meta,
-.mode-live, .mode-staging .participant-meta,
-.mode-live, .mode-staging .turn-meta {
+.mode-live .speaker-meta,
+.mode-live .participant-meta,
+.mode-live .turn-meta {
   font-size: 0.72rem;
 }
 
-.mode-live, .mode-staging .turn p {
+.mode-live .turn p {
   font-size: 0.92rem;
   line-height: 1.62;
 }
 
-.mode-live, .mode-staging .scene-backdrop-art {
+.mode-live .scene-backdrop-art {
   min-height: 100%;
 }
 
-.mode-live, .mode-staging .scene-backdrop-copy {
+.mode-live .scene-backdrop-copy {
   bottom: 72px;
 }
 
-.mode-live, .mode-staging .scene-backdrop-copy h2 {
+.mode-live .scene-backdrop-copy h2 {
   font-size: clamp(1.18rem, 2.2vw, 1.7rem);
 }
 
-.mode-live, .mode-staging .scene-backdrop-copy p {
+.mode-live .scene-backdrop-copy p {
   margin-top: 8px;
   line-height: 1.55;
 }
 
-.mode-live, .mode-staging .scene-backdrop-meta {
+.mode-live .scene-backdrop-meta {
   bottom: 14px;
   left: 14px;
   right: 14px;
   gap: 8px;
 }
 
-.mode-live, .mode-staging .scene-backdrop-meta div {
+.mode-live .scene-backdrop-meta div {
   padding: 8px 10px;
 }
 
-.mode-live, .mode-staging .participant-scroll {
+.mode-live .participant-scroll {
   gap: 8px;
   margin-top: 0;
 }
 
-.mode-live, .mode-staging .participant-strip {
+.mode-live .participant-strip {
   max-height: none;
 }
 
-.mode-live, .mode-staging .participant-card {
+.mode-live .participant-card {
   grid-template-columns: 40px minmax(0, 1fr);
   gap: 10px;
   padding: 10px 12px;
   min-width: 220px;
 }
 
-.mode-live, .mode-staging .participant-avatar-button {
+.mode-live .participant-avatar-button {
   min-width: 40px;
   min-height: 40px;
   width: 40px;
   height: 40px;
 }
 
-.mode-live, .mode-staging .participant-avatar-button span {
+.mode-live .participant-avatar-button span {
   font-size: 0.78rem;
 }
 
-.mode-live, .mode-staging .participant-name {
+.mode-live .participant-name {
   font-size: 0.68rem;
 }
 
-.mode-live, .mode-staging .participant-status {
+.mode-live .participant-status {
   display: none;
 }
 
-.mode-live, .mode-staging .participant-meta {
+.mode-live .participant-meta {
   gap: 2px;
   margin-top: 3px;
   font-size: 0.58rem;
 }
 
-.mode-live, .mode-staging .participant-detail {
+.mode-live .participant-detail {
   display: none;
 }
 
-.mode-live, .mode-staging .participant-subtext {
+.mode-live .participant-subtext {
   font-size: 0.56rem;
 }
 
-.mode-live, .mode-staging .action-grid {
+.mode-live .action-grid {
   gap: 8px;
   margin-top: 0;
 }
 
-.mode-live, .mode-staging .quick-ops-terminal h2 {
+.mode-live .quick-ops-terminal h2 {
   font-size: 0.72rem;
 }
 
-.mode-live, .mode-staging .action-button {
+.mode-live .action-button {
   min-height: 34px;
   gap: 7px;
   padding-inline: 8px;
 }
 
-.mode-live, .mode-staging .action-label {
+.mode-live .action-label {
   font-size: 0.7rem;
 }
 
-.mode-live, .mode-staging .action-index,
-.mode-live, .mode-staging .action-icon {
+.mode-live .action-index,
+.mode-live .action-icon {
   font-size: 0.64rem;
 }
 
-.mode-live, .mode-staging .input-panel textarea {
+.mode-live .input-panel textarea {
   min-height: 34px;
   height: 34px;
   margin: 0;
   padding: 7px 10px;
 }
 
-.mode-live, .mode-staging .input-terminal-bar .hint {
+.mode-live .input-terminal-bar .hint {
   font-size: 0.64rem;
 }
 
-.mode-live, .mode-staging .command-row button {
+.mode-live .command-row button {
   min-width: 108px;
   min-height: 34px;
   padding: 5px 9px;
