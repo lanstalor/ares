@@ -50,43 +50,105 @@ function getTurnAvatar(turn, speakerName, speakerCaste) {
   };
 }
 
-function renderText(text, speaker) {
+function buildNameColorMap(participants, speakerName, speakerCaste) {
+  const map = new Map();
+
+  if (speakerName) {
+    const color = getCasteColorToken(speakerCaste);
+    map.set(speakerName, color);
+    const short = speakerName.split(" ")[0];
+    if (short.length > 2) map.set(short, color);
+  }
+
+  for (const p of participants ?? []) {
+    if (!p.name || p.tone === "system" || p.tone === "player") continue;
+    const color = getCasteColorToken(p.caste);
+    map.set(p.name, color);
+    const parts = p.name.split(/\s+/);
+    const lastName = parts[parts.length - 1];
+    if (lastName.length > 2 && !map.has(lastName)) {
+      map.set(lastName, color);
+    }
+  }
+
+  return map;
+}
+
+const CASTE_QUOTE_RE = /^\[(\w+)\]("[^"]*")$/;
+
+function renderText(text, speaker, nameColorMap) {
   if (!text) return null;
 
+  const names = nameColorMap ? [...nameColorMap.keys()].sort((a, b) => b.length - a.length) : [];
+  const namePattern = names.length
+    ? names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")
+    : null;
+
+  // Match: [Caste]"quote", plain "quote", or known names — in priority order
+  const patternParts = [`\\[\\w+\\]"[^"]*"`, `"[^"]*"`];
+  if (namePattern) patternParts.push(namePattern);
+  const fullPattern = new RegExp(patternParts.join("|"), "g");
+
   const segments = [];
-  const quoteRe = /"[^"]*"/g;
   let lastIndex = 0;
   let match;
 
-  while ((match = quoteRe.exec(text)) !== null) {
+  while ((match = fullPattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
       segments.push({ type: "text", value: text.slice(lastIndex, match.index) });
     }
-    segments.push({ type: "quote", value: match[0] });
-    lastIndex = match.index + match[0].length;
+
+    const value = match[0];
+    if (value.startsWith("[")) {
+      const parsed = CASTE_QUOTE_RE.exec(value);
+      segments.push({ type: "caste-quote", caste: parsed?.[1] ?? "System", quote: parsed?.[2] ?? value });
+    } else if (value.startsWith('"')) {
+      segments.push({ type: "quote", value });
+    } else {
+      segments.push({ type: "name", value, color: nameColorMap?.get(value) });
+    }
+
+    lastIndex = match.index + value.length;
   }
 
   if (lastIndex < text.length) {
     segments.push({ type: "text", value: text.slice(lastIndex) });
   }
 
-  if (segments.every((s) => s.type === "text")) {
-    return text;
-  }
+  if (segments.every((s) => s.type === "text")) return text;
 
-  return segments.map((seg, i) =>
-    seg.type === "quote" ? (
-      <span key={i} className={`turn-dialogue turn-dialogue-${speaker}`}>{seg.value}</span>
-    ) : (
-      seg.value
-    ),
-  );
+  return segments.map((seg, i) => {
+    if (seg.type === "caste-quote") {
+      const color = getCasteColorToken(seg.caste);
+      return (
+        <span key={i} style={{ color, textShadow: `0 0 8px ${color}55` }}>
+          {seg.quote}
+        </span>
+      );
+    }
+    if (seg.type === "quote") {
+      return (
+        <span key={i} className={`turn-dialogue turn-dialogue-${speaker}`}>
+          {seg.value}
+        </span>
+      );
+    }
+    if (seg.type === "name") {
+      return (
+        <span key={i} style={{ color: seg.color, fontWeight: 500 }}>
+          {seg.value}
+        </span>
+      );
+    }
+    return seg.value;
+  });
 }
 
 export function TurnFeed({
   campaignName,
   isThinking,
   objective,
+  participants,
   speakerCaste,
   speakerName,
   speakerRole,
@@ -94,12 +156,35 @@ export function TurnFeed({
   turns,
 }) {
   const scrollRef = useRef(null);
+  const prevTurnCountRef = useRef(0);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) return;
+
+    const prevCount = prevTurnCountRef.current;
+    const currCount = turns.length;
+
+    if (currCount > prevCount) {
+      const newSlice = turns.slice(prevCount);
+      const firstNewGmOffset = newSlice.findIndex((t) => t.speaker === "gm");
+
+      if (firstNewGmOffset >= 0) {
+        const absIndex = prevCount + firstNewGmOffset;
+        const el = scrollEl.querySelector(`[data-turn-index="${absIndex}"]`);
+        if (el) {
+          scrollEl.scrollTop = el.offsetTop - scrollEl.offsetTop;
+          prevTurnCountRef.current = currCount;
+          return;
+        }
+      }
     }
+
+    scrollEl.scrollTop = scrollEl.scrollHeight;
+    prevTurnCountRef.current = currCount;
   }, [turns, isThinking]);
+
+  const nameColorMap = buildNameColorMap(participants, speakerName, speakerCaste);
 
   return (
     <section className="turn-feed">
@@ -148,11 +233,15 @@ export function TurnFeed({
               </div>
             </article>
           ) : (
-            turns.map((turn) => {
+            turns.map((turn, index) => {
               const avatar = getTurnAvatar(turn, speakerName, speakerCaste);
 
               return (
-                <article className={`turn turn-${turn.speaker}`} key={turn.id}>
+                <article
+                  className={`turn turn-${turn.speaker}`}
+                  data-turn-index={index}
+                  key={turn.id}
+                >
                   <div className="turn-avatar" style={{ borderColor: getCasteColorToken(avatar.caste) }}>
                     <span>{avatar.initials}</span>
                   </div>
@@ -161,8 +250,7 @@ export function TurnFeed({
                       <span style={{ color: getCasteColorToken(avatar.caste) }}>{avatar.name}</span>
                       <span>{formatTimestamp(turn.timestamp) ?? turn.meta ?? "Live"}</span>
                     </div>
-                    {turn.location ? <p className="turn-location">{turn.location}</p> : null}
-                    <p>{renderText(turn.text, turn.speaker)}</p>
+                    <p>{renderText(turn.text, turn.speaker, nameColorMap)}</p>
                   </div>
                 </article>
               );

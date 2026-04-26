@@ -65,6 +65,16 @@ Current branch guidance:
 | `readme.md` | Original product spec, design principles, domain model, architecture layers, agent playbooks, acceptance criteria — the canonical "why" document |
 | `world_bible.md` | Campaign source material: factions, areas, POIs, NPCs, secrets, lore, player character (Davan of Tharsis), clocks — seeded into the DB on first run |
 | `CLAUDE.md` (this file) | Current implementation state, file map, dev workflow, hard constraints |
+| `docs/development/master-plan.md` | Current priorities, active workstreams, and the fastest way to see what should happen next |
+| `docs/development/workstreams/` | Canonical resume docs for interrupted feature slices; read the linked workstream before chat history |
+
+## Development Workflow Defaults
+
+- Start each coding session with: `CLAUDE.md` -> `docs/development/master-plan.md` -> target workstream doc -> linked PR/issue -> `git status`
+- Each non-trivial feature slice should have one GitHub issue, one flat branch, one draft PR, and one workstream doc under `docs/development/workstreams/`
+- `CLAUDE.md` holds durable repo context and constraints; active TODO churn belongs in the master plan and workstream docs
+- Before pausing or switching agents, update the workstream doc with current state, verification, risks, and the exact next step
+- If GitHub artifacts are missing for an active slice, record `TBD` in the doc temporarily, then create the missing issue/branch/PR before substantial new work
 
 ---
 

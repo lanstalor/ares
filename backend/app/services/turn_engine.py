@@ -22,6 +22,8 @@ class TurnEngineResult:
     canon_guard_message: str | None
     clocks_fired: list[str] = field(default_factory=list)
     location_changed_to: str | None = None
+    suggested_actions: list[dict] = field(default_factory=list)
+    scene_participants: list[dict] = field(default_factory=list)
 
 
 def resolve_turn(
@@ -61,4 +63,6 @@ def resolve_turn(
         canon_guard_message=canon_guard_message,
         clocks_fired=consequence_result.clocks_fired,
         location_changed_to=consequence_result.location_changed_to,
+        suggested_actions=narration.suggested_actions,
+        scene_participants=narration.scene_participants,
     )

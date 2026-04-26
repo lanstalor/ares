@@ -18,6 +18,8 @@ class NarrationResponse:
     narrative: str
     player_safe_summary: str
     consequences: Consequences = field(default_factory=Consequences)
+    suggested_actions: list[dict] = field(default_factory=list)
+    scene_participants: list[dict] = field(default_factory=list)
 
 
 class NarrationProvider(Protocol):

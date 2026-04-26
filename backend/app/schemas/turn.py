@@ -26,3 +26,5 @@ class TurnResolution(BaseModel):
     canon_guard_message: str | None
     clocks_fired: list[str] = Field(default_factory=list)
     location_changed_to: str | None = None
+    suggested_actions: list[dict] = Field(default_factory=list)
+    scene_participants: list[dict] = Field(default_factory=list)
