@@ -697,10 +697,10 @@ textarea {
 }
 
 .mode-live .participant-scroll {
-  flex-direction: column;
-  gap: 6px;
-  overflow-x: hidden;
-  overflow-y: auto;
+  flex-direction: row;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
   margin-top: 0;
 }
 
