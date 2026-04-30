@@ -1109,6 +1109,15 @@ textarea::-webkit-scrollbar-thumb {
   color: var(--accent-gold);
 }
 
+.turn-system-secret {
+  border-left-color: #c084fc;
+  background: rgba(192, 132, 252, 0.06);
+}
+
+.turn-system-secret .turn-meta {
+  color: #c084fc;
+}
+
 .turn-location {
   color: var(--muted);
   font-size: 0.84rem;

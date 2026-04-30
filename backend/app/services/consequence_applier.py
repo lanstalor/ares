@@ -54,6 +54,7 @@ class Consequences:
 class ConsequenceResult:
     clocks_fired: list[str]
     location_changed_to: str | None = None
+    revealed_secrets: list[dict] = field(default_factory=list)
 
 
 def apply_consequences(session: Session, campaign: Campaign, consequences: Consequences) -> ConsequenceResult:
@@ -70,6 +71,7 @@ def apply_consequences(session: Session, campaign: Campaign, consequences: Conse
         if was_below_max and clock.current_value == clock.max_value:
             fired.append(clock.label)
 
+    revealed: list[dict] = []
     for change in consequences.secret_status_changes:
         secret = session.scalar(
             select(Secret).where(Secret.campaign_id == campaign.id, Secret.label == change.label)
@@ -77,6 +79,8 @@ def apply_consequences(session: Session, campaign: Campaign, consequences: Conse
         if secret is None:
             continue
         secret.status = change.new_status
+        if change.new_status == SecretStatus.REVEALED:
+            revealed.append({"label": secret.label, "content": secret.content})
 
     for draft in consequences.new_memories:
         session.add(
@@ -114,4 +118,4 @@ def apply_consequences(session: Session, campaign: Campaign, consequences: Conse
                 )
             )
 
-    return ConsequenceResult(clocks_fired=fired, location_changed_to=location_changed_to)
+    return ConsequenceResult(clocks_fired=fired, location_changed_to=location_changed_to, revealed_secrets=revealed)

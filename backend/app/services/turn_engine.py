@@ -24,6 +24,7 @@ class TurnEngineResult:
     location_changed_to: str | None = None
     suggested_actions: list[dict] = field(default_factory=list)
     scene_participants: list[dict] = field(default_factory=list)
+    revealed_secrets: list[dict] = field(default_factory=list)
 
 
 def resolve_turn(
@@ -65,4 +66,5 @@ def resolve_turn(
         location_changed_to=consequence_result.location_changed_to,
         suggested_actions=narration.suggested_actions,
         scene_participants=narration.scene_participants,
+        revealed_secrets=consequence_result.revealed_secrets,
     )

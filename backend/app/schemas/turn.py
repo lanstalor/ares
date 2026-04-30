@@ -28,3 +28,4 @@ class TurnResolution(BaseModel):
     location_changed_to: str | None = None
     suggested_actions: list[dict] = Field(default_factory=list)
     scene_participants: list[dict] = Field(default_factory=list)
+    revealed_secrets: list[dict] = Field(default_factory=list)

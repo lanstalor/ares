@@ -60,4 +60,5 @@ def create_turn(campaign_id: str, payload: TurnCreate, session: SessionDep) -> T
         location_changed_to=result.location_changed_to,
         suggested_actions=result.suggested_actions,
         scene_participants=result.scene_participants,
+        revealed_secrets=result.revealed_secrets,
     )

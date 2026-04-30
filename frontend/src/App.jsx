@@ -72,6 +72,9 @@ function mergeParticipants(existing, incoming) {
     if (match) {
       match.disposition = np.disposition;
       match.role = np.role;
+      if (np.level != null) match.level = np.level;
+      if (np.current_hp != null) match.current_hp = np.current_hp;
+      if (np.max_hp != null) match.max_hp = np.max_hp;
     } else {
       roster.push(np);
     }
@@ -104,6 +107,17 @@ function buildConsequenceEvents(resolution) {
       label: "Clock",
       meta: "Fired",
       text: `${label} — consequence triggered`,
+      timestamp: null,
+    });
+  }
+
+  for (const secret of resolution.revealed_secrets ?? []) {
+    events.push({
+      id: `${id}-secret-${secret.label}`,
+      speaker: "system-secret",
+      label: "Revealed",
+      meta: secret.label,
+      text: secret.content,
       timestamp: null,
     });
   }
