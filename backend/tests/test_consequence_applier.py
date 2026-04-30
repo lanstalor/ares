@@ -3,13 +3,14 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.enums import ClockType, SecretStatus, Visibility
 from app.models.base import Base
-from app.models.campaign import Campaign, Clock
+from app.models.campaign import Campaign, Clock, Objective
 from app.models.memory import Memory, Secret
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
     LocationChange,
     MemoryDraft,
+    ObjectiveUpdate,
     SecretStatusChange,
     apply_consequences,
 )
@@ -230,3 +231,99 @@ def test_apply_consequences_no_location_change_returns_none() -> None:
     result = apply_consequences(session, campaign, Consequences())
 
     assert result.location_changed_to is None
+
+
+def test_apply_consequences_completes_active_objective() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    obj = Objective(
+        campaign_id=campaign.id,
+        title="Check the Melt before shift",
+        is_active=True,
+    )
+    session.add(obj)
+    session.commit()
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            objective_updates=[ObjectiveUpdate(title="Check the Melt before shift", action="complete")]
+        ),
+    )
+    session.commit()
+
+    refreshed = session.scalar(select(Objective).where(Objective.id == obj.id))
+    assert refreshed.is_active is False
+
+
+def test_apply_consequences_add_creates_new_objective() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            objective_updates=[
+                ObjectiveUpdate(
+                    title="Find Vex's handler",
+                    action="add",
+                    description="Track who Vex is reporting to.",
+                )
+            ]
+        ),
+    )
+    session.commit()
+
+    obj = session.scalar(
+        select(Objective).where(
+            Objective.campaign_id == campaign.id,
+            Objective.title == "Find Vex's handler",
+        )
+    )
+    assert obj is not None
+    assert obj.is_active is True
+    assert obj.description == "Track who Vex is reporting to."
+
+
+def test_apply_consequences_complete_ignores_unknown_objective() -> None:
+    """Completing a non-existent objective should not raise."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            objective_updates=[ObjectiveUpdate(title="Nonexistent objective", action="complete")]
+        ),
+    )
+    session.commit()
+
+    assert session.scalar(select(Objective)) is None
+
+
+def test_apply_consequences_complete_ignores_already_inactive_objective() -> None:
+    """Completing an already-inactive objective should not error."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    obj = Objective(
+        campaign_id=campaign.id,
+        title="Old task",
+        is_active=False,
+    )
+    session.add(obj)
+    session.commit()
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            objective_updates=[ObjectiveUpdate(title="Old task", action="complete")]
+        ),
+    )
+    session.commit()
+
+    refreshed = session.scalar(select(Objective).where(Objective.id == obj.id))
+    assert refreshed.is_active is False

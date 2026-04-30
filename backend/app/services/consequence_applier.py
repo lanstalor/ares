@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.enums import SecretStatus, Visibility
-from app.models.campaign import Campaign, Clock
+from app.models.campaign import Campaign, Clock, Objective
 from app.models.memory import Memory, Secret
 
 
@@ -34,11 +34,20 @@ class LocationChange:
 
 
 @dataclass
+class ObjectiveUpdate:
+    title: str
+    action: str  # "complete" or "add"
+    description: str | None = None
+    gm_instructions: str | None = None
+
+
+@dataclass
 class Consequences:
     clock_ticks: list[ClockTick] = field(default_factory=list)
     secret_status_changes: list[SecretStatusChange] = field(default_factory=list)
     new_memories: list[MemoryDraft] = field(default_factory=list)
     location_change: LocationChange | None = None
+    objective_updates: list[ObjectiveUpdate] = field(default_factory=list)
 
 
 @dataclass
@@ -82,5 +91,27 @@ def apply_consequences(session: Session, campaign: Campaign, consequences: Conse
     if consequences.location_change is not None:
         campaign.current_location_label = consequences.location_change.new_location_label
         location_changed_to = consequences.location_change.new_location_label
+
+    for update in consequences.objective_updates:
+        if update.action == "complete":
+            obj = session.scalar(
+                select(Objective).where(
+                    Objective.campaign_id == campaign.id,
+                    Objective.title == update.title,
+                    Objective.is_active.is_(True),
+                )
+            )
+            if obj:
+                obj.is_active = False
+        elif update.action == "add":
+            session.add(
+                Objective(
+                    campaign_id=campaign.id,
+                    title=update.title,
+                    description=update.description,
+                    gm_instructions=update.gm_instructions,
+                    is_active=True,
+                )
+            )
 
     return ConsequenceResult(clocks_fired=fired, location_changed_to=location_changed_to)
