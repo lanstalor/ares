@@ -9,6 +9,7 @@ from app.services.consequence_applier import (
     Consequences,
     LocationChange,
     MemoryDraft,
+    ObjectiveUpdate,
     SecretStatusChange,
 )
 
@@ -60,6 +61,7 @@ Tool use:
 - consequences.secret_status_changes: list of {label, new_status}. new_status is one of: dormant, eligible, revealed. Only reference secret labels that appear in the hidden GM brief.
 - consequences.new_memories: list of {content, visibility}. Visibility is one of: player_facing, gm_only, sealed, locked. Use player_facing for things the player saw or heard. Use gm_only for things you noted but the player did not perceive.
 - consequences.location_change: {new_location_label}. Emit only when the player physically moves to a different named area this turn. new_location_label must match an area name from the world context. Omit entirely if the player does not change location.
+- consequences.objective_updates: list of {title, action, description?}. action "complete" marks the named active objective done (use the exact title from the player-safe brief). action "add" creates a new objective with the given title and optional description. Only emit when an objective is genuinely achieved or a major new story goal appears — not for routine scene transitions.
 - A clock marked "FIRED — consequence due" has reached its maximum. Act on its in-fiction consequence immediately this turn: escalate the threat, surface the reveal, or break the tension the label implies. Do not tick a FIRED clock again.
 - Omit any field whose list is empty rather than emitting placeholder entries.
 - Dialogue formatting: Every line of direct in-character speech must be prefixed with that character's Red Rising color caste in square brackets, immediately before the opening quote — for example [Red]"I need a drink." or [Gold]"You dare address me?" or [Obsidian]"Move." Use the character's actual caste color. Never add the prefix to the player character's speech or to narration — only to spoken words that belong to an NPC or named character in the scene.
@@ -139,6 +141,27 @@ _TOOL_SCHEMA = {
                             },
                         },
                         "required": ["new_location_label"],
+                    },
+                    "objective_updates": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "Exact title of the objective to complete, or title of the new objective.",
+                                },
+                                "action": {
+                                    "type": "string",
+                                    "enum": ["complete", "add"],
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "description": "Brief description for new objectives. Omit for complete.",
+                                },
+                            },
+                            "required": ["title", "action"],
+                        },
                     },
                 },
             },
@@ -335,5 +358,13 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
                 for item in raw_consequences.get("new_memories", [])
             ],
             location_change=location_change,
+            objective_updates=[
+                ObjectiveUpdate(
+                    title=item["title"],
+                    action=item["action"],
+                    description=item.get("description"),
+                )
+                for item in raw_consequences.get("objective_updates", [])
+            ],
         ),
     )

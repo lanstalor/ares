@@ -214,3 +214,49 @@ def test_provider_raises_when_no_tool_call_returned() -> None:
 def test_provider_requires_non_empty_model() -> None:
     with pytest.raises(ValueError, match="non-empty model"):
         AnthropicNarrationProvider(messages_create=lambda **_: _make_canned_response(), model="")
+
+
+def test_provider_parses_objective_updates_from_tool_call() -> None:
+    def fake_messages_create(**kwargs: Any) -> _FakeMessage:
+        return _make_canned_response(
+            consequences={
+                "objective_updates": [
+                    {"title": "Check the Melt before shift", "action": "complete"},
+                    {
+                        "title": "Find Vex's handler",
+                        "action": "add",
+                        "description": "Track who Vex reports to.",
+                    },
+                ]
+            }
+        )
+
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
+
+    response = provider.narrate(_make_request())
+
+    updates = response.consequences.objective_updates
+    assert len(updates) == 2
+    assert updates[0].title == "Check the Melt before shift"
+    assert updates[0].action == "complete"
+    assert updates[0].description is None
+    assert updates[1].title == "Find Vex's handler"
+    assert updates[1].action == "add"
+    assert updates[1].description == "Track who Vex reports to."
+
+
+def test_provider_objective_updates_empty_when_absent() -> None:
+    def fake_messages_create(**kwargs: Any) -> _FakeMessage:
+        return _make_canned_response()
+
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
+
+    response = provider.narrate(_make_request())
+
+    assert response.consequences.objective_updates == []
