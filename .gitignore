@@ -17,3 +17,4 @@ ares.db
 ebooks/
 .playwright-mcp/
 .superpowers/
+tools/playtester/reports/*.md
