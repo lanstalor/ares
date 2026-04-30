@@ -238,9 +238,43 @@ No structural HTML/JSX changes required for any of these drops.
 
 ## Current State
 
-- Phase 1 (CSS pass): **Not started**
-- Phase 2 (Asset generation): **Not started**
+- Phase 1 (CSS pass): **Complete** (2026-04-30)
+- Icon sidebar refactor: **Complete** (2026-04-30)
+- Phase 2 (Asset generation): **Superseded — see UI Overhaul workstream**
+
+## Phase 1 Implementation Notes
+
+All Phase 1 changes are in `frontend/src/styles.css` at the bottom, under the "PANEL FRAME SYSTEM" section.
+
+What was implemented:
+- `--panel-accent` CSS custom property drives the top-edge strip per panel type
+- Green → turn feed, command line (narrative); cyan/blue → topbar, scene, participants (system); gold → status panel
+- `border-top: 2px solid var(--panel-accent, ...)` on all major panels — overrides the base 1px top border
+- `.scene-backdrop-panel` and `.participant-strip` use `color-mix(... var(--scene-accent) ...)` so accent strips track scene tone changes
+- `.app-shell::after` — SVG turbulence noise grain at 3.8% opacity, `mix-blend-mode: overlay` (Phase 2 replaces with `/chrome/grain.png`)
+- `.participant-portrait` — `background-image: var(--caste-icon-url, none)` slot ready for Phase 2 SVG icons
+- `.mode-live .play-column::after` — faint vertical separator between play and status columns
+
+Corner bracket markers are provided by the existing `clip-path: polygon(...)` notch on all panels — no new pseudo-elements needed.
+
+## Icon Sidebar Implementation Notes (2026-04-30)
+
+Replaced the always-visible status panel column with a 56px icon rail + popout overlay system.
+
+**Layout change:** `.mode-live .layout` column reduced from `minmax(240px, 320px)` to `56px`. The play column and scene column now have full remaining width.
+
+**Scene backdrop:** `aspect-ratio: 4/3` enforced on `.mode-live .scene-column .scene-backdrop-panel` (was `flex: 1`). Width drives height.
+
+**StatusPanel.jsx rewrite:**
+- `useState(null)` tracks active tab id; null = collapsed
+- 5 tabs: `◈` Field Readout, `◎` Current Brief, `◉` Campaign Log, `⊙` GM Stack, `⊞` Machine State
+- Each section extracted into its own component (CharacterPanel, CampaignPanel, MemoriesPanel, ReadinessPanel, SystemPanel)
+- `.sidebar-icon-rail` — 56px flex column of icon buttons with gold accent strip
+- `.sidebar-popout` — `position: absolute; right: 56px; top: 0; bottom: 0; width: 300px` — overlays the scene when active
+- Clicking active icon collapses the popout (toggle)
+
+**CSS additions** (end of `styles.css`): `.sidebar-icon-rail`, `.sidebar-icon-btn`, `.sidebar-icon-btn.is-active`, `.sidebar-popout`, `.sidebar-popout .status-panel`.
 
 ## Next Step
 
-Begin Phase 1 CSS pass. Start with the panel enclosure system and status panel frames, then extend to turn cards and layout columns.
+UI overhaul — full visual redesign driven by reference document and sample image provided by operator. See UI Overhaul workstream doc (TBD).

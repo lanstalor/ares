@@ -8,14 +8,14 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |
 |---|---|---|---|---|---|---|
-| TBD | `UI design pass` | `TBD` | `TBD` | Claude | Phase 1 ready | CSS panel enclosure system — see `docs/development/workstreams/ui-design-pass.md` |
+| TBD | `UI overhaul` | `TBD` | `TBD` | Claude | Starting | Full visual redesign — operator providing reference doc + sample image |
 | TBD | `GM anti-stall safeguards` | `TBD` | `TBD` | Codex | Ready to start | Build structural scene-progression guardrails using `docs/development/workstreams/playtester-prompt-pass.md` and the `2026-04-30-00-28.md` benchmark |
 
 ## Next
 
 | Priority | Slice | Why now |
 |---|---|---|
-| 1 | UI asset generation | Scene art (5 locations), caste icons (7), panel corner piece, grain texture, ARES wordmark — see asset inventory in ui-design-pass.md |
+| 1 | UI overhaul assets | Generate assets once overhaul design is locked |
 | 2 | Session prep CLI workflow | Keep it CLI-first and operator-facing |
 | 3 | Post-session continuity review | Use scorecards and narrow repair workflows |
 
@@ -35,6 +35,8 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-04-30 | Icon sidebar + 4:3 scene aspect ratio | Status panel replaced with 56px icon rail + popout overlay; scene backdrop locked to 4:3 aspect ratio |
+| 2026-04-30 | UI design pass Phase 1 (CSS frames) | Panel accent strips, grain texture slot, column separator, caste icon slot |
 | 2026-04-30 | Playtester prompt pass + OpenAI benchmark | Shared GM prompt tightened, playtester made provider-configurable, and the first OpenAI benchmark documented that prompt-only changes did not yet fix repetition or scene stall |
 | 2026-04-30 | Backend NPC stats | level/HP on NPC model, parsed from world_bible, emitted in scene_participants |
 | 2026-04-30 | Objective updates | GM can complete/create objectives via consequences tool call |

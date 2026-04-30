@@ -489,7 +489,7 @@ textarea {
 }
 
 .mode-live .layout {
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  grid-template-columns: minmax(0, 1fr) 56px;
 }
 
 .play-column,
@@ -544,8 +544,9 @@ textarea {
 }
 
 .mode-live .scene-column .scene-backdrop-panel {
-  flex: 1;
-  min-height: 0;
+  flex: none;
+  width: 100%;
+  aspect-ratio: 4 / 3;
 }
 
 .turn-feed,
@@ -824,8 +825,10 @@ textarea {
 .campaign-console,
 .status-stack {
   min-height: 0;
-  overflow: auto;
-  padding-right: 6px;
+  overflow: visible;
+  padding-right: 0;
+  position: relative;
+  /* Icon rail + popout: no top-level scroll; popout scrolls internally */
 }
 
 .turn-feed-scroll,
@@ -3041,4 +3044,167 @@ textarea::-webkit-scrollbar-thumb {
 
 .clarify-message.thinking .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
 .clarify-message.thinking .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   PANEL FRAME SYSTEM — Phase 1 CSS Pass
+   Each major panel gets a typed accent color on its top edge via
+   --panel-accent. The existing clip-path corner notches serve as the
+   corner bracket markers. Phase 2 will drop in SVG corner pieces as
+   mask-image on the ::before pseudo-element.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Per-panel accent color assignments ------------------------------------ */
+.topbar           { --panel-accent: rgba(94, 166, 214, 0.72); }
+.turn-feed        { --panel-accent: rgba(99, 212, 133, 0.62); }
+.input-panel      { --panel-accent: rgba(99, 212, 133, 0.48); }
+.scene-backdrop-panel {
+  --panel-accent: color-mix(in srgb, var(--scene-accent) 72%, var(--border-strong));
+}
+.participant-strip {
+  --panel-accent: color-mix(in srgb, var(--scene-accent) 52%, var(--border));
+}
+.status-panel     { --panel-accent: rgba(200, 162, 74, 0.68); }
+.action-bar       { --panel-accent: rgba(99, 212, 133, 0.38); }
+
+/* Top-edge accent strip ------------------------------------------------- */
+/* 2px colored rule replaces the 1px top border from the base panel group.
+   clip-path notch at top-right corner acts as the bracket marker. */
+.topbar,
+.turn-feed,
+.scene-backdrop-panel,
+.participant-strip,
+.action-bar,
+.input-panel,
+.status-panel,
+.hud-card {
+  border-top: 2px solid var(--panel-accent, var(--border-strong));
+}
+
+/* Grain texture slot ---------------------------------------------------- */
+/* CSS SVG turbulence placeholder. Replace background-image with
+   url('/chrome/grain.png') in Phase 2 when the asset is ready. */
+.app-shell::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.038;
+  mix-blend-mode: overlay;
+}
+
+/* Caste icon slot ------------------------------------------------------- */
+/* Phase 2: set --caste-icon-url on .participant-portrait per caste.
+   e.g. .participant-portrait.caste-red { --caste-icon-url: url('/chrome/caste/red.svg'); } */
+.participant-portrait {
+  background-image: var(--caste-icon-url, none);
+  background-size: 55% 55%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Column separator line ------------------------------------------------- */
+/* Subtle vertical rule between play column and status panel in live mode. */
+.mode-live .play-column {
+  position: relative;
+}
+
+.mode-live .play-column::after {
+  content: '';
+  position: absolute;
+  top: 6%;
+  right: -8px;
+  bottom: 6%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--border-strong) 48%, transparent) 18%,
+    color-mix(in srgb, var(--border-strong) 48%, transparent) 82%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Icon sidebar rail ---------------------------------------------------- */
+.sidebar-icon-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+  width: 56px;
+  height: 100%;
+  background: var(--panel-strong);
+  border-left: 1px solid var(--border);
+  border-top: 2px solid rgba(200, 162, 74, 0.68);
+}
+
+.sidebar-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: none;
+  color: var(--text-muted);
+  font-size: 17px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  font-family: var(--font-terminal);
+}
+
+.sidebar-icon-btn:hover {
+  color: var(--text);
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-icon-btn.is-active {
+  color: var(--accent-gold);
+  border-color: rgba(200, 162, 74, 0.5);
+  background: rgba(200, 162, 74, 0.08);
+}
+
+/* Sidebar popout panel ------------------------------------------------- */
+.sidebar-popout {
+  position: absolute;
+  top: 0;
+  right: 56px;
+  bottom: 0;
+  width: 300px;
+  overflow-y: auto;
+  background: var(--panel-strong);
+  border: 1px solid var(--border-strong);
+  border-right: none;
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-popout .status-panel {
+  flex: none;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+}
+
+.sidebar-popout .status-panel + .status-panel {
+  border-top: none;
+}
+
+.sidebar-popout::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-popout::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
 
