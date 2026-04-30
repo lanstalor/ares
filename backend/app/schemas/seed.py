@@ -48,6 +48,8 @@ class SeedNPC(BaseModel):
     visibility: Visibility = Visibility.PLAYER_FACING
     aliases: list[str] = Field(default_factory=list)
     notes: list[SeedNote] = Field(default_factory=list)
+    level: int | None = None
+    max_hp: int | None = None
 
 
 class SeedLorePage(BaseModel):

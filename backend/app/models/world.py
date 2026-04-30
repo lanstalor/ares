@@ -1,4 +1,4 @@
-from sqlalchemy import Enum, ForeignKey, String, Text
+from sqlalchemy import Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.enums import Visibility
@@ -46,6 +46,9 @@ class NPC(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     personality: Mapped[str | None] = mapped_column(Text())
     hidden_agenda: Mapped[str | None] = mapped_column(Text())
     visibility: Mapped[Visibility] = mapped_column(Enum(Visibility), default=Visibility.PLAYER_FACING)
+    level: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    current_hp: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    max_hp: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class LorePage(UUIDPrimaryKeyMixin, TimestampMixin, Base):

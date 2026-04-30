@@ -364,6 +364,12 @@ def _parse_poi_block(block: str) -> SeedPOI | None:
     )
 
 
+def _parse_npc_hp(body: str) -> int | None:
+    # Extract HP value from Stats line, e.g. STR 16 | DEX 18 | HP 78 | AC 16
+    match = re.search(r"\bHP\s+(\d+)\b", body)
+    return int(match.group(1)) if match else None
+
+
 def _parse_npcs(section: str) -> list[SeedNPC]:
     npcs: list[SeedNPC] = []
     for heading, body in _split_level3_entries(section):
@@ -374,6 +380,8 @@ def _parse_npcs(section: str) -> list[SeedNPC]:
         if gm_rule:
             notes.append(_build_note("GM rule", gm_rule))
 
+        max_hp = _parse_npc_hp(body)
+
         npcs.append(
             SeedNPC(
                 name=heading,
@@ -383,11 +391,10 @@ def _parse_npcs(section: str) -> list[SeedNPC]:
                 hidden_agenda=gm_rule,
                 aliases=aliases,
                 notes=notes,
+                max_hp=max_hp,
             )
         )
     return npcs
-
-
 def _join_nonempty(*parts: str | None) -> str | None:
     values = [part.strip() for part in parts if part and part.strip()]
     return "\n\n".join(values) if values else None
