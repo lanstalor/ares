@@ -14,23 +14,45 @@ This is **not** a chatbot wrapper. The value is in the hidden-state engine: cloc
 
 ## Latest Session Summary
 
-Date: 2026-04-30
+Date: 2026-04-30 (continued)
 
-### Full consequence pipeline + UI design plan
+### Pixel-art rebel terminal UI overhaul — golden slice
 
-**Delivered (all merged to main):**
-- Backend NPC stats: `level`, `current_hp`, `max_hp` on NPC model; HP parsed from world_bible Stats lines; emitted in `scene_participants` tool response
-- Objective updates: GM can complete/create objectives via `consequences.objective_updates` in the tool call
-- Memory rendering: `GET /api/v1/campaigns/{id}/memories` endpoint + "Campaign Log" section in StatusPanel (player_facing only)
-- Live stat patching: `mergeParticipants` in App.jsx now patches level/HP/disposition per turn without a full refresh
-- Secret reveal display: purple in-feed `system-secret` event when a secret flips to `revealed`; threaded through ConsequenceResult → TurnResolution → frontend
-- Automated playtester: `tools/playtester/run.py` — 30-turn simulation, PlayerAgent + EvaluatorAgent (6 UX dimensions) + holistic report to `tools/playtester/reports/`; Codex refactored to use `llm.py` with OpenAI default
-- UI design plan: see `docs/development/workstreams/ui-design-pass.md` — two-phase (CSS structure slots now, generated assets later)
+**Delivered (all merged to main, commit 0252225):**
+- UI overhaul CSS refactor: pixel-art diegetic rebel terminal aesthetic per `docs/layout.md` + `assets/samples/ui.png`
+- VT323 font loaded (Google Fonts) for pixel-style labels, tabs, metadata; body/narrative keep Chakra Petch
+- Design tokens: `--shell-bg`, `--shell-bevel-hi/lo`, `--shell-rivet`, `--module-bg/inset-*`, `--screen-bg`, `--accent-tac-red/cyan/amber/green`, `--unit` (8px grid)
+- Frame primitives (CSS-only, asset-swappable via CSS vars):
+  * `.frame-shell` — outer chassis with bevelled inset (top/left highlight, bottom/right shadow) + corner rivets
+  * `.frame-module` — bolted instrument-rack module with title stripe (top edge), corner brackets, bevel shadow
+  * `.frame-screen` — monitor bezel with darker inner surface + scanline overlay
+  * `.frame-cmd` — heavier console-housing variant (command line)
+  * `.frame-chip` — compact tactical chip (buttons, presence cards)
+- Applied to golden-slice vertical only (topbar, command line, scene viewport, sidebar):
+  * `.topbar` — cyan top stripe, pixel ARES wordmark, VT323 labels, quieter contrast
+  * `.input-panel.frame-cmd` — red top stripe, 78px+ housing, hardware-style EXECUTE button (bevelled, embossed, pressable), focus-state cyan glow
+  * `.scene-backdrop-panel.frame-screen` — monitor bezel inset + scanline overlay
+  * `.sidebar-icon-rail` + `.sidebar-popout` — amber stripe, folded into chassis as one bolted assembly (flush edge, no gap when open, active button shows side-accent)
+  * `.app-shell.frame-shell` — outer chassis frame with bevel + corner rivets
+- Hierarchy: older `.turn-item` entries fade via `:nth-last-child(n+6)` opacity ramp (oldest 55%, middle 78%, newest 100%)
+- Asset hooks ready (CSS vars, no markup edits needed): `--shell-frame-image`, `--module-frame-image`, `--screen-frame-image`, `--cmd-frame-image`, `--ares-wordmark`
+- Verification: Playwright screenshots at 1366×1024 (iPad Pro landscape): `ui-overhaul-golden-slice.png` (closed), `ui-overhaul-popout-open-v2.png` (popout open)
 
-**Agent worktree gotchas (learned this session):**
-- Background agents with `isolation: "worktree"` do NOT auto-commit. After each agent completes, `cd` into the worktree path, stage, commit, then merge back to main.
-- Worktree agents can also modify the main working tree (e.g., via Playwright screenshots). If so, commit directly on main instead of merging from the worktree branch.
-- `master-plan.md` is co-maintained by Codex — treat as shared, always check `git log` before editing.
+**Phase 1 panel styling (2026-04-30 prior session):**
+- Top-edge accent strips: `--panel-accent` drives per-region color coding (green = narrative, cyan = system, gold = status, amber = relay)
+- Clip-path corner notches on untouched panels (turn feed, participant strip, action bar, status panel interiors) — preserved during rolling refactor
+
+**Out of scope (follow-up passes):**
+- Turn feed, participant strip, action bar, status panel interior reskinning (still on Phase 1 styling — no half-dressed UI)
+- Asset generation: corner brackets PNG/SVG, grain texture, ARES wordmark, caste icons, scene location art
+- New panels or IA changes
+
+**Code changes:** 5 files touched
+- `frontend/src/styles.css` — VT323 import + ~550 lines new `UI OVERHAUL — PIXEL TERMINAL` section
+- `frontend/src/App.jsx` — add `frame-shell` className to root `.app-shell`
+- `frontend/src/components/PlayerInput.jsx` — add `frame-cmd` to root form, `frame-cmd-execute` to submit button
+- `frontend/src/components/SceneBackdrop.jsx` — add `frame-screen` to root section
+- `frontend/src/components/StatusPanel.jsx` — add `frame-module` to rail/popout, `frame-chip` to icon buttons
 
 **How to use next session:**
 - Use `make compose-up` for the full stack (postgres + backend at 8000 + frontend at 5180 via Docker). **Always test at 5180**, not the standalone Vite dev server at 5173/5174.
@@ -38,7 +60,7 @@ Date: 2026-04-30
 - Frontend Docker image must be rebuilt after source changes: `docker compose up --build --no-deps -d frontend`.
 - Backend Docker image must also be rebuilt after source changes: `docker compose up --build --no-deps -d backend`. `--no-deps -d` alone does NOT rebuild — source changes (prompts, routes, services) will be silently ignored.
 
-**What's next:** See `docs/development/master-plan.md` — UI design CSS pass (Phase 1) is first.
+**What's next:** See `docs/development/master-plan.md` — reskin remaining panels (turn feed, participant strip, action bar, status panels) with frame primitives. Asset generation roadmap in `docs/layout.md` §"Recommended Workflow".
 
 ---
 

@@ -275,6 +275,32 @@ Replaced the always-visible status panel column with a 56px icon rail + popout o
 
 **CSS additions** (end of `styles.css`): `.sidebar-icon-rail`, `.sidebar-icon-btn`, `.sidebar-icon-btn.is-active`, `.sidebar-popout`, `.sidebar-popout .status-panel`.
 
+## UI Overhaul Implementation (2026-04-30)
+
+**Status: Golden-slice CSS refactor complete.** Implements the pixel-art rebel terminal aesthetic from `docs/layout.md` and `assets/samples/ui.png`. All Phase 1 styling (top-edge accents + clip-path notches) preserved on untouched panels so the UI never looks half-dressed during rolling refactor.
+
+**Delivered (all merged to main, commit 0252225):**
+- Design tokens: `--shell-bg`, `--shell-bevel-*`, `--module-*`, `--screen-*`, `--accent-tac-*`, `--unit` grid
+- VT323 font loaded for pixel-style labels and tabs
+- Frame primitives (all CSS-only, asset-swappable): `.frame-shell`, `.frame-module`, `.frame-screen`, `.frame-cmd`, `.frame-chip`
+- Applied to golden slice:
+  * `.topbar` — cyan stripe, pixel ARES wordmark, VT323 labels (TIME/SIGNAL/RUNTIME/etc), quieter contrast
+  * `.input-panel.frame-cmd` — red top stripe, taller housing (78px min), hardware-style EXECUTE button (bevelled, embossed, pressable), focus-state cyan glow halo
+  * `.scene-backdrop-panel.frame-screen` — monitor bezel with inset surface, scanline overlay
+  * `.sidebar-icon-rail.frame-module` + `.sidebar-popout.frame-module` — folded into chassis as one bolted assembly (amber stripe, flush edge, no shadow gap when open, active button shows side-accent)
+  * `.frame-shell` on `.app-shell` — outer chassis bevel (top/left highlight, bottom/right shadow) + corner rivets
+- Hierarchy: older `.turn-item` entries fade via `:nth-last-child` opacity ramp (oldest 55%, middle 78%, newest 100%)
+- Asset hooks ready (no markup edits needed): `--shell-frame-image`, `--module-frame-image`, `--screen-frame-image`, `--cmd-frame-image`, `--ares-wordmark`
+
+**Screenshots (iPad Pro landscape 1366×1024):**
+- `ui-overhaul-golden-slice.png` — full collapsed state (icon rail, scene, command line)
+- `ui-overhaul-popout-open-v2.png` — popout open (sidebar-popout flush against rail)
+
+**Out of scope (follow-up passes):**
+- Turn feed, participant strip, action bar, status panel interior reskinning (still on Phase 1 styling)
+- Asset generation (corner brackets PNG/SVG, grain texture, ARES wordmark, caste icons, scene art)
+- New panels or IA changes
+
 ## Next Step
 
-UI overhaul — full visual redesign driven by reference document and sample image provided by operator. See UI Overhaul workstream doc (TBD).
+Reskin remaining panels (turn feed → embedded system log, participant strip → tactical dossier chips, action bar → hardware toggles) with the same frame primitives. All asset hooks already in place per the asset-drop pattern.
