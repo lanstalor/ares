@@ -8,15 +8,15 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |
 |---|---|---|---|---|---|---|
-| TBD | `Backend NPC stats` | `TBD` | `TBD` | Next session | Ready to start | Define the backend data structure for real level/HP/disposition values |
+| TBD | `UI design pass` | `TBD` | `TBD` | Claude | Phase 1 ready | CSS panel enclosure system — see `docs/development/workstreams/ui-design-pass.md` |
 
 ## Next
 
 | Priority | Slice | Why now |
 |---|---|---|
-| 1 | Live participant stat patching after turns | It completes the Scene Presence loop without requiring a full refresh |
-| 2 | Memory rendering in status/feed | It exposes player-relevant continuity without leaking hidden state |
-| 3 | Secret reveal display events | It improves narrative clarity when sealed facts become player-facing |
+| 1 | UI asset generation | Scene art (5 locations), caste icons (7), panel corner piece, grain texture, ARES wordmark — see asset inventory in ui-design-pass.md |
+| 2 | Session prep CLI workflow | Keep it CLI-first and operator-facing |
+| 3 | Post-session continuity review | Use scorecards and narrow repair workflows |
 
 ## Later
 
@@ -34,9 +34,15 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
-| 2026-04-26 | GM clarify sidebar chat | Added a non-persisted `?` sidebar for story clarification without advancing the game clock |
-| 2026-04-26 | GM scene context + action guidance | Added `suggested_actions` and `scene_participants`, tightened feed rendering, wired scene art into the main app, and verified the Docker runtime on `:5180` |
-| 2026-04-24 | Runtime/bootstrap reconciliation | Backend bootstrap, provider wiring, and frontend readiness were aligned to real status fields |
+| 2026-04-30 | Backend NPC stats | level/HP on NPC model, parsed from world_bible, emitted in scene_participants |
+| 2026-04-30 | Objective updates | GM can complete/create objectives via consequences tool call |
+| 2026-04-30 | Memory rendering | GET /memories endpoint + StatusPanel Campaign Log section |
+| 2026-04-30 | Live stat patching | HP/disposition patched from TurnResolution per turn, no full refresh |
+| 2026-04-30 | Secret reveal display | Purple in-feed event when sealed secret flips to revealed |
+| 2026-04-30 | Automated playtester | 30-turn campaign simulation with per-turn UX scoring and holistic report |
+| 2026-04-26 | GM clarify sidebar chat | Non-persisted `?` sidebar for story clarification |
+| 2026-04-26 | GM scene context + action guidance | suggested_actions, scene_participants, scene art wired |
+| 2026-04-24 | Runtime/bootstrap reconciliation | Backend bootstrap, provider wiring, frontend readiness aligned |
 
 ## Working Rules
 
