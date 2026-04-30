@@ -1,7 +1,8 @@
 """EvaluatorAgent: scores GM responses per-turn and produces a holistic summary."""
 
 import json
-import anthropic
+
+from llm import TextGenerator
 
 DIMENSIONS = ["realism", "continuity", "engagement", "repetition", "quality", "flow"]
 
@@ -82,8 +83,8 @@ class TurnScore:
 
 
 class EvaluatorAgent:
-    def __init__(self, client: anthropic.Anthropic):
-        self._client = client
+    def __init__(self, llm: TextGenerator):
+        self._llm = llm
 
     def score_turn(
         self,
@@ -100,13 +101,7 @@ class EvaluatorAgent:
             f"GM: {gm_response}\n\n"
             "Score the GM response above."
         )
-        message = self._client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=600,
-            system=PER_TURN_SYSTEM,
-            messages=[{"role": "user", "content": user_content}],
-        )
-        raw = message.content[0].text.strip()
+        raw = self._llm.generate(system=PER_TURN_SYSTEM, user=user_content)
         try:
             data = json.loads(raw)
         except json.JSONDecodeError:
@@ -128,13 +123,7 @@ class EvaluatorAgent:
             f"Per-turn scores:\n\n{scores_text}\n\n"
             "Write the holistic analysis."
         )
-        message = self._client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=2000,
-            system=HOLISTIC_SYSTEM,
-            messages=[{"role": "user", "content": user_content}],
-        )
-        return message.content[0].text.strip()
+        return self._llm.generate(system=HOLISTIC_SYSTEM, user=user_content)
 
 
 def _format_transcript(transcript: list[dict]) -> str:

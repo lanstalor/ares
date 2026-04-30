@@ -14,6 +14,8 @@ def write_report(
     scores: list[TurnScore],
     holistic: str,
     backend_url: str,
+    player_model: str,
+    evaluator_model: str,
 ) -> Path:
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
     report_path = REPORTS_DIR / f"{timestamp}.md"
@@ -25,8 +27,8 @@ def write_report(
         "",
         f"- Turns: {len(transcript)}",
         f"- Campaign ID: `{campaign_id}`",
-        f"- Player model: claude-sonnet-4-6",
-        f"- Evaluator model: claude-sonnet-4-6",
+        f"- Player model: {player_model}",
+        f"- Evaluator model: {evaluator_model}",
         f"- Backend: {backend_url}",
         "",
         "---",

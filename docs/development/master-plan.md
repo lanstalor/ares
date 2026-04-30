@@ -9,6 +9,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 | Issue | Workstream | Branch | PR | Last owner | Status | Next concrete step |
 |---|---|---|---|---|---|---|
 | TBD | `UI design pass` | `TBD` | `TBD` | Claude | Phase 1 ready | CSS panel enclosure system — see `docs/development/workstreams/ui-design-pass.md` |
+| TBD | `GM anti-stall safeguards` | `TBD` | `TBD` | Codex | Ready to start | Build structural scene-progression guardrails using `docs/development/workstreams/playtester-prompt-pass.md` and the `2026-04-30-00-28.md` benchmark |
 
 ## Next
 
@@ -34,6 +35,7 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-04-30 | Playtester prompt pass + OpenAI benchmark | Shared GM prompt tightened, playtester made provider-configurable, and the first OpenAI benchmark documented that prompt-only changes did not yet fix repetition or scene stall |
 | 2026-04-30 | Backend NPC stats | level/HP on NPC model, parsed from world_bible, emitted in scene_participants |
 | 2026-04-30 | Objective updates | GM can complete/create objectives via consequences tool call |
 | 2026-04-30 | Memory rendering | GET /memories endpoint + StatusPanel Campaign Log section |
@@ -49,3 +51,4 @@ None currently recorded. Add rows only for real external blockers, not general u
 - Every active feature slice should have one GitHub issue, one flat branch, one draft PR, and one workstream doc under `docs/development/workstreams/`.
 - `CLAUDE.md` is for repo bootstrap and durable constraints. This file is for current priorities and active work.
 - If an active branch or PR is missing, record `TBD` temporarily and create the missing artifact before starting substantial new work on that slice.
+- When a playtester benchmark materially changes the outlook, record the report path and the concrete learning in the relevant workstream doc before starting the next slice.

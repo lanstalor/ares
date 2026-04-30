@@ -16,7 +16,8 @@ A fully automated script that simulates a 30-turn Project Ares campaign session,
 ```
 tools/playtester/
 ├── run.py            # entrypoint — orchestrates the full loop
-├── player.py         # PlayerAgent: generates Davan's next action via Claude
+├── llm.py            # provider/model selection + text-generation wrapper
+├── player.py         # PlayerAgent: generates Davan's next action
 ├── evaluator.py      # EvaluatorAgent: per-turn scoring + holistic summary
 ├── reporter.py       # assembles scores + holistic into a markdown report
 └── reports/          # output directory (gitignored)
@@ -31,15 +32,15 @@ tools/playtester/
 run.py
   → POST /api/v1/seed/world-bible   (creates campaign + seeds world, returns campaign_id)
   → for turn in range(30):
-      player.py   → Claude Sonnet   → player_input string
+      player.py   → configured LLM  → player_input string
       HTTP POST   → /api/v1/campaigns/{id}/turns → gm_response
-      evaluator.py → Claude Sonnet  → TurnScore (6 dims, 1–5 + note)
+      evaluator.py → configured LLM → TurnScore (6 dims, 1–5 + note)
       print turn summary to stdout
-  → evaluator.py → Claude Sonnet    → HolisticReport
+  → evaluator.py → configured LLM   → HolisticReport
   → reporter.py  → write markdown to tools/playtester/reports/
 ```
 
-All Claude calls are independent (no shared thread). The backend must be running at `localhost:8000` before invoking the script. If a turn HTTP call fails, that turn is skipped and logged; the run continues.
+All playtester model calls are independent (no shared thread). The backend must be running at `localhost:8000` before invoking the script. If a turn HTTP call fails, that turn is skipped and logged; the run continues.
 
 ---
 
@@ -61,7 +62,9 @@ questions directly; act or speak instead.
 
 **Context:** Last 5 GM responses (not the full transcript — mimics realistic player memory, prevents omniscience).
 
-**Model:** `claude-sonnet-4-6`
+**Default provider/model:** `openai:gpt-5.4-mini` via repo `.env`
+
+**Overrides:** `ARES_PLAYTESTER_PLAYER_PROVIDER`, `ARES_PLAYTESTER_PLAYER_MODEL`
 
 **Guardrail:** If output exceeds 150 tokens, truncate to the first sentence and continue.
 
@@ -96,7 +99,9 @@ Called immediately after each GM response. Receives: the player input, the GM re
 | Dialogue/Narrative quality | Prose clarity, caste-appropriate voice, sentence rhythm, avoids banned patterns (interiority, similes, editorial metaphors) |
 | Turn flow | Length calibrated to action scope, ends at a natural decision point, doesn't over-explain |
 
-**Model:** `claude-sonnet-4-6`
+**Default provider/model:** `openai:gpt-5.4-mini`
+
+**Overrides:** `ARES_PLAYTESTER_EVALUATOR_PROVIDER`, `ARES_PLAYTESTER_EVALUATOR_MODEL`
 
 ### Holistic Summary
 
@@ -107,7 +112,7 @@ Called once at the end with the full 30-turn transcript + all per-turn scores.
 - Worst recurring issues (patterns, not one-offs)
 - Best moments (specific turns worth noting)
 - Average score per dimension across all turns
-- Top 3 actionable recommendations for improving the GM system prompt
+- Top 3 actionable recommendations for improving the GM system prompt or scene-progression contract
 
 ---
 
@@ -150,8 +155,9 @@ Assembles per-turn scores and holistic output into a single markdown file.
 
 Listed in `tools/playtester/requirements.txt`:
 - `httpx` — HTTP client for backend calls
-- `anthropic` — Claude API
-- `python-dotenv` — reads `ANTHROPIC_API_KEY` from repo root `.env`
+- `anthropic` — optional Anthropic benchmark path
+- `openai` — default OpenAI benchmark path
+- `python-dotenv` — reads provider keys from repo root `.env`
 
 ---
 
@@ -165,7 +171,14 @@ make backend-dev   # or make compose-up
 python tools/playtester/run.py
 ```
 
-Report saves to `tools/playtester/reports/YYYY-MM-DD-HH-MM.md` automatically.
+Useful overrides:
+
+```bash
+ARES_PLAYTESTER_TURNS=8 python tools/playtester/run.py
+ARES_PLAYTESTER_PROVIDER=anthropic ARES_PLAYTESTER_MODEL=claude-sonnet-4-6 python tools/playtester/run.py
+```
+
+Report saves to `tools/playtester/reports/YYYY-MM-DD-HH-MM.md` automatically and records the actual player/evaluator provider+model used.
 
 ---
 
@@ -175,3 +188,22 @@ Report saves to `tools/playtester/reports/YYYY-MM-DD-HH-MM.md` automatically.
 - Interactive mode or mid-run steering
 - Evaluating the player input quality (only GM responses are scored)
 - Running without a live backend
+
+---
+
+## Observations From The First OpenAI Benchmark
+
+Validated on 2026-04-30 with:
+
+- smoke run: `tools/playtester/reports/2026-04-30-00-25.md`
+- full 30-turn run: `tools/playtester/reports/2026-04-30-00-28.md`
+
+Key learnings:
+
+- The configurable provider path works end-to-end on OpenAI.
+- Prompt-only anti-stall instructions were not enough to fix scene stagnation.
+- The full OpenAI run still underperformed on the exact dimensions this tool was meant to expose:
+  - `repetition`: `1.40`
+  - `flow`: `2.40`
+  - `engagement`: `2.97`
+- Future work should not assume prompt tightening alone will cure prolonged standoffs. The next pass likely needs structural escalation rules or repeated-beat suppression outside pure prose guidance.

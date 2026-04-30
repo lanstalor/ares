@@ -1,6 +1,6 @@
 """PlayerAgent: roleplays as Davan o' Tharsis, generating one action per GM turn."""
 
-import anthropic
+from llm import TextGenerator
 
 SYSTEM_PROMPT = """\
 You are Davan o' Tharsis, a lowRed miner working the Melt at Lykos station, 728 PCE.
@@ -14,8 +14,8 @@ Respond with ONLY the action text, nothing else."""
 
 
 class PlayerAgent:
-    def __init__(self, client: anthropic.Anthropic):
-        self._client = client
+    def __init__(self, llm: TextGenerator):
+        self._llm = llm
 
     def next_action(self, recent_gm_responses: list[str]) -> str:
         context_parts = []
@@ -23,18 +23,10 @@ class PlayerAgent:
             context_parts.append(f"[Turn {i + 1}]\n{resp}")
         context = "\n\n".join(context_parts)
 
-        message = self._client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=200,
+        text = self._llm.generate(
             system=SYSTEM_PROMPT,
-            messages=[
-                {
-                    "role": "user",
-                    "content": f"Recent GM responses:\n\n{context}\n\nWhat do you do next?",
-                }
-            ],
+            user=f"Recent GM responses:\n\n{context}\n\nWhat do you do next?",
         )
-        text = message.content[0].text.strip()
         # Guardrail: cap at first sentence if suspiciously long
         if len(text.split()) > 50:
             sentences = text.split(". ")
