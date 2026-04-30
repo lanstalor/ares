@@ -78,7 +78,7 @@ def main() -> None:
     with httpx.Client() as http:
         # Verify backend is reachable
         try:
-            health = http.get(f"{BACKEND_URL}/api/v1/system/health", timeout=5)
+            health = http.get(f"{BACKEND_URL}/api/v1/health", timeout=5)
             health.raise_for_status()
         except Exception as e:
             print(f"ERROR: Backend not reachable at {BACKEND_URL}: {e}", file=sys.stderr)
