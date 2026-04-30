@@ -4,7 +4,7 @@ Ares Playtester — automated 30-turn campaign simulation with UX evaluation.
 
 Requires:
   - Backend running at localhost:8000 (make backend-dev or make compose-up)
-  - ANTHROPIC_API_KEY in repo root .env or environment
+  - Provider API key in repo root .env or environment
 
 Usage:
   cd tools/playtester && pip install -r requirements.txt
@@ -21,15 +21,15 @@ if env_path.exists():
     from dotenv import load_dotenv
     load_dotenv(env_path)
 
-import anthropic
 import httpx
 
 from player import PlayerAgent
 from evaluator import EvaluatorAgent, TurnScore
+from llm import TextGenerator, load_model_config, verify_api_key
 from reporter import write_report
 
 BACKEND_URL = os.getenv("ARES_BACKEND_URL", "http://localhost:8000")
-NUM_TURNS = 30
+NUM_TURNS = int(os.getenv("ARES_PLAYTESTER_TURNS", "30"))
 PLAYER_CONTEXT_WINDOW = 5  # last N GM responses fed to the player agent
 
 
@@ -62,14 +62,17 @@ def submit_turn(http: httpx.Client, campaign_id: str, player_input: str) -> dict
 
 
 def main() -> None:
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
-        print("ERROR: ANTHROPIC_API_KEY not set. Add it to .env or environment.", file=sys.stderr)
+    try:
+        player_config = load_model_config("player")
+        evaluator_config = load_model_config("evaluator")
+        verify_api_key(player_config.provider)
+        verify_api_key(evaluator_config.provider)
+    except (RuntimeError, ValueError) as e:
+        print(f"ERROR: {e}", file=sys.stderr)
         sys.exit(1)
 
-    client = anthropic.Anthropic(api_key=api_key)
-    player = PlayerAgent(client)
-    evaluator = EvaluatorAgent(client)
+    player = PlayerAgent(TextGenerator(player_config, max_tokens=200))
+    evaluator = EvaluatorAgent(TextGenerator(evaluator_config, max_tokens=2000))
 
     transcript: list[dict] = []
     scores: list[TurnScore] = []
@@ -89,6 +92,8 @@ def main() -> None:
 
         print(f"\n{'='*60}")
         print(f"Starting {NUM_TURNS}-turn playtester session")
+        print(f"Player model:    {player_config.label}")
+        print(f"Evaluator model: {evaluator_config.label}")
         print(f"{'='*60}\n")
 
         for turn_num in range(1, NUM_TURNS + 1):
@@ -137,7 +142,15 @@ def main() -> None:
 
         holistic = evaluator.holistic_summary(transcript, scores)
 
-        report_path = write_report(campaign_id, transcript, scores, holistic, BACKEND_URL)
+        report_path = write_report(
+            campaign_id,
+            transcript,
+            scores,
+            holistic,
+            BACKEND_URL,
+            player_config.label,
+            evaluator_config.label,
+        )
         print(f"\nReport saved: {report_path}")
         print("\n--- Holistic Summary Preview ---")
         preview_lines = holistic.splitlines()[:20]

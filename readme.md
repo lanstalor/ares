@@ -16,12 +16,12 @@ This README is the canonical spec and operations guide for Project Ares v1. It c
 - the operator workflows
 - the Codex CLI agent playbooks used to build and maintain the system
 
-**Current status (as of 2026-04-26):** The application is fully implemented and playable. All core phases — seed pipeline, GM engine, canon guard, consequence tracking, and the cinematic web UI — are complete. See `CLAUDE.md` for the precise implementation state and next engineering slices.
+**Current status (as of 2026-04-30):** The application is fully implemented and playable. All core phases — seed pipeline, GM engine, canon guard, consequence tracking, and the cinematic web UI — are complete. The playtester benchmark workflow is now implemented and configurable across OpenAI and Anthropic. The latest benchmark also showed that scene-stall and repetition remain active quality problems, so prompt tightening alone should not be treated as a complete fix. See `CLAUDE.md` and `docs/development/workstreams/playtester-prompt-pass.md` for the current implementation state and next engineering slices.
 
 ### Quick Start
 
 ```bash
-# 1. Copy .env.example to .env and fill in your Anthropic API key
+# 1. Copy .env.example to .env and fill in your provider API key(s)
 # 2. Start the full stack
 make compose-up
 
@@ -30,6 +30,17 @@ make compose-up
 ```
 
 On first run, click **Seed World Bible** in the Campaign Lattice panel to import `world_bible.md` into the database. Select the seeded campaign to enter live play mode.
+
+### Current Benchmark Note
+
+The first full OpenAI playtester benchmark lives at `tools/playtester/reports/2026-04-30-00-28.md`.
+
+High-level outcome:
+
+- the configurable playtester path works end-to-end on `openai:gpt-5.4-mini`
+- realism held up, but pacing quality did not
+- the worst scores were still `repetition` (`1.40`) and `flow` (`2.40`)
+- the next backend quality slice should focus on structural anti-stall safeguards, not more prompt-only polishing
 
 ---
 
@@ -724,7 +735,6 @@ Primary checks:
 
 The design should remain friendly to additional workflows such as:
 
-- playtest simulation agent
 - economy and inventory balance agent
 - accessibility reviewer
 - session recap editor
@@ -758,6 +768,21 @@ Purpose:
 
 - inspect current campaign state
 - review clocks and hidden agendas
+
+### Playtester Workflow
+
+Purpose:
+
+- simulate a full campaign session against the live backend
+- score per-turn realism, continuity, engagement, repetition, quality, and flow
+- produce a markdown report for editorial QA and prompt/system tuning
+
+Current implementation notes:
+
+- entrypoint: `python tools/playtester/run.py`
+- defaults to the repo provider settings, which currently resolve to OpenAI
+- supports overrides such as `ARES_PLAYTESTER_PROVIDER`, `ARES_PLAYTESTER_PLAYER_MODEL`, and `ARES_PLAYTESTER_EVALUATOR_MODEL`
+- writes timestamped reports under `tools/playtester/reports/`
 - verify canon-sensitive conditions
 - prepare the next play session
 
