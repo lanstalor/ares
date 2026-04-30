@@ -721,7 +721,7 @@ export default function App() {
   const shellMode = "live";
 
   return (
-    <div className={`app-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""}`}>
+    <div className={`app-shell frame-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""}`}>
       {devUiMode ? null : (
         <IntroOverlay
           activeSceneIndex={storySceneIndex}

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Share+Tech+Mono&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Share+Tech+Mono&family=VT323&display=swap");
 
 :root {
   --bg: #0b0f14;
@@ -3206,5 +3206,424 @@ textarea::-webkit-scrollbar-thumb {
 .sidebar-popout::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================================
+   UI OVERHAUL — PIXEL TERMINAL
+   Implements docs/layout.md golden-slice: outer chassis,
+   topbar, command line, scene viewport monitor, icon sidebar.
+   Asset hooks: every painted surface accepts a CSS-var image
+   override so PNG/SVG 9-slice can drop in without markup edits.
+   ============================================================ */
+
+:root {
+  /* Chassis palette */
+  --shell-bg: #07101a;
+  --shell-bevel-hi: #1a2a3a;
+  --shell-bevel-lo: #03070c;
+  --shell-rivet: #2a3540;
+  --module-bg: #0a1620;
+  --module-inset-hi: rgba(94, 166, 214, 0.10);
+  --module-inset-lo: rgba(0, 0, 0, 0.55);
+  --screen-bg: #050b12;
+
+  /* Tactical accents (semantic) */
+  --accent-tac-red: #c34a43;
+  --accent-tac-cyan: #5ea6d6;
+  --accent-tac-amber: #c8a24a;
+  --accent-tac-green: #63d485;
+
+  /* Layout grid */
+  --unit: 8px;
+  --unit-half: 4px;
+
+  /* Pixel display font for labels / tabs / metadata. Body text
+     keeps Chakra Petch via --font-display. */
+  --font-pixel: "VT323", "Share Tech Mono", monospace;
+}
+
+/* ----- Outer chassis (frame-shell) ----------------------- */
+
+.frame-shell {
+  background-image: var(--shell-frame-image, none);
+  position: relative;
+}
+
+.frame-shell::before {
+  /* Inner bevel — top/left highlight, bottom/right shadow */
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  border: 4px solid transparent;
+  border-top-color: var(--shell-bevel-hi);
+  border-left-color: var(--shell-bevel-hi);
+  border-right-color: var(--shell-bevel-lo);
+  border-bottom-color: var(--shell-bevel-lo);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.65),
+    inset 0 0 24px rgba(0, 0, 0, 0.55);
+  mix-blend-mode: normal;
+}
+
+.frame-shell::after {
+  /* Decorative rivets in each corner — radial gradients = cheap pixel hardware */
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background-image:
+    radial-gradient(circle at 14px 14px, var(--shell-rivet) 0 2.5px, transparent 3px),
+    radial-gradient(circle at calc(100% - 14px) 14px, var(--shell-rivet) 0 2.5px, transparent 3px),
+    radial-gradient(circle at 14px calc(100% - 14px), var(--shell-rivet) 0 2.5px, transparent 3px),
+    radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), var(--shell-rivet) 0 2.5px, transparent 3px);
+}
+
+/* Push real content inside the shell bevel so rivets + bevel never overlap layout */
+.frame-shell.app-shell {
+  padding: 14px 18px;
+}
+
+/* ----- Frame module primitive ---------------------------- */
+/* Used directly on .topbar overrides + sidebar rail/popout. */
+
+.frame-module {
+  position: relative;
+  background-color: var(--module-bg);
+  background-image: var(--module-frame-image, none);
+  border: 1px solid rgba(94, 166, 214, 0.22);
+  border-top: 2px solid var(--panel-accent, var(--accent-tac-cyan));
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 0 var(--module-inset-hi),
+    inset 0 -1px 0 var(--module-inset-lo),
+    inset 1px 0 0 var(--module-inset-hi),
+    inset -1px 0 0 var(--module-inset-lo),
+    0 4px 14px rgba(0, 0, 0, 0.55);
+  clip-path: none;
+}
+
+/* Pixel corner brackets — drawn with a single conic-gradient mask */
+.frame-module::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  pointer-events: none;
+  background:
+    /* TL */ linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) top left / 10px 1px no-repeat,
+    linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) top left / 1px 10px no-repeat,
+    /* TR */ linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) top right / 10px 1px no-repeat,
+    linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) top right / 1px 10px no-repeat,
+    /* BL */ linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) bottom left / 1px 10px no-repeat,
+    /* BR */ linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--panel-accent, var(--accent-tac-cyan)), var(--panel-accent, var(--accent-tac-cyan))) bottom right / 1px 10px no-repeat;
+  opacity: 0.85;
+}
+
+/* ----- Apply chassis to topbar --------------------------- */
+
+.frame-shell .topbar {
+  /* Override the clip-path notch + soft border from the legacy panel system */
+  clip-path: none;
+  border-radius: 2px;
+  border: 1px solid rgba(94, 166, 214, 0.22);
+  border-top: 2px solid var(--accent-tac-cyan);
+  background:
+    linear-gradient(180deg, rgba(94, 166, 214, 0.05), transparent 40%),
+    linear-gradient(180deg, var(--module-bg), #060d15);
+  box-shadow:
+    inset 0 1px 0 var(--module-inset-hi),
+    inset 0 -1px 0 var(--module-inset-lo),
+    0 4px 14px rgba(0, 0, 0, 0.55);
+  backdrop-filter: none;
+  padding: 10px 16px;
+}
+
+.frame-shell .topbar::before {
+  /* Drop the legacy top accent strip — chassis now owns the top edge */
+  display: none;
+}
+
+.frame-shell .topbar h1 {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 2.4rem;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  color: #e6f1ff;
+  text-shadow:
+    0 0 1px rgba(94, 166, 214, 0.55),
+    1px 1px 0 #000,
+    2px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.frame-shell .topbar-brand .eyebrow,
+.frame-shell .topbar-breadcrumb,
+.frame-shell .topbar-stat span {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  color: rgba(184, 200, 220, 0.7);
+}
+
+.frame-shell .topbar-stat strong {
+  font-family: var(--font-pixel);
+  font-size: 1.1rem;
+  color: #e0e9f3;
+}
+
+.frame-shell .topbar-tagline {
+  color: rgba(184, 200, 220, 0.55);
+}
+
+/* ----- Command line monitor housing (frame-cmd) ---------- */
+
+.frame-shell .input-panel.frame-cmd {
+  clip-path: none;
+  border-radius: 3px;
+  border: 1px solid rgba(195, 74, 67, 0.30);
+  border-top: 3px solid var(--accent-tac-red);
+  background:
+    linear-gradient(180deg, rgba(195, 74, 67, 0.05), transparent 35%),
+    linear-gradient(180deg, #0c1a26, #060d15);
+  box-shadow:
+    inset 0 1px 0 rgba(195, 74, 67, 0.18),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.8),
+    inset 2px 0 0 rgba(0, 0, 0, 0.45),
+    inset -2px 0 0 rgba(0, 0, 0, 0.45),
+    0 6px 22px rgba(0, 0, 0, 0.7);
+  padding: 14px 18px;
+  min-height: 78px;
+}
+
+.frame-shell .input-panel.frame-cmd::before {
+  /* Replace the existing thin accent — keep a stronger top stripe via border-top above */
+  display: none;
+}
+
+.frame-shell .input-panel.frame-cmd::after {
+  /* Corner rivets on the command housing */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 8px 8px, var(--shell-rivet) 0 2px, transparent 2.5px),
+    radial-gradient(circle at calc(100% - 8px) 8px, var(--shell-rivet) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 8px calc(100% - 8px), var(--shell-rivet) 0 2px, transparent 2.5px),
+    radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), var(--shell-rivet) 0 2px, transparent 2.5px);
+}
+
+.frame-shell .input-panel.frame-cmd:focus-within {
+  border-color: rgba(94, 166, 214, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(94, 166, 214, 0.35),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.8),
+    inset 2px 0 0 rgba(0, 0, 0, 0.45),
+    inset -2px 0 0 rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(94, 166, 214, 0.25),
+    0 0 22px rgba(94, 166, 214, 0.18),
+    0 6px 22px rgba(0, 0, 0, 0.7);
+}
+
+.frame-shell .input-panel.frame-cmd textarea {
+  font-family: var(--font-terminal);
+  caret-color: var(--accent-tac-cyan);
+}
+
+@keyframes frame-cmd-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.frame-shell .input-panel.frame-cmd .panel-label,
+.frame-shell .input-panel.frame-cmd .hint {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.12em;
+}
+
+/* Hardware-style execute button */
+.frame-shell .input-panel.frame-cmd button[type="submit"].frame-cmd-execute {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.22em;
+  font-size: 1.1rem;
+  min-width: 168px;
+  min-height: 48px;
+  background:
+    linear-gradient(180deg, #d65a52, #8e2e29);
+  color: #fff5e8;
+  border: 1px solid #2a0707;
+  border-radius: 2px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.55),
+    inset 2px 0 0 rgba(255, 255, 255, 0.08),
+    inset -2px 0 0 rgba(0, 0, 0, 0.45),
+    0 2px 0 #2a0707,
+    0 4px 12px rgba(0, 0, 0, 0.55);
+  transition: transform 60ms ease, box-shadow 60ms ease;
+}
+
+.frame-shell .input-panel.frame-cmd button[type="submit"].frame-cmd-execute:hover {
+  background: linear-gradient(180deg, #e26a62, #9c352f);
+}
+
+.frame-shell .input-panel.frame-cmd button[type="submit"].frame-cmd-execute:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 2px 0 rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+    0 0 0 #2a0707,
+    0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+/* ----- Scene viewport monitor bezel (frame-screen) ------- */
+
+.frame-shell .scene-backdrop-panel.frame-screen {
+  clip-path: none;
+  border-radius: 3px;
+  border: 1px solid rgba(94, 166, 214, 0.25);
+  border-top: 2px solid color-mix(in srgb, var(--scene-accent) 80%, var(--accent-tac-cyan));
+  background:
+    linear-gradient(180deg, var(--screen-bg), #02060a);
+  box-shadow:
+    inset 0 0 0 4px #0a1018,
+    inset 0 0 0 5px rgba(94, 166, 214, 0.18),
+    inset 0 1px 0 rgba(94, 166, 214, 0.20),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.85),
+    0 6px 22px rgba(0, 0, 0, 0.6);
+  padding: 8px;
+}
+
+.frame-shell .scene-backdrop-panel.frame-screen::before {
+  display: none;
+}
+
+.frame-shell .scene-backdrop-panel.frame-screen::after {
+  /* Subtle scanlines over the viewport interior */
+  content: "";
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.18) 0,
+    rgba(0, 0, 0, 0.18) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* ----- Icon sidebar — folded into chassis ---------------- */
+
+.frame-shell .sidebar-icon-rail.frame-module {
+  clip-path: none;
+  border-radius: 2px;
+  border: 1px solid rgba(200, 162, 74, 0.28);
+  border-top: 2px solid var(--accent-tac-amber);
+  background:
+    linear-gradient(180deg, rgba(200, 162, 74, 0.06), transparent 30%),
+    linear-gradient(180deg, var(--module-bg), #050a10);
+  box-shadow:
+    inset 0 1px 0 rgba(200, 162, 74, 0.18),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.7),
+    inset 2px 0 0 rgba(0, 0, 0, 0.45),
+    inset -2px 0 0 rgba(0, 0, 0, 0.45),
+    0 4px 14px rgba(0, 0, 0, 0.55);
+  padding: 8px 6px;
+}
+
+.frame-shell .sidebar-icon-rail.frame-module::before {
+  display: none;
+}
+
+.frame-shell .sidebar-icon-rail.frame-module::after {
+  /* Top + bottom rivets on the rail */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 6px, var(--shell-rivet) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 50% calc(100% - 6px), var(--shell-rivet) 0 2px, transparent 2.5px);
+}
+
+.frame-shell .sidebar-icon-btn.frame-chip {
+  font-family: var(--font-pixel);
+  background: linear-gradient(180deg, #0e1a26, #060c12);
+  border: 1px solid rgba(94, 166, 214, 0.20);
+  border-radius: 2px;
+  color: rgba(200, 215, 232, 0.78);
+  box-shadow:
+    inset 0 1px 0 rgba(94, 166, 214, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  transition: transform 60ms ease, box-shadow 60ms ease, color 100ms ease, border-color 100ms ease;
+}
+
+.frame-shell .sidebar-icon-btn.frame-chip:hover {
+  color: #e0eaf4;
+  border-color: rgba(94, 166, 214, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(94, 166, 214, 0.22),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.7);
+}
+
+.frame-shell .sidebar-icon-btn.frame-chip.is-active {
+  color: var(--accent-tac-amber);
+  border-color: rgba(200, 162, 74, 0.55);
+  background: linear-gradient(180deg, #1a1408, #0a0804);
+  box-shadow:
+    inset 0 1px 0 rgba(200, 162, 74, 0.25),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.75),
+    -2px 0 0 rgba(200, 162, 74, 0.55);
+}
+
+.frame-shell .sidebar-popout.frame-module {
+  position: absolute;
+  clip-path: none;
+  border-radius: 2px 0 0 2px;
+  border: 1px solid rgba(200, 162, 74, 0.28);
+  border-right: none;
+  border-top: 2px solid var(--accent-tac-amber);
+  background:
+    linear-gradient(180deg, rgba(200, 162, 74, 0.04), transparent 22%),
+    linear-gradient(180deg, var(--module-bg), #050a10);
+  box-shadow:
+    inset 0 1px 0 rgba(200, 162, 74, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.7),
+    inset 2px 0 0 rgba(0, 0, 0, 0.45),
+    -8px 0 32px rgba(0, 0, 0, 0.65);
+}
+
+.frame-shell .sidebar-popout.frame-module::before,
+.frame-shell .sidebar-popout.frame-module::after {
+  display: none;
+}
+
+/* ----- Hierarchy: fade older feed entries ---------------- */
+
+.frame-shell .turn-feed-scroll .turn-item {
+  opacity: 0.78;
+  transition: opacity 200ms ease;
+}
+
+.frame-shell .turn-feed-scroll .turn-item:nth-last-child(-n+2) {
+  opacity: 1;
+}
+
+.frame-shell .turn-feed-scroll .turn-item:nth-last-child(n+6) {
+  opacity: 0.55;
+}
+
+/* ----- Wordmark slot for later asset drop-in ------------- */
+
+.frame-shell .topbar-brand h1 {
+  background-image: var(--ares-wordmark, none);
 }
 

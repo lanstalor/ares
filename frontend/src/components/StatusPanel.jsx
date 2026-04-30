@@ -187,11 +187,11 @@ export function StatusPanel({ campaignState, healthStatus, memories, selectedCam
 
   return (
     <aside className="status-stack">
-      <nav className="sidebar-icon-rail">
+      <nav className="sidebar-icon-rail frame-module">
         {TABS.map((tab) => (
           <button
             key={tab.id}
-            className={`sidebar-icon-btn${activeTab === tab.id ? ' is-active' : ''}`}
+            className={`sidebar-icon-btn frame-chip${activeTab === tab.id ? ' is-active' : ''}`}
             onClick={() => handleTabClick(tab.id)}
             title={tab.label}
             type="button"
@@ -201,7 +201,7 @@ export function StatusPanel({ campaignState, healthStatus, memories, selectedCam
         ))}
       </nav>
       {activeTab && (
-        <div className="sidebar-popout">
+        <div className="sidebar-popout frame-module">
           {activeTab === 'character' && (
             <CharacterPanel playerCharacter={campaignState?.player_character} />
           )}

@@ -147,7 +147,7 @@ export function SceneBackdrop({ campaignState, currentLocation, objective, scene
   const playerCharacter = campaignState?.player_character;
 
   return (
-    <section className={`scene-backdrop-panel tone-${sceneTone}`}>
+    <section className={`scene-backdrop-panel frame-screen tone-${sceneTone}`}>
       <div className="scene-tabs" role="tablist" aria-label="Scene display mode">
         {TABS.map((tab) => (
           <button

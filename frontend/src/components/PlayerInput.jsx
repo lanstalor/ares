@@ -23,7 +23,7 @@ export function PlayerInput({
   };
 
   return (
-    <form className="input-panel" onSubmit={handleSubmit}>
+    <form className="input-panel frame-cmd" onSubmit={handleSubmit}>
       <div className="input-terminal-bar">
         <label className="panel-label" htmlFor="player-input">
           Command line
@@ -55,7 +55,7 @@ export function PlayerInput({
           rows={1}
           value={value}
         />
-        <button disabled={disabled || isSubmitting || !value.trim()} type="submit">
+        <button className="frame-cmd-execute" disabled={disabled || isSubmitting || !value.trim()} type="submit">
           {isSubmitting ? "Transmitting..." : "Execute"}
         </button>
       </div>
