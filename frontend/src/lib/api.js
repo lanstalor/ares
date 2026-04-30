@@ -73,6 +73,10 @@ export function submitClarification(campaignId, payload) {
   }, "Clarification request failed");
 }
 
+export function fetchMemories(campaignId, limit = 5) {
+  return request(`/campaigns/${campaignId}/memories?limit=${limit}`, {}, "Memory fetch failed");
+}
+
 export function seedWorldBible(payload = {}) {
   return request("/seed/world-bible", {
     method: "POST",

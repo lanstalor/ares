@@ -5,8 +5,10 @@ import { IntroOverlay } from "./components/IntroOverlay";
 import { ParticipantStrip } from "./components/ParticipantStrip";
 import { PlayerInput } from "./components/PlayerInput";
 import { SceneBackdrop } from "./components/SceneBackdrop";
+import { StatusPanel } from "./components/StatusPanel";
 import { TurnFeed } from "./components/TurnFeed";
 import {
+  fetchMemories,
   getCampaignState,
   getHealth,
   getSystemStatus,
@@ -17,6 +19,7 @@ import {
 } from "./lib/api";
 import { createDevUiSnapshot, DEV_UI_QUERY, DEV_UI_ROUTE, isDevUiMode } from "./lib/devUiFixture";
 import { UNIVERSAL_STORY_SCENES } from "./lib/introContent";
+import { deriveShellReadiness } from "./lib/readiness";
 import { buildActionPresets, buildSceneParticipants, deriveSceneTone } from "./lib/uiTheme";
 
 const STORY_SCENE_DURATION_MS = 5400;
@@ -127,6 +130,14 @@ async function fetchShellSnapshot() {
 
 async function fetchCampaignSnapshot(campaignId) {
   return Promise.all([getCampaignState(campaignId), listTurns(campaignId)]);
+}
+
+async function fetchCampaignMemories(campaignId) {
+  try {
+    return await fetchMemories(campaignId, 10);
+  } catch {
+    return [];
+  }
 }
 
 function getAudioContextConstructor() {
@@ -277,6 +288,7 @@ export default function App() {
       return Array.isArray(parsed) ? parsed : [];
     } catch { return []; }
   });
+  const [memories, setMemories] = useState([]);
   const [isClarifySidebarOpen, setIsClarifySidebarOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [presentationStage, setPresentationStage] = useState(() => {
@@ -491,6 +503,10 @@ export default function App() {
           ...current,
           [selectedCampaignId]: normalizePersistedTurns(turnHistory),
         }));
+        const campaignMemories = await fetchCampaignMemories(selectedCampaignId);
+        if (isMounted) {
+          setMemories(campaignMemories);
+        }
         setErrorMessage("");
       } catch (error) {
         if (!isMounted) return;
@@ -514,6 +530,7 @@ export default function App() {
   const selectedCampaign = campaigns.find((campaign) => campaign.id === selectedCampaignId) ?? null;
   const turns = buildCampaignTurns(selectedCampaign, campaignState, turnHistoryByCampaign);
   const shellStatusText = buildShellStatusText(loadingShell, healthStatus);
+  const shellReadiness = deriveShellReadiness({ healthStatus, systemStatus, campaigns, lastSeedResult: null });
   const inferredSceneTone = deriveSceneTone({ campaignState, selectedCampaign, turns });
   const sceneTone = manualSceneTone === "auto" ? inferredSceneTone : manualSceneTone;
   const participants = buildSceneParticipants({ campaignState, gmSceneParticipants, selectedCampaign, sceneTone });
@@ -594,6 +611,8 @@ export default function App() {
           )
         ));
       }
+      const updatedMemories = await fetchCampaignMemories(selectedCampaign.id);
+      setMemories(updatedMemories);
       setInputValue("");
     } catch (error) {
       setTurnHistoryByCampaign((current) => ({
@@ -809,6 +828,15 @@ export default function App() {
             value={inputValue}
           />
         </section>
+
+        <StatusPanel
+          campaignState={campaignState}
+          healthStatus={healthStatus}
+          memories={memories}
+          selectedCampaign={selectedCampaign}
+          shellReadiness={shellReadiness}
+          systemStatus={systemStatus}
+        />
       </main>
 
       <ClarifySidebar

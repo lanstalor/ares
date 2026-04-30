@@ -107,6 +107,7 @@ function ReadinessPanel({ shellReadiness }) {
 export function StatusPanel({
   campaignState,
   healthStatus,
+  memories,
   selectedCampaign,
   shellReadiness,
   systemStatus,
@@ -180,6 +181,25 @@ export function StatusPanel({
           ))}
         </dl>
       </section>
+
+      {memories && memories.length > 0 ? (
+        <section className="status-panel">
+          <div className="panel-chrome">
+            <div>
+              <p className="eyebrow">Campaign Log</p>
+              <h2>Memories</h2>
+            </div>
+            <span className="panel-chip">{memories.length}</span>
+          </div>
+          <ul className="status-memory-list">
+            {memories.map((memory) => (
+              <li key={memory.id} className="status-memory-item">
+                {memory.content}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </aside>
   );
 }
