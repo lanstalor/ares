@@ -135,6 +135,10 @@ def _insert_npcs(session: Session, npcs, faction_ids: dict[str, str]) -> int:
         npc.personality = npc_seed.personality
         npc.hidden_agenda = npc_seed.hidden_agenda
         npc.visibility = npc_seed.visibility
+        npc.level = npc_seed.level
+        npc.max_hp = npc_seed.max_hp
+        if npc_seed.max_hp is not None and npc.current_hp is None:
+            npc.current_hp = npc_seed.max_hp
         count += 1
     return count
 

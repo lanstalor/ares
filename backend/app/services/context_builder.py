@@ -185,11 +185,19 @@ def _render_hidden_gm_brief(
             if secret.reveal_condition:
                 entry += f" (Condition: {secret.reveal_condition})"
             lines.append(entry)
-    npc_lines = [
-        f"  - {npc.name}: {npc.hidden_agenda}"
-        for npc in scene_npcs
-        if npc.hidden_agenda
-    ]
+    npc_lines = []
+    for npc in scene_npcs:
+        if not npc.hidden_agenda:
+            continue
+        stat_parts: list[str] = []
+        if npc.level is not None:
+            stat_parts.append(f"level {npc.level}")
+        if npc.current_hp is not None and npc.max_hp is not None:
+            stat_parts.append(f"HP {npc.current_hp}/{npc.max_hp}")
+        elif npc.max_hp is not None:
+            stat_parts.append(f"HP {npc.max_hp}/{npc.max_hp}")
+        stat_str = f" [{', '.join(stat_parts)}]" if stat_parts else ""
+        npc_lines.append(f"  - {npc.name}{stat_str}: {npc.hidden_agenda}")
     if npc_lines:
         lines.append("NPCs in scene with hidden agendas:")
         lines.extend(npc_lines)
