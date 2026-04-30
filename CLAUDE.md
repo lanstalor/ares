@@ -14,30 +14,23 @@ This is **not** a chatbot wrapper. The value is in the hidden-state engine: cloc
 
 ## Latest Session Summary
 
-Date: 2026-04-26
+Date: 2026-04-30
 
-### GM Clarify sidebar + narrative feed quality pass
+### Full consequence pipeline + UI design plan
 
-**GM Clarify sidebar (`feat-7-gm-clarify-sidebar` → merged to main):**
-- Backend `POST /api/v1/campaigns/{id}/clarify` endpoint — non-persisted, no state mutation.
-- `ClarifySidebar` React component: markdown rendering (paragraphs, headings, lists, bold/italic), ESC closes, `?` topbar button.
-- Fixed sidebar header scroll bug: `--topbar-height` CSS variable was never defined; added ResizeObserver in `App.jsx` to set it dynamically from the actual topbar element.
-- Clarify system prompt rewritten: no markdown headers, no chatbot-style endings ("What would you like to do?"), brevity-first, 2–3 sentence target for simple questions.
+**Delivered (all merged to main):**
+- Backend NPC stats: `level`, `current_hp`, `max_hp` on NPC model; HP parsed from world_bible Stats lines; emitted in `scene_participants` tool response
+- Objective updates: GM can complete/create objectives via `consequences.objective_updates` in the tool call
+- Memory rendering: `GET /api/v1/campaigns/{id}/memories` endpoint + "Campaign Log" section in StatusPanel (player_facing only)
+- Live stat patching: `mergeParticipants` in App.jsx now patches level/HP/disposition per turn without a full refresh
+- Secret reveal display: purple in-feed `system-secret` event when a secret flips to `revealed`; threaded through ConsequenceResult → TurnResolution → frontend
+- Automated playtester: `tools/playtester/run.py` — 30-turn simulation, PlayerAgent + EvaluatorAgent (6 UX dimensions) + holistic report to `tools/playtester/reports/`; Codex refactored to use `llm.py` with OpenAI default
+- UI design plan: see `docs/development/workstreams/ui-design-pass.md` — two-phase (CSS structure slots now, generated assets later)
 
-**Narrative feed rendering:**
-- GM turn text now splits on `\n\n` into separate `<p>` elements inside a `.turn-body` div — multi-paragraph responses render as readable prose, not a wall of text.
-- `renderText` → `renderInline` refactor: handles `**bold**`, `*italic*`, `[Caste]"quote"` (caste color), and plain `"quote"` (neutral italic) inline within each paragraph.
-- Dialogue coloring fixed: only `[Caste]"..."` tagged lines get a caste color; plain quotes are neutral italic. The old `.turn-dialogue-gm` gold class is removed.
-
-**GM system prompt improvements:**
-- Pacing discipline: calibrate length to action scope; don't re-establish ambient facts.
-- Anti-filler rule: stacked atmospheric sentences ("The station hums… Jupiter hangs…") are explicitly banned unless they advance action, tension, character, or information.
-- Sentence rhythm: vary length fluidly; not uniform staccato, not uniform purple prose.
-- Naming conventions: Gold `au`, Copper `cu`, Silver `si`, Gray `te`, Red `ne`, Blue `de`, Obsidian `ka`. "Ares" banned as a family name.
-- Clarify prompt: brevity-first, no headers, no chatbot endings.
-
-**Canon fix:**
-- Player character renamed **Davan o' Tharsis** (correct lowRed apostrophe convention, like Darrow o' Lykos) in `world_bible.md`, all DB rows, and tests.
+**Agent worktree gotchas (learned this session):**
+- Background agents with `isolation: "worktree"` do NOT auto-commit. After each agent completes, `cd` into the worktree path, stage, commit, then merge back to main.
+- Worktree agents can also modify the main working tree (e.g., via Playwright screenshots). If so, commit directly on main instead of merging from the worktree branch.
+- `master-plan.md` is co-maintained by Codex — treat as shared, always check `git log` before editing.
 
 **How to use next session:**
 - Use `make compose-up` for the full stack (postgres + backend at 8000 + frontend at 5180 via Docker). **Always test at 5180**, not the standalone Vite dev server at 5173/5174.
@@ -45,12 +38,7 @@ Date: 2026-04-26
 - Frontend Docker image must be rebuilt after source changes: `docker compose up --build --no-deps -d frontend`.
 - Backend Docker image must also be rebuilt after source changes: `docker compose up --build --no-deps -d backend`. `--no-deps -d` alone does NOT rebuild — source changes (prompts, routes, services) will be silently ignored.
 
-**What's next (priority order from master plan):**
-1. Backend NPC stats — emit `level`, `current_hp`/`max_hp`, `disposition` from turn engine into `scene_participants`; replace mock fallback in `buildSceneParticipants`.
-2. Live stat patching after turns — patch participant HP/disposition from `TurnResolution` without full refresh.
-3. Memory rendering — surface player-relevant memories in the status panel or feed.
-4. Secret reveal display — in-feed event when a sealed secret becomes player-facing.
-5. Update the active objective from GM responses — currently stuck at "Check the Melt before shift" across 34 turns.
+**What's next:** See `docs/development/master-plan.md` — UI design CSS pass (Phase 1) is first.
 
 ---
 
@@ -77,14 +65,18 @@ Date: 2026-04-26
 
 ## Implementation Status
 
-All core phases are complete and playable as of 2026-04-25.
+All core phases are complete and playable as of 2026-04-30.
 
 - **Seed pipeline**: `world_bible.md` → parser → seed_service → DB (18 factions, 24 areas, 25 POIs, 11 NPCs, 30 secrets, 1 character)
 - **GM engine**: `turn_engine.py` → context assembly → Anthropic (claude-haiku-4-5) → structured tool response → consequence application → `TurnResolution`
 - **Canon guard**: blocks forbidden characters (Darrow, Eo, Cassius, Virginia, Mustang), impossible tech, tonal drift
-- **Consequence feedback**: location changes and fired clocks surface in the turn feed as styled system events
+- **Consequence feedback**: location changes, fired clocks, and revealed secrets surface in the turn feed as styled system events (`system-location`, `system-clock`, `system-secret`)
+- **Objective updates**: GM can complete active objectives and create new ones via `consequences.objective_updates`
+- **Memory rendering**: `GET /api/v1/campaigns/{id}/memories` (player_facing only) + StatusPanel Campaign Log section
+- **NPC stats**: `level`, `current_hp`, `max_hp` on NPC model; emitted in `scene_participants` per turn; live-patched in frontend without full refresh
+- **Automated playtester**: `tools/playtester/run.py` — 30-turn simulation with UX scoring; reports in `tools/playtester/reports/`
 - **Web UI**: React, retro terminal aesthetic, `turn-${speaker}` CSS class pattern for turn styling
-- **62 backend tests passing** (`make backend-test`)
+- **70 backend tests passing** (`make backend-test`)
 
 ---
 
@@ -106,9 +98,11 @@ All core phases are complete and playable as of 2026-04-25.
 | `services/seed_runtime.py` | Inserts seed bundle into the database, idempotent |
 | `services/provider_registry.py` | Returns correct `NarrationProvider` based on `ARES_GENERATION_PROVIDER` |
 | `api/routes/turns.py` | `POST /api/v1/campaigns/{id}/turns` — the live turn endpoint |
-| `api/routes/seed.py` | `POST /api/v1/seed/world-bible` — operator seed trigger |
+| `api/routes/memories.py` | `GET /api/v1/campaigns/{id}/memories` — player_facing memories only |
+| `api/routes/seed.py` | `POST /api/v1/seed/world-bible` — creates campaign + seeds world in one call, returns `campaign_id` |
 | `api/routes/campaigns.py` | Campaign CRUD |
-| `api/routes/system.py` | Health + system status |
+| `api/routes/system.py` | Health (`/api/v1/health`) + system status |
+| `schemas/memory.py` | `MemoryRead` Pydantic schema |
 | `db/bootstrap.py` | `bootstrap_database()` — idempotent schema init, safe alongside Alembic |
 
 ### Frontend (`frontend/src/`)
@@ -122,7 +116,7 @@ All core phases are complete and playable as of 2026-04-25.
 | `components/TurnFeed.jsx` | Renders the turn list; no speaker-specific logic, uses CSS class pattern |
 | `components/PlayerInput.jsx` | Text input + submit |
 | `components/CampaignConsole.jsx` | Campaign selector, seed button, create form |
-| `components/StatusPanel.jsx` | Character state, location, active objective |
+| `components/StatusPanel.jsx` | Character state, location, active objective, Campaign Log (memories) |
 | `components/ParticipantStrip.jsx` | Scene Presence cards + per-character modal (level, HP, disposition) |
 | `components/IntroOverlay.jsx` | First-time player onboarding overlay |
 
@@ -215,23 +209,23 @@ Four states used throughout the codebase (`app/core/enums.py`):
 ## Architecture Invariants
 
 - **Turn loop is synchronous per campaign.** No concurrent turns for the same campaign ID.
-- **`TurnResolution`** is the return type of `turn_engine.submit_turn()`. It carries `canon_guard_passed`, `clocks_fired`, `location_changed_to`, `context_excerpt`, and the persisted `turn` record.
-- **Consequence events in the feed** use speaker values `system-location` and `system-clock` — these map to CSS classes `.turn-system-location` and `.turn-system-clock` without any conditional logic in `TurnFeed.jsx`.
+- **`TurnResolution`** carries `canon_guard_passed`, `clocks_fired`, `location_changed_to`, `revealed_secrets`, `context_excerpt`, `suggested_actions`, `scene_participants`, and the persisted `turn` record.
+- **Consequence events in the feed** use speaker values `system-location`, `system-clock`, `system-secret` — these map to CSS classes without any conditional logic in `TurnFeed.jsx`.
+- **`ConsequenceResult`** carries `revealed_secrets: list[dict]` — populated when a secret's `new_status == REVEALED`. Each entry has `label` and `content`.
+- **Health endpoint** is `/api/v1/health` — not `/api/v1/system/health`.
+- **`POST /api/v1/seed/world-bible`** creates the campaign AND seeds world state in one call — returns `campaign_id`. No separate `POST /api/v1/campaigns` needed.
 - **`bootstrap_database()`** is idempotent and Alembic-compatible. Do not replace it with bare `Base.metadata.create_all()`.
 - **Alembic** manages schema migrations. After any model change: write a migration (`alembic revision --autogenerate -m "..."`) and run `make migrate`.
 
 ---
 
-## What's Next (as of 2026-04-26)
+## What's Next (as of 2026-04-30)
 
-UI is now the canonical game shell. Core loop is fully playable. Next engineering slices in priority order:
+Core loop is fully playable. UI design pass is next. See `docs/development/master-plan.md` for current priorities.
 
-1. **GM clarify sidebar chat** — add a `?` entry point in the live shell that opens a non-persisted GM sidebar conversation. The backend endpoint should explain the current story plainly, break the fourth wall if needed, and must not create a turn or mutate campaign state.
-2. **Backend NPC stats** — emit `level`, `current_hp`/`max_hp`, and `disposition` per scene participant from the turn engine. `buildSceneParticipants` already has the hook; just replace mock fallback with real values. Disposition must be player-facing read (from observable NPC behavior), not sealed GM intent.
-3. **Live stat patching after turns** — patch `participant.hp` and `participant.disposition` from `TurnResolution` without a full refresh, mirroring how `clocks_fired` and `location_changed_to` already surface as feed events.
-4. **Memory rendering** — surface player-relevant turn memories in the status panel or turn feed
-5. **Secret reveal display** — show an in-feed event when a sealed secret becomes player-facing
-6. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session
-7. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction
+1. **UI design CSS pass (Phase 1)** — panel enclosure system, corner markers, turn card frames, column separators. Pure CSS, no assets required. See `docs/development/workstreams/ui-design-pass.md`.
+2. **UI asset generation (Phase 2)** — scene art (5 locations), caste icons (7 SVGs), panel corner piece, grain texture, ARES wordmark. All slot into existing `frontend/public/chrome/` and `scene-art/` paths without markup changes.
+3. **Session prep CLI workflow** — operator command to inspect clock state, NPC agendas, and reveal candidates before a play session.
+4. **Post-session continuity review** — operator workflow to audit generated memories for drift or contradiction.
 
 Do not build Phase 5 items (multiplayer, admin dashboard, map UI) until the items above are solid.
