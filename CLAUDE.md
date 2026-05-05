@@ -22,9 +22,9 @@ Date: 2026-05-05
 - A1 Dice + Skill Check Primitive: `track-a/A1-dice-skill-checks`, draft PR #10.
   - Tasks 1-12 are implemented.
   - `ARES_ENABLE_DICE` defaults off.
-  - Backend response path is complete: conditional Anthropic tool schema/prompt, typed `Roll`, `TurnEngineResult.rolls`, API `TurnResolution.rolls`.
+  - Backend response path is complete: conditional Anthropic/OpenAI tool schema/prompt, typed `Roll`, `TurnEngineResult.rolls`, API `TurnResolution.rolls`.
   - Frontend path is complete: `system-roll` consequence events, Skill Check avatar, amber/copper styling.
-  - Verified after rebasing onto updated `origin/main`: `PYTHONPATH=backend /home/lans/ares/backend/.venv/bin/pytest backend/tests -q` (85 passed), `make check`, and `npm run build`.
+  - Verified after rebasing onto updated `origin/main`: `PYTHONPATH=backend /home/lans/ares/backend/.venv/bin/pytest backend/tests -q` (87 passed), `make check`, and `npm run build`.
   - Still pending before marking PR #10 ready: Docker/5180 smoke with `ARES_ENABLE_DICE=true`, Playwright screenshot saved under `assets/samples/ui-iteration/`, optional playtester regression.
 - B1 MediaProvider abstraction: `track-b/B1-media-provider`, draft PR #11.
   - Implemented `MediaProvider`, `StubMediaProvider`, `OpenAIImageProvider`, `ReplicateImageProvider`, `get_media_provider()`, `ARES_MEDIA_PROVIDER`, `ARES_MEDIA_MODEL`, and `/system/status` media fields.
@@ -46,7 +46,7 @@ Date: 2026-05-05
 2. If clean and ahead/behind after rebase, push with `git push --force-with-lease`.
 3. Start full stack at 5180 with `ARES_ENABLE_DICE=true`.
 4. Submit an action that should call for a check, e.g. "I lie to the Copper about my ident-papers."
-5. Confirm a `system-roll` event appears in the turn feed and capture the required Playwright screenshot.
+5. Confirm a `system-roll` event appears in the turn feed and capture the required Playwright screenshot. The live Docker env at this checkpoint used `ARES_GENERATION_PROVIDER=openai`, so OpenAI dice wiring is required and present.
 6. Update `docs/development/workstreams/A1-dice-skill-checks.md`, then mark PR #10 ready if smoke passes.
 
 Date: 2026-04-30 (continued)

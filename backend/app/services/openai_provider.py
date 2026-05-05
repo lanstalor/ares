@@ -16,8 +16,9 @@ from app.services.consequence_applier import (
 _TOOL_NAME = "record_turn"
 
 # Re-use the same system prompt text from the Anthropic provider
-from app.services.anthropic_provider import _SYSTEM_PROMPT, _CLARIFY_SYSTEM_PROMPT, _TOOL_SCHEMA
-from app.services.anthropic_provider import _format_user_message, _build_response
+from app.services.anthropic_provider import _CLARIFY_SYSTEM_PROMPT
+from app.services.anthropic_provider import _build_response, _format_user_message
+from app.services.anthropic_provider import build_system_prompt, build_tool_schema
 
 
 class OpenAINarrationProvider:
@@ -27,12 +28,14 @@ class OpenAINarrationProvider:
         client: Any | None = None,
         model: str = "gpt-5.4-mini",
         max_tokens: int = 4096,
+        enable_dice: bool = False,
     ) -> None:
         if not model:
             raise ValueError("OpenAINarrationProvider requires a non-empty model.")
         self._client = client
         self._model = model
         self._max_tokens = max_tokens
+        self._enable_dice = enable_dice
 
     def _get_client(self) -> Any:
         if self._client is None:
@@ -42,14 +45,15 @@ class OpenAINarrationProvider:
 
     def narrate(self, request: NarrationRequest) -> NarrationResponse:
         client = self._get_client()
+        tool_schema = build_tool_schema(enable_dice=self._enable_dice)
 
         # Convert Anthropic tool schema to OpenAI function schema
         tool = {
             "type": "function",
             "function": {
-                "name": _TOOL_SCHEMA["name"],
-                "description": _TOOL_SCHEMA["description"],
-                "parameters": _TOOL_SCHEMA["input_schema"],
+                "name": tool_schema["name"],
+                "description": tool_schema["description"],
+                "parameters": tool_schema["input_schema"],
             },
         }
 
@@ -57,7 +61,7 @@ class OpenAINarrationProvider:
             model=self._model,
             max_completion_tokens=self._max_tokens,
             messages=[
-                {"role": "system", "content": _SYSTEM_PROMPT},
+                {"role": "system", "content": build_system_prompt(enable_dice=self._enable_dice)},
                 {"role": "user", "content": _format_user_message(request)},
             ],
             tools=[tool],

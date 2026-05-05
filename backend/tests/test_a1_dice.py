@@ -302,3 +302,54 @@ def test_turns_endpoint_returns_rolls(monkeypatch) -> None:
     response = create_turn(campaign.id, TurnCreate(player_input="hold the line"), session)
     assert response.rolls[0]["attribute"] == "will"
     assert response.rolls[0]["outcome"] == "success"
+
+
+def test_openai_provider_passes_enable_dice_to_schema_and_prompt() -> None:
+    from types import SimpleNamespace
+
+    from app.services.openai_provider import OpenAINarrationProvider
+
+    captured: dict = {}
+
+    class Completions:
+        def create(self, **kwargs):
+            captured.update(kwargs)
+            message = SimpleNamespace(
+                content=None,
+                tool_calls=[
+                    SimpleNamespace(
+                        function=SimpleNamespace(
+                            name="record_turn",
+                            arguments='{"narrative":"n","player_safe_summary":"s","consequences":{},"suggested_actions":[{"label":"A","prompt":"do A"},{"label":"B","prompt":"do B"},{"label":"C","prompt":"do C"}],"scene_participants":[]}',
+                        )
+                    )
+                ],
+            )
+            return SimpleNamespace(choices=[SimpleNamespace(message=message)])
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    provider = OpenAINarrationProvider(client=client, enable_dice=True)
+    provider.narrate(
+        NarrationRequest(
+            campaign_name="x",
+            current_date_pce=728,
+            player_input="probe",
+            player_safe_brief="b",
+            hidden_gm_brief="h",
+        )
+    )
+
+    properties = captured["tools"][0]["function"]["parameters"]["properties"]
+    assert "rolls" in properties
+    assert "skill check" in captured["messages"][0]["content"].lower()
+
+
+def test_registry_passes_enable_dice_to_openai_provider() -> None:
+    from app.services.openai_provider import OpenAINarrationProvider
+    from app.services.provider_registry import get_narration_provider
+
+    provider = get_narration_provider("openai", "gpt-test", enable_dice=True)
+
+    assert isinstance(provider, OpenAINarrationProvider)
+    assert provider._model == "gpt-test"
+    assert provider._enable_dice is True

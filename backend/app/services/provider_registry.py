@@ -15,6 +15,8 @@ def get_narration_provider(
             kwargs["model"] = model
         return AnthropicNarrationProvider(**kwargs)
     if provider_name == "openai":
-        kwargs = {"model": model} if model else {}
+        kwargs = {"enable_dice": enable_dice}
+        if model:
+            kwargs["model"] = model
         return OpenAINarrationProvider(**kwargs)
     return NullNarrationProvider()
