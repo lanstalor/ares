@@ -285,6 +285,24 @@ Rules:
 """
 
 
+_DICE_PROMPT_ADDENDUM = """
+
+Skill checks (dice):
+- Some player actions warrant a Red Rising attribute check. Call for one ONLY when the outcome is genuinely uncertain or under pressure: opposed will, deception, infiltration, lifting under load, threading a dataspike, etc. Do not call for a roll on routine narration, dialogue, or movement.
+- Available attributes: strength, cunning, will, charm, tech.
+- For each check, emit one entry in the rolls array with attribute, target (8 trivial / 12 average / 15 hard / 18+ heroic), dice_total (the resolved total — be honest, do not always favour the player), outcome (critical_success / success / failure / critical_failure), and narration (one short sentence flavouring the result).
+- The narrative you produce must align with the roll outcome — failed rolls land as cost, complication, or partial success. Do not narrate success when the roll failed.
+- Never explain dice mechanics in the narrative. The roll record is structural; the narrative is fiction.
+- Maximum 3 rolls per turn. Most turns should have zero.
+"""
+
+
+def build_system_prompt(*, enable_dice: bool = False) -> str:
+    if enable_dice:
+        return _SYSTEM_PROMPT + _DICE_PROMPT_ADDENDUM
+    return _SYSTEM_PROMPT
+
+
 class AnthropicNarrationProvider:
     def __init__(
         self,
@@ -315,7 +333,7 @@ class AnthropicNarrationProvider:
             system=[
                 {
                     "type": "text",
-                    "text": _SYSTEM_PROMPT,
+                    "text": build_system_prompt(enable_dice=self._enable_dice),
                     "cache_control": {"type": "ephemeral"},
                 }
             ],

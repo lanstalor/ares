@@ -1121,6 +1121,22 @@ textarea::-webkit-scrollbar-thumb {
   color: #c084fc;
 }
 
+.turn-system-roll {
+  border-left-color: var(--accent-tac-amber);
+  background: rgba(241, 190, 88, 0.06);
+}
+
+.turn-system-roll .turn-meta {
+  color: var(--accent-tac-amber);
+}
+
+.turn-system-roll .turn-body {
+  font-family: "VT323", monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--accent-tac-amber);
+}
+
 .turn-location {
   color: var(--muted);
   font-size: 0.84rem;
@@ -3626,4 +3642,3 @@ textarea::-webkit-scrollbar-thumb {
 .frame-shell .topbar-brand h1 {
   background-image: var(--ares-wordmark, none);
 }
-

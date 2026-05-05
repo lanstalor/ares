@@ -61,4 +61,14 @@ def create_turn(campaign_id: str, payload: TurnCreate, session: SessionDep) -> T
         suggested_actions=result.suggested_actions,
         scene_participants=result.scene_participants,
         revealed_secrets=result.revealed_secrets,
+        rolls=[
+            {
+                "attribute": roll.attribute,
+                "target": roll.target,
+                "dice_total": roll.dice_total,
+                "outcome": roll.outcome,
+                "narration": roll.narration,
+            }
+            for roll in result.rolls
+        ],
     )

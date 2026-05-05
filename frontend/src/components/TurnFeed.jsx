@@ -47,6 +47,14 @@ function getTurnAvatar(turn, speakerName, speakerCaste) {
     };
   }
 
+  if (turn.speaker === "system-roll") {
+    return {
+      initials: "RL",
+      name: "Skill Check",
+      caste: "Copper",
+    };
+  }
+
   return {
     initials: "AR",
     name: turn.label ?? "System",

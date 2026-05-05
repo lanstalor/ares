@@ -194,3 +194,111 @@ def test_provider_default_omits_rolls_from_schema() -> None:
     )
     tool_schema = captured["tools"][0]
     assert "rolls" not in tool_schema["input_schema"]["properties"]
+
+
+from app.services.anthropic_provider import build_system_prompt
+
+
+def test_system_prompt_omits_dice_guidance_when_disabled() -> None:
+    prompt = build_system_prompt(enable_dice=False)
+    assert "skill check" not in prompt.lower()
+    assert "rolls:" not in prompt
+
+
+def test_system_prompt_includes_dice_guidance_when_enabled() -> None:
+    prompt = build_system_prompt(enable_dice=True)
+    lowered = prompt.lower()
+    assert "skill check" in lowered or "attribute check" in lowered
+    assert "cunning" in lowered
+    assert "do not call for a roll" in lowered or "do not roll" in lowered
+
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+
+from app.models.base import Base
+from app.models.campaign import Campaign
+from app.services.ai_provider import NarrationRequest
+from app.services.consequence_applier import Consequences
+from app.services.turn_engine import resolve_turn
+
+
+class _RollProvider:
+    def __init__(self, rolls):
+        self._rolls = rolls
+
+    def narrate(self, request: NarrationRequest) -> NarrationResponse:
+        return NarrationResponse(
+            narrative="n",
+            player_safe_summary="s",
+            consequences=Consequences(),
+            rolls=self._rolls,
+        )
+
+    def clarify(self, request: NarrationRequest) -> str:
+        return "clarified"
+
+
+def _bare_session() -> Session:
+    engine = create_engine("sqlite+pysqlite:///:memory:", future=True)
+    SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+    Base.metadata.create_all(bind=engine)
+    return SessionLocal()
+
+
+def test_resolve_turn_returns_rolls() -> None:
+    session = _bare_session()
+    campaign = Campaign(
+        name="t",
+        tagline="t",
+        current_date_pce=728,
+        current_location_label="Crescent Block",
+    )
+    session.add(campaign)
+    session.flush()
+
+    provider = _RollProvider(
+        [Roll(attribute="cunning", target=14, dice_total=17, outcome="success", narration="x.")]
+    )
+    result = resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="lie to the Copper",
+        narration_provider=provider,
+    )
+    assert len(result.rolls) == 1
+    assert result.rolls[0].attribute == "cunning"
+
+
+def test_turns_endpoint_returns_rolls(monkeypatch) -> None:
+    from app.api.routes.campaigns import create_campaign
+    from app.api.routes.turns import create_turn
+    from app.schemas.campaign import CampaignCreate
+    from app.schemas.turn import TurnCreate
+    from app.services import turn_engine as turn_engine_module
+
+    captured_provider = _RollProvider(
+        [Roll(attribute="will", target=12, dice_total=15, outcome="success", narration="ok.")]
+    )
+
+    original_resolve = turn_engine_module.resolve_turn
+
+    def fake_resolve(*, session, campaign, player_input, narration_provider=None):
+        return original_resolve(
+            session=session,
+            campaign=campaign,
+            player_input=player_input,
+            narration_provider=captured_provider,
+        )
+
+    monkeypatch.setattr(
+        "app.api.routes.turns.resolve_turn",
+        fake_resolve,
+    )
+
+    session = _bare_session()
+    campaign = create_campaign(CampaignCreate(name="Turn Test"), session)
+
+    response = create_turn(campaign.id, TurnCreate(player_input="hold the line"), session)
+    assert response.rolls[0]["attribute"] == "will"
+    assert response.rolls[0]["outcome"] == "success"

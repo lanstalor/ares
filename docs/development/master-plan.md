@@ -10,7 +10,9 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| — | — | — | — | none in flight | run `make bootstrap-slice SLICE=A1` (or B1, or C1) to start |
+| A1 | `track-a/A1-dice-skill-checks` | `~/ares-track-a/A1` | Codex | in-flight | Resolve missing `frontend/src/lib/sceneArtLibrary.js` build blocker, then smoke dice at 5180. |
+| B1 | `track-b/B1-media-provider` | `~/ares-track-b/B1` | Codex | review | Review PR #11 or open B2 for scene-art cache/service work. |
+| C1 | `track-c/C1-admin-api` | `~/ares-track-c/C1` | any | not-started | Start C1 if an operator-depth lane is needed. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -20,7 +22,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Title | Status |
 |---|---|---|
-| A1 | Dice + skill check primitive | not-started |
+| A1 | Dice + skill check primitive | in-flight |
 | A2 | Itemized inventory | not-started |
 | A3 | Conditions + status effects | not-started |
 | A4 | Turn-based combat mode | not-started |
@@ -30,7 +32,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Title | Status |
 |---|---|---|
-| B1 | MediaProvider abstraction | not-started |
+| B1 | MediaProvider abstraction | review |
 | B2 | Scene art generation pipeline | not-started |
 | B3 | NPC portrait generation | not-started |
 | B4 | TTS narration | not-started |

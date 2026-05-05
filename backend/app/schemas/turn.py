@@ -29,3 +29,4 @@ class TurnResolution(BaseModel):
     suggested_actions: list[dict] = Field(default_factory=list)
     scene_participants: list[dict] = Field(default_factory=list)
     revealed_secrets: list[dict] = Field(default_factory=list)
+    rolls: list[dict] = Field(default_factory=list)

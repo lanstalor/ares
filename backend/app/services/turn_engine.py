@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.models.campaign import Campaign
-from app.services.ai_provider import NarrationProvider, NarrationRequest
+from app.services.ai_provider import NarrationProvider, NarrationRequest, Roll
 from app.services.canon_guard import evaluate_canon_guard
 from app.services.consequence_applier import ConsequenceResult, apply_consequences
 from app.services.context_builder import build_turn_context
@@ -25,6 +25,7 @@ class TurnEngineResult:
     suggested_actions: list[dict] = field(default_factory=list)
     scene_participants: list[dict] = field(default_factory=list)
     revealed_secrets: list[dict] = field(default_factory=list)
+    rolls: list[Roll] = field(default_factory=list)
 
 
 def resolve_turn(
@@ -71,4 +72,5 @@ def resolve_turn(
         suggested_actions=narration.suggested_actions,
         scene_participants=narration.scene_participants,
         revealed_secrets=consequence_result.revealed_secrets,
+        rolls=narration.rolls,
     )
