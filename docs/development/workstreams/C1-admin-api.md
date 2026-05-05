@@ -21,7 +21,7 @@ Provide a set of backend API endpoints accessible only to operator workflows tha
 
 ## Last-known-good commit
 
-`8381e46` — `docs(C1): update workstream with initial progress`
+`af6ac16` — `feat(C1): implement operator state repair endpoint (PATCH)`
 
 Test status at this commit:
 - backend (`make backend-test`): ✅
@@ -31,21 +31,20 @@ Test status at this commit:
 
 ## In-flight WIP
 
-- `wip 2edcb74` — implemented operator schemas and full-state endpoint; tests pass. missing: state repair (patch) and audit endpoints.
+- `wip af6ac16` — implemented operator schemas, full-state endpoint, and state repair (patch) endpoint; tests pass. missing: state audit endpoints.
 
 ## Files touched so far
 
 Append entries as you edit. Mark files complete with ✅, in-progress with ⚠️.
 
 - `docs/development/workstreams/C1-admin-api.md` — updated ⚠️
-- `backend/app/schemas/operator.py` — created with CampaignFullState ✅
-- `backend/app/api/routes/operator.py` — created with /health and /full-state ✅
-- `backend/app/api/router.py` — registered operator router ✅
-- `backend/tests/test_operator_api.py` — added coverage for new endpoints ✅
+- `backend/app/schemas/operator.py` — added patch schemas ✅
+- `backend/app/api/routes/operator.py` — added `patch_campaign_state` ✅
+- `backend/tests/test_operator_api.py` — added patch tests ✅
 
 ## Next concrete step
 
-Implement an endpoint for operator-level state repair: `PATCH /api/v1/operator/campaigns/{id}/state`. This should allow an operator to send a partial state update (e.g. adjust a clock, flip a secret status, or edit a turn's gm_response) to the campaign and its child entities.
+Implement an audit endpoint: `GET /api/v1/operator/campaigns/{id}/audit`. This should return a list of potential issues detected in the campaign state (e.g. clocks near max, dormant secrets with met reveal conditions, or orphaned entities) to help operators focus their repair efforts.
 
 ## Open questions / blockers
 
@@ -55,6 +54,7 @@ Implement an endpoint for operator-level state repair: `PATCH /api/v1/operator/c
 
 Append-only. One line per session.
 
+- `2026-05-05 23:35 UTC` — Gemini → Implemented `PATCH /operator/campaigns/{id}/state` for state repair; updated schemas and tests; all tests passing.
 - `2026-05-05 23:20 UTC` — Gemini → Resumed slice; implemented `CampaignFullState` schema and operator routes (`/health`, `/full-state`); verified with new test suite; updated master plan.
 - `YYYY-MM-DD HH:MM UTC` — Agent → what was done; status at end of session
 - ...
