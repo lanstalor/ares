@@ -21,7 +21,7 @@ Provide a set of backend API endpoints accessible only to operator workflows tha
 
 ## Last-known-good commit
 
-`f147057` — `chore(C1): bootstrap slice — branch + workstream doc`
+`2edcb74` — `feat(C1): implement operator health and full-state endpoints`
 
 Test status at this commit:
 - backend (`make backend-test`): ✅
@@ -31,17 +31,21 @@ Test status at this commit:
 
 ## In-flight WIP
 
-- `clean` — no uncommitted edits, last commit is a `chore:`.
+- `wip 2edcb74` — implemented operator schemas and full-state endpoint; tests pass. missing: state repair (patch) and audit endpoints.
 
 ## Files touched so far
 
 Append entries as you edit. Mark files complete with ✅, in-progress with ⚠️.
 
-- `docs/development/workstreams/C1-admin-api.md` — initialized ✅
+- `docs/development/workstreams/C1-admin-api.md` — updated ⚠️
+- `backend/app/schemas/operator.py` — created with CampaignFullState ✅
+- `backend/app/api/routes/operator.py` — created with /health and /full-state ✅
+- `backend/app/api/router.py` — registered operator router ✅
+- `backend/tests/test_operator_api.py` — added coverage for new endpoints ✅
 
 ## Next concrete step
 
-Create `backend/app/api/routes/operator.py` with a basic health check and a `GET /api/v1/operator/campaigns/{id}/full-state` endpoint that returns the complete, visibility-unfiltered campaign state (including all world entities, characters, objectives, turns, memories, clocks, and secrets).
+Implement an endpoint for operator-level state repair: `PATCH /api/v1/operator/campaigns/{id}/state`. This should allow an operator to send a partial state update (e.g. adjust a clock, flip a secret status, or edit a turn's gm_response) to the campaign and its child entities.
 
 ## Open questions / blockers
 
