@@ -1,4 +1,4 @@
-.PHONY: backend-install backend-dev backend-test frontend-install frontend-dev frontend-build check compose-up migrate
+.PHONY: backend-install backend-dev backend-test frontend-install frontend-dev frontend-build check compose-up migrate bootstrap-slice slice-status
 
 BACKEND_VENV := backend/.venv
 
@@ -32,3 +32,20 @@ compose-up:
 
 migrate:
 	cd backend && alembic upgrade head
+
+# Bootstrap a roadmap slice: branch + worktree + workstream doc.
+# Usage: make bootstrap-slice SLICE=A1
+bootstrap-slice:
+	@if [ -z "$(SLICE)" ]; then \
+		echo "usage: make bootstrap-slice SLICE=A1"; \
+		exit 2; \
+	fi
+	@scripts/bootstrap_slice.sh $(SLICE)
+
+# Show in-flight slices (worktrees + branches) at a glance.
+slice-status:
+	@echo "=== worktrees ==="
+	@git worktree list
+	@echo
+	@echo "=== open slice branches ==="
+	@git branch --list 'track-*' --format='%(refname:short)  %(committerdate:relative)  %(subject)' || true

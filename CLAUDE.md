@@ -77,11 +77,12 @@ Date: 2026-04-30 (continued)
 
 ## Development Workflow Defaults
 
-- Start each coding session with: `CLAUDE.md` -> `docs/development/master-plan.md` -> target workstream doc -> linked PR/issue -> `git status`
-- Each non-trivial feature slice should have one GitHub issue, one flat branch, one draft PR, and one workstream doc under `docs/development/workstreams/`
-- `CLAUDE.md` holds durable repo context and constraints; active TODO churn belongs in the master plan and workstream docs
-- Before pausing or switching agents, update the workstream doc with current state, verification, risks, and the exact next step
-- If GitHub artifacts are missing for an active slice, record `TBD` in the doc temporarily, then create the missing issue/branch/PR before substantial new work
+- Start each coding session with: `CLAUDE.md` -> `docs/development/agent-handoff-protocol.md` -> `docs/development/master-plan.md` -> target slice doc -> worktree -> `git status`
+- This repo is worked on by **Codex, Claude, and Gemini** cycling through quotas. The handoff protocol at `docs/development/agent-handoff-protocol.md` is the contract that keeps work resumable across agents and mid-session interruptions. Read it.
+- Each non-trivial feature slice has one branch, one worktree, one draft PR, and one workstream doc under `docs/development/workstreams/`. Bootstrap with `make bootstrap-slice SLICE=A1`.
+- Before pausing or switching agents: update the slice doc, then commit (`feat(ID):` / `wip(ID):` / `handoff(ID):`), then push. Never leave uncommitted edits across a handoff — the next agent does not see your local diff.
+- `CLAUDE.md` holds durable repo context and constraints; active TODO churn belongs in the master plan and slice docs.
+- Current wave (fables.gg gap-closing) parent roadmap: `~/.claude/plans/a-i-happy-matsumoto.md` — 15 slices across three parallel tracks (A: Mechanical Depth, B: Sensory Polish, C: Operator Depth).
 
 ---
 
