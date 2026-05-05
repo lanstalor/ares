@@ -182,6 +182,42 @@ class NPCUpdate(BaseModel):
     max_hp: int | None = None
 
 
+class FactionUpdate(BaseModel):
+    id: str
+    name: str | None = None
+    color_hex: str | None = None
+    description: str | None = None
+    visibility: Visibility | None = None
+
+
+class AreaUpdate(BaseModel):
+    id: str
+    name: str | None = None
+    area_type: str | None = None
+    description: str | None = None
+    appearance: str | None = None
+    parent_area_id: str | None = None
+    faction_id: str | None = None
+    visibility: Visibility | None = None
+
+
+class POIUpdate(BaseModel):
+    id: str
+    name: str | None = None
+    parent_area_id: str | None = None
+    faction_id: str | None = None
+    description: str | None = None
+    gm_instructions: str | None = None
+    visibility: Visibility | None = None
+
+
+class LorePageUpdate(BaseModel):
+    id: str
+    title: str | None = None
+    content: str | None = None
+    visibility: Visibility | None = None
+
+
 class CampaignStatePatch(BaseModel):
     campaign: CampaignUpdate | None = None
     objectives: list[ObjectiveUpdate] | None = None
@@ -190,3 +226,21 @@ class CampaignStatePatch(BaseModel):
     turns: list[TurnUpdate] | None = None
     characters: list[CharacterUpdate] | None = None
     npcs: list[NPCUpdate] | None = None
+    factions: list[FactionUpdate] | None = None
+    areas: list[AreaUpdate] | None = None
+    pois: list[POIUpdate] | None = None
+    lore_pages: list[LorePageUpdate] | None = None
+
+
+class AuditFinding(BaseModel):
+    severity: str  # "info", "warning", "critical"
+    entity_type: str  # "clock", "secret", "objective", etc.
+    entity_id: str
+    message: str
+    context: dict | None = None
+
+
+class CampaignAuditReport(BaseModel):
+    campaign_id: str
+    findings: list[AuditFinding]
+    summary: str
