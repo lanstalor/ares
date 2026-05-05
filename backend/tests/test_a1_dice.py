@@ -126,3 +126,71 @@ def test_build_response_skips_malformed_rolls() -> None:
     response = _build_response(tool_input)
     assert len(response.rolls) == 1
     assert response.rolls[0].attribute == "tech"
+
+
+from app.services.anthropic_provider import AnthropicNarrationProvider
+
+
+def test_provider_passes_enable_dice_to_schema() -> None:
+    captured: dict = {}
+
+    class _Block:
+        type = "tool_use"
+        name = "record_turn"
+        input = _BASE_TOOL_INPUT
+
+    class _Message:
+        content = [_Block()]
+
+    def fake_messages_create(**kwargs):
+        captured.update(kwargs)
+        return _Message()
+
+    from app.services.ai_provider import NarrationRequest
+
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        enable_dice=True,
+    )
+    provider.narrate(
+        NarrationRequest(
+            campaign_name="x",
+            current_date_pce=728,
+            player_input="probe",
+            player_safe_brief="b",
+            hidden_gm_brief="h",
+        )
+    )
+    tool_schema = captured["tools"][0]
+    assert "rolls" in tool_schema["input_schema"]["properties"]
+
+
+def test_provider_default_omits_rolls_from_schema() -> None:
+    captured: dict = {}
+
+    class _Block:
+        type = "tool_use"
+        name = "record_turn"
+        input = _BASE_TOOL_INPUT
+
+    class _Message:
+        content = [_Block()]
+
+    def fake_messages_create(**kwargs):
+        captured.update(kwargs)
+        return _Message()
+
+    from app.services.ai_provider import NarrationRequest
+
+    provider = AnthropicNarrationProvider(messages_create=fake_messages_create)
+    provider.narrate(
+        NarrationRequest(
+            campaign_name="x",
+            current_date_pce=728,
+            player_input="probe",
+            player_safe_brief="b",
+            hidden_gm_brief="h",
+        )
+    )
+    tool_schema = captured["tools"][0]
+    assert "rolls" not in tool_schema["input_schema"]["properties"]

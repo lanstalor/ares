@@ -38,7 +38,11 @@ def resolve_turn(
 
     if narration_provider is None:
         settings = get_settings()
-        narration_provider = get_narration_provider(settings.generation_provider, settings.generation_model)
+        narration_provider = get_narration_provider(
+            settings.generation_provider,
+            settings.generation_model,
+            enable_dice=settings.enable_dice,
+        )
 
     narration = narration_provider.narrate(
         NarrationRequest(

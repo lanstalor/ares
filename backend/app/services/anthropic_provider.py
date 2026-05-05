@@ -292,12 +292,14 @@ class AnthropicNarrationProvider:
         messages_create: Callable[..., Any] | None = None,
         model: str = "claude-haiku-4-5",
         max_tokens: int = 4096,
+        enable_dice: bool = False,
     ) -> None:
         if not model:
             raise ValueError("AnthropicNarrationProvider requires a non-empty model.")
         self._messages_create = messages_create
         self._model = model
         self._max_tokens = max_tokens
+        self._enable_dice = enable_dice
 
     def _get_messages_create(self) -> Callable[..., Any]:
         if self._messages_create is None:
@@ -317,7 +319,7 @@ class AnthropicNarrationProvider:
                     "cache_control": {"type": "ephemeral"},
                 }
             ],
-            tools=[_TOOL_SCHEMA],
+            tools=[build_tool_schema(enable_dice=self._enable_dice)],
             tool_choice={"type": "tool", "name": _TOOL_NAME},
             messages=[{"role": "user", "content": _format_user_message(request)}],
         )
