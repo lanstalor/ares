@@ -5,7 +5,7 @@
 | **Track** | B |
 | **Branch** | `track-b/B1-media-provider` |
 | **Worktree** | `~/ares-track-b/B1` |
-| **PR** | TBD |
+| **PR** | https://github.com/lanstalor/ares/pull/11 |
 | **Status** | review |
 | **Last agent** | Codex |
 | **Next agent** | human review or B2 starter |
