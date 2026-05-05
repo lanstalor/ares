@@ -21,7 +21,7 @@ Provide a set of backend API endpoints accessible only to operator workflows tha
 
 ## Last-known-good commit
 
-`2edcb74` — `feat(C1): implement operator health and full-state endpoints`
+`8381e46` — `docs(C1): update workstream with initial progress`
 
 Test status at this commit:
 - backend (`make backend-test`): ✅
@@ -55,6 +55,7 @@ Implement an endpoint for operator-level state repair: `PATCH /api/v1/operator/c
 
 Append-only. One line per session.
 
+- `2026-05-05 23:20 UTC` — Gemini → Resumed slice; implemented `CampaignFullState` schema and operator routes (`/health`, `/full-state`); verified with new test suite; updated master plan.
 - `YYYY-MM-DD HH:MM UTC` — Agent → what was done; status at end of session
 - ...
 
