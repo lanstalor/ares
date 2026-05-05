@@ -80,6 +80,8 @@ class Settings(BaseSettings):
     )
     generation_provider: str = Field(default="stub", alias="ARES_GENERATION_PROVIDER")
     generation_model: str = Field(default="claude-haiku-4-5", alias="ARES_MODEL")
+    media_provider: str = Field(default="stub", alias="ARES_MEDIA_PROVIDER")
+    media_model: str = Field(default="gpt-image-1", alias="ARES_MEDIA_MODEL")
     embedding_provider: str = Field(default="stub", alias="ARES_EMBEDDING_PROVIDER")
     database_bootstrap: Literal["create_all", "disabled"] = Field(
         default="create_all",

@@ -10,6 +10,8 @@ class SystemStatus(BaseModel):
     environment: str
     ai_generation_provider: str
     ai_model: str | None
+    media_provider: str
+    media_model: str | None
     embedding_provider: str
     database_bootstrap: str
     database_initialized: bool

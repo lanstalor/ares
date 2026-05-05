@@ -34,6 +34,8 @@ def system_status(session: SessionDep) -> SystemStatus:
         environment=settings.app_env,
         ai_generation_provider=settings.generation_provider,
         ai_model=settings.generation_model,
+        media_provider=settings.media_provider,
+        media_model=settings.media_model,
         embedding_provider=settings.embedding_provider,
         database_bootstrap=settings.database_bootstrap,
         database_initialized=database_initialized,
