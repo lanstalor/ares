@@ -25,13 +25,13 @@ Add a Red Rising-flavored skill-check primitive so the GM can call for and resol
 Test status at this commit:
 - backend (`PYTHONPATH=backend /home/lans/ares/backend/.venv/bin/pytest backend/tests -q`): ✅ 85 passing
 - frontend (`make check`): ✅ compileall + node syntax checks passed
-- frontend (`npm run build`): ❌ blocked before A1 code by pre-existing missing `frontend/src/lib/sceneArtLibrary.js` imported by `SceneBackdrop.jsx`; that asset-library file exists only in the dirty main checkout/UI asset lane, so it was not folded into A1.
+- frontend (`npm run build`): ❌ blocked on this branch alone by missing `frontend/src/lib/sceneArtLibrary.js` imported by `SceneBackdrop.jsx`; ✅ verified passing in a temporary merge with PR #12 (`fix/frontend-scene-art-library`).
 - playtester (offline, stub provider): not-run
 - playwright screenshot at 5180: not-run (requires resolving frontend build/runtime blocker first)
 
 ## In-flight WIP
 
-`clean after commit` — all implementation tasks are complete; remaining work is verification/smoke once the separate scene-art library blocker is resolved.
+`clean after commit` — all implementation tasks are complete; PR #12 resolves the frontend build blocker in a temporary merge. Remaining work is Docker/5180 dice smoke after PR #12 lands or is merged into A1.
 
 ## Files touched so far
 
@@ -49,16 +49,17 @@ Test status at this commit:
 
 ## Next concrete step
 
-Resolve the separate frontend build blocker: `SceneBackdrop.jsx` imports `../lib/sceneArtLibrary`, but `frontend/src/lib/sceneArtLibrary.js` is absent from the A1 worktree. Once that Track B/UI asset file lands or the import is otherwise reconciled, rerun `npm run build`, then do the Docker/5180 smoke with `ARES_ENABLE_DICE=true` and capture the dice screenshot.
+Land PR #12 or merge `fix/frontend-scene-art-library` into A1, then do the Docker/5180 smoke with `ARES_ENABLE_DICE=true` and capture the dice screenshot.
 
 ## Open questions / blockers
 
-- `npm run build` currently fails before A1 code because `frontend/src/lib/sceneArtLibrary.js` is missing. This appears to be separate UI/asset-lane work: the file exists in the dirty `/home/lans/ares` main checkout but is not committed on the A1 branch.
+- `npm run build` on A1 alone fails before A1 code because `frontend/src/lib/sceneArtLibrary.js` is missing. PR #12 adds that library and required scene-art assets; a temporary merge of A1 + PR #12 passed `npm run build`.
 
 ## Agent rotation log
 
 - 2026-05-05 — Claude → bootstrap + plan + Tasks 1–5 (settings flag, Roll dataclass, conditional tool schema, response translation, provider wiring). 81 tests passing. Ended at commit `aaaf504` due to imminent quota exhaustion. Working tree clean. Next: Task 6 (system-prompt addendum).
 - 2026-05-05 — Codex → completed Tasks 6–12 (prompt addendum, backend/API roll propagation, frontend `system-roll` event/avatar/style). `PYTHONPATH=backend /home/lans/ares/backend/.venv/bin/pytest backend/tests -q` passed with 85 tests; `make check` passed. `npm run build` blocked by missing pre-existing `sceneArtLibrary.js`.
+- 2026-05-05 — Codex → opened PR #12 for the missing scene-art library/assets and verified a temporary A1 + PR #12 merge: A1 focused tests passed, `make check` passed, `npm run build` passed.
 
 ## How to resume (any agent)
 
