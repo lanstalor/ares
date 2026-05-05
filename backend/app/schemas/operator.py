@@ -114,3 +114,79 @@ class CampaignFullState(BaseModel):
     turns: list[TurnRead]
     memories: list[MemoryRead]
     world: WorldState
+
+
+# Patch Schemas
+
+class CampaignUpdate(BaseModel):
+    name: str | None = None
+    tagline: str | None = None
+    current_date_pce: int | None = None
+    current_location_label: str | None = None
+
+
+class ObjectiveUpdate(BaseModel):
+    id: str
+    title: str | None = None
+    description: str | None = None
+    gm_instructions: str | None = None
+    is_active: bool | None = None
+    is_complete: bool | None = None
+
+
+class ClockUpdate(BaseModel):
+    id: str
+    label: str | None = None
+    clock_type: ClockType | None = None
+    current_value: int | None = None
+    max_value: int | None = None
+    hidden_from_player: bool | None = None
+
+
+class SecretUpdate(BaseModel):
+    id: str
+    label: str | None = None
+    content: str | None = None
+    status: SecretStatus | None = None
+    reveal_condition: str | None = None
+
+
+class TurnUpdate(BaseModel):
+    id: str
+    player_input: str | None = None
+    gm_response: str | None = None
+    player_safe_summary: str | None = None
+
+
+class CharacterUpdate(BaseModel):
+    id: str
+    name: str | None = None
+    race: str | None = None
+    character_class: str | None = None
+    cover_identity: str | None = None
+    current_hp: int | None = None
+    max_hp: int | None = None
+    cover_integrity: int | None = None
+    inventory_summary: str | None = None
+    notes: str | None = None
+
+
+class NPCUpdate(BaseModel):
+    id: str
+    appearance: str | None = None
+    personality: str | None = None
+    hidden_agenda: str | None = None
+    visibility: Visibility | None = None
+    level: int | None = None
+    current_hp: int | None = None
+    max_hp: int | None = None
+
+
+class CampaignStatePatch(BaseModel):
+    campaign: CampaignUpdate | None = None
+    objectives: list[ObjectiveUpdate] | None = None
+    clocks: list[ClockUpdate] | None = None
+    secrets: list[SecretUpdate] | None = None
+    turns: list[TurnUpdate] | None = None
+    characters: list[CharacterUpdate] | None = None
+    npcs: list[NPCUpdate] | None = None
