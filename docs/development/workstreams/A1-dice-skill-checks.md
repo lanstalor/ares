@@ -6,7 +6,7 @@
 | **Branch** | `track-a/A1-dice-skill-checks` |
 | **Worktree** | `~/ares-track-a/A1` |
 | **PR** | https://github.com/lanstalor/ares/pull/10 (draft) |
-| **Status** | in-flight (12/12 tasks complete; frontend smoke blocked by missing scene-art library file) |
+| **Status** | in-flight (12/12 tasks complete; Docker smoke/screenshot pending) |
 | **Last agent** | Codex (2026-05-05) |
 | **Next agent** | any |
 | **Parent plan** | `~/.claude/plans/a-i-happy-matsumoto.md` |
@@ -25,13 +25,13 @@ Add a Red Rising-flavored skill-check primitive so the GM can call for and resol
 Test status at this commit:
 - backend (`PYTHONPATH=backend /home/lans/ares/backend/.venv/bin/pytest backend/tests -q`): ✅ 85 passing
 - frontend (`make check`): ✅ compileall + node syntax checks passed
-- frontend (`npm run build`): ❌ blocked on this branch alone by missing `frontend/src/lib/sceneArtLibrary.js` imported by `SceneBackdrop.jsx`; ✅ verified passing in a temporary merge with PR #12 (`fix/frontend-scene-art-library`).
+- frontend (`npm run build`): ✅ passed after rebasing onto `origin/main` with PR #12 merged.
 - playtester (offline, stub provider): not-run
 - playwright screenshot at 5180: not-run (requires resolving frontend build/runtime blocker first)
 
 ## In-flight WIP
 
-`clean after commit` — all implementation tasks are complete; PR #12 resolves the frontend build blocker in a temporary merge. Remaining work is Docker/5180 dice smoke after PR #12 lands or is merged into A1.
+`clean after commit` — all implementation tasks are complete. Remaining work is Docker/5180 dice smoke with `ARES_ENABLE_DICE=true` and screenshot capture.
 
 ## Files touched so far
 
@@ -49,17 +49,18 @@ Test status at this commit:
 
 ## Next concrete step
 
-Land PR #12 or merge `fix/frontend-scene-art-library` into A1, then do the Docker/5180 smoke with `ARES_ENABLE_DICE=true` and capture the dice screenshot.
+Do the Docker/5180 smoke with `ARES_ENABLE_DICE=true` and capture the dice screenshot.
 
 ## Open questions / blockers
 
-- `npm run build` on A1 alone fails before A1 code because `frontend/src/lib/sceneArtLibrary.js` is missing. PR #12 adds that library and required scene-art assets; a temporary merge of A1 + PR #12 passed `npm run build`.
+- No code blockers. PR #12 merged into `main`, A1 was rebased onto it, and `npm run build` now passes.
 
 ## Agent rotation log
 
 - 2026-05-05 — Claude → bootstrap + plan + Tasks 1–5 (settings flag, Roll dataclass, conditional tool schema, response translation, provider wiring). 81 tests passing. Ended at commit `aaaf504` due to imminent quota exhaustion. Working tree clean. Next: Task 6 (system-prompt addendum).
 - 2026-05-05 — Codex → completed Tasks 6–12 (prompt addendum, backend/API roll propagation, frontend `system-roll` event/avatar/style). `PYTHONPATH=backend /home/lans/ares/backend/.venv/bin/pytest backend/tests -q` passed with 85 tests; `make check` passed. `npm run build` blocked by missing pre-existing `sceneArtLibrary.js`.
 - 2026-05-05 — Codex → opened PR #12 for the missing scene-art library/assets and verified a temporary A1 + PR #12 merge: A1 focused tests passed, `make check` passed, `npm run build` passed.
+- 2026-05-05 — Codex → merged PR #12 to `main`, rebased A1 onto updated `origin/main`, and verified `PYTHONPATH=backend /home/lans/ares/backend/.venv/bin/pytest backend/tests -q`, `make check`, and `npm run build` all pass on A1.
 
 ## How to resume (any agent)
 

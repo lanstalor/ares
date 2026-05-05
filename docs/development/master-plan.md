@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| A1 | `track-a/A1-dice-skill-checks` | `~/ares-track-a/A1` | Codex | in-flight | Resolve missing `frontend/src/lib/sceneArtLibrary.js` build blocker, then smoke dice at 5180. |
+| A1 | `track-a/A1-dice-skill-checks` | `~/ares-track-a/A1` | Codex | in-flight | Smoke dice at 5180 with `ARES_ENABLE_DICE=true` and capture screenshot. |
 | B1 | `track-b/B1-media-provider` | `~/ares-track-b/B1` | Codex | review | Review PR #11 or open B2 for scene-art cache/service work. |
 | C1 | `track-c/C1-admin-api` | `~/ares-track-c/C1` | any | not-started | Start C1 if an operator-depth lane is needed. |
 
