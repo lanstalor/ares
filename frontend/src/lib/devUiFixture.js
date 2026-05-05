@@ -4,14 +4,43 @@ function isoAt(offsetMinutes) {
 
 export const DEV_UI_ROUTE = "/ui-dev";
 export const DEV_UI_QUERY = "ui-dev";
+export const ASSET_OVERLAY_QUERY = "asset-overlay";
+
+function hasQueryFlag(flag) {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  return params.get(flag) === "1";
+}
 
 export function isDevUiMode() {
   if (typeof window === "undefined") {
     return false;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  return window.location.pathname === DEV_UI_ROUTE || params.get(DEV_UI_QUERY) === "1";
+  return window.location.pathname === DEV_UI_ROUTE || hasQueryFlag(DEV_UI_QUERY);
+}
+
+export function isAssetOverlayMode() {
+  return hasQueryFlag(ASSET_OVERLAY_QUERY);
+}
+
+export function setQueryFlag(flag, enabled) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+
+  if (enabled) {
+    url.searchParams.set(flag, "1");
+  } else {
+    url.searchParams.delete(flag);
+  }
+
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
 export function createDevUiSnapshot() {

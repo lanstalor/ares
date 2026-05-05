@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { AssetOverlay } from "./AssetOverlay";
 import { DISPOSITION_META, DISPOSITION_ORDER, getCasteColorToken } from "../lib/uiTheme";
 
 function hpPercent(hp) {
@@ -86,7 +87,11 @@ function ParticipantModal({ participant, onClose }) {
 
         <div className="participant-modal-header">
           <div className={`participant-portrait tone-${participant.tone} participant-modal-avatar`}>
-            <span>{participant.name.slice(0, 2).toUpperCase()}</span>
+            {participant.portraitSrc ? (
+              <img alt="" className="participant-portrait-image" src={participant.portraitSrc} />
+            ) : (
+              <span>{participant.name.slice(0, 2).toUpperCase()}</span>
+            )}
             {participant.level ? (
               <span className="participant-level-badge participant-level-badge-lg">
                 {participant.level}
@@ -164,7 +169,11 @@ function ParticipantCard({ participant, onOpen }) {
         onClick={() => onOpen(participant)}
         type="button"
       >
-        <span>{participant.name.slice(0, 2).toUpperCase()}</span>
+        {participant.portraitSrc ? (
+          <img alt="" className="participant-portrait-image" src={participant.portraitSrc} />
+        ) : (
+          <span>{participant.name.slice(0, 2).toUpperCase()}</span>
+        )}
         {participant.level ? (
           <span className="participant-level-badge" aria-label={`Level ${participant.level}`}>
             {participant.level}
@@ -192,11 +201,12 @@ function ParticipantCard({ participant, onOpen }) {
   );
 }
 
-export function ParticipantStrip({ participants, sceneTone }) {
+export function ParticipantStrip({ assetOverlayMode, participants, sceneTone }) {
   const [selectedParticipant, setSelectedParticipant] = useState(null);
 
   return (
     <section className={`participant-strip tone-${sceneTone}`}>
+      {assetOverlayMode ? <AssetOverlay frameId="presenceBar" /> : null}
       <div className="participant-strip-layout">
         <div className="participant-strip-header">
           <div className="panel-chrome">

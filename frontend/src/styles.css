@@ -330,8 +330,30 @@ textarea {
 }
 
 .topbar-brand {
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
+}
+
+.topbar-wordmark {
+  width: clamp(150px, 14vw, 215px);
+  height: 42px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  object-position: left center;
+  image-rendering: pixelated;
+  filter:
+    drop-shadow(0 0 7px rgba(226, 220, 205, 0.12))
+    drop-shadow(0 0 5px rgba(94, 166, 214, 0.12));
+}
+
+.topbar-mark {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 8px rgba(195, 74, 67, 0.25))
+    drop-shadow(0 0 5px rgba(94, 166, 214, 0.16));
 }
 
 .topbar-brand .eyebrow {
@@ -1044,6 +1066,7 @@ textarea::-webkit-scrollbar-thumb {
     linear-gradient(180deg, color-mix(in srgb, var(--terminal-dim) 72%, transparent), transparent),
     rgba(3, 8, 10, 0.86);
   clip-path: polygon(12% 0, 100% 0, 100% 88%, 88% 100%, 0 100%, 0 12%);
+  overflow: hidden;
 }
 
 .turn-avatar span {
@@ -3104,6 +3127,16 @@ textarea::-webkit-scrollbar-thumb {
   background-size: 55% 55%;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.participant-portrait-image,
+.turn-avatar-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: auto;
 }
 
 /* Column separator line ------------------------------------------------- */
@@ -3627,3 +3660,691 @@ textarea::-webkit-scrollbar-thumb {
   background-image: var(--ares-wordmark, none);
 }
 
+/* ============================================================
+   UI OVERHAUL — STRUCTURAL WIREFRAME
+   Authoritative layout for the reference-inspired live shell.
+   ============================================================ */
+
+.frame-shell.app-shell {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
+.shell-layout {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 10px;
+}
+
+.main-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(420px, 1.2fr) minmax(430px, 1.45fr) minmax(280px, 0.9fr);
+  gap: 10px;
+}
+
+.feed-column,
+.scene-column,
+.utility-column,
+.presence-bar,
+.command-bar {
+  min-width: 0;
+  min-height: 0;
+}
+
+.feed-column,
+.scene-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-column .turn-feed,
+.scene-column .scene-backdrop-panel,
+.utility-column {
+  height: 100%;
+}
+
+.mode-live .layout.shell-layout,
+.layout.shell-layout {
+  grid-template-columns: none;
+}
+
+.mode-live .scene-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mode-live .scene-column .scene-backdrop-panel {
+  flex: 1;
+  width: 100%;
+  aspect-ratio: auto;
+}
+
+.presence-bar .participant-strip,
+.command-bar .input-panel {
+  width: 100%;
+}
+
+.presence-bar .participant-strip {
+  max-height: 132px;
+  padding: 10px 12px;
+}
+
+.presence-bar .participant-strip-layout {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.presence-bar .participant-scroll {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 0;
+  padding-bottom: 2px;
+}
+
+.presence-bar .participant-card {
+  min-width: 210px;
+  border: 2px solid rgba(94, 166, 214, 0.24);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--scene-accent) 12%, transparent), transparent 48%),
+    rgba(2, 7, 10, 0.76);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.68);
+}
+
+.utility-column {
+  --panel-accent: var(--accent-tac-amber);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 2px solid rgba(200, 162, 74, 0.34);
+  background:
+    linear-gradient(180deg, rgba(200, 162, 74, 0.05), transparent 22%),
+    linear-gradient(180deg, var(--module-bg), #050a10);
+  box-shadow:
+    inset 0 1px 0 rgba(200, 162, 74, 0.16),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.7),
+    0 4px 16px rgba(0, 0, 0, 0.55);
+}
+
+.utility-column .status-panel {
+  flex: none;
+  overflow: visible;
+  padding: 10px;
+  border: 2px solid rgba(200, 162, 74, 0.26);
+  border-top-color: rgba(200, 162, 74, 0.78);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 42%),
+    rgba(4, 9, 13, 0.78);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.utility-column .status-panel + .status-panel {
+  margin-top: 0;
+}
+
+.utility-column .panel-chrome {
+  min-height: 24px;
+  margin: -10px -10px 8px;
+  padding: 5px 8px 5px 12px;
+  border-bottom: 1px solid rgba(200, 162, 74, 0.22);
+  background: rgba(15, 24, 31, 0.92);
+  position: relative;
+}
+
+.utility-column .panel-chrome::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--panel-accent, var(--accent-tac-amber));
+}
+
+.utility-column .panel-chrome h2 {
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.utility-column .eyebrow,
+.utility-column .panel-label,
+.utility-column .status-grid dt {
+  font-family: var(--font-pixel);
+}
+
+.utility-column .readiness-grid {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.utility-column .readiness-card {
+  padding: 10px;
+}
+
+.action-tab-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.action-tab {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  border: 2px solid rgba(94, 166, 214, 0.28);
+  border-radius: 2px;
+  padding: 5px 10px;
+  background:
+    linear-gradient(180deg, rgba(94, 166, 214, 0.10), transparent 55%),
+    #07111b;
+  color: #dce9f4;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.62),
+    0 2px 0 rgba(0, 0, 0, 0.7);
+  font-family: var(--font-pixel);
+  letter-spacing: 0.08em;
+}
+
+.action-tab:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--scene-accent) 58%, rgba(94, 166, 214, 0.35));
+  color: #f4fbff;
+}
+
+.action-tab:disabled {
+  opacity: 0.42;
+}
+
+.action-tab-key {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(200, 162, 74, 0.45);
+  color: var(--accent-tac-amber);
+}
+
+.action-tab-label {
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.command-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: stretch;
+}
+
+.command-prompt {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(99, 212, 133, 0.26);
+  border-right: none;
+  padding: 0 10px;
+  background: rgba(2, 8, 8, 0.84);
+  color: var(--accent-tac-green);
+  font-family: var(--font-pixel);
+  font-size: 1.22rem;
+  letter-spacing: 0.08em;
+}
+
+.frame-shell .input-panel.frame-cmd {
+  padding: 10px 14px;
+}
+
+.frame-shell .input-panel.frame-cmd textarea {
+  min-height: 42px;
+  border-radius: 0;
+  border-color: rgba(99, 212, 133, 0.26);
+  background: rgba(1, 5, 6, 0.82);
+}
+
+.frame-shell .input-panel.frame-cmd button[type="submit"].frame-cmd-execute {
+  min-height: 42px;
+  min-width: 146px;
+}
+
+.turn-feed {
+  border: 2px solid transparent;
+  clip-path: none;
+  background:
+    linear-gradient(180deg, rgba(99, 212, 133, 0.035), transparent 42%),
+    rgba(5, 12, 14, 0.82);
+  padding: 34px 18px 16px;
+}
+
+.turn-feed::before {
+  display: none;
+}
+
+.turn-feed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 18px solid transparent;
+  border-image: url("/chrome/frames/panel-cyan-strict-generated.png") 40 / 18px stretch;
+  image-rendering: pixelated;
+}
+
+.turn-feed > * {
+  position: relative;
+  z-index: 3;
+}
+
+.turn {
+  border: 2px solid rgba(94, 166, 214, 0.17);
+  border-left-width: 5px;
+  gap: 12px;
+  padding: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+}
+
+.mode-live .turn-feed .panel-chrome h2 {
+  font-size: 1rem;
+}
+
+.mode-live .turn-feed .panel-chip,
+.mode-live .turn-feed .eyebrow {
+  font-size: 0.72rem;
+}
+
+.mode-live .turn-feed-scroll {
+  margin-top: 12px;
+}
+
+.mode-live .turn-feed .speaker-card {
+  grid-template-columns: 58px minmax(0, 1fr) 68px;
+  padding: 14px;
+}
+
+.mode-live .turn-feed .speaker-name {
+  font-size: 1.08rem;
+}
+
+.mode-live .turn-feed .speaker-meta,
+.mode-live .turn-feed .turn-meta {
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.mode-live .turn-feed .turn p,
+.mode-live .turn-feed .turn .turn-body p {
+  font-size: 0.82rem;
+  line-height: 1.52;
+}
+
+.mode-live .turn-feed .turn-avatar {
+  width: 42px;
+  height: 42px;
+}
+
+.mode-live .turn-feed .turn-avatar span {
+  font-size: 0.9rem;
+}
+
+.scene-column .scene-backdrop-panel.frame-screen {
+  border-width: 2px;
+  box-shadow:
+    inset 0 0 0 7px #0a1018,
+    inset 0 0 0 8px rgba(94, 166, 214, 0.18),
+    inset 0 1px 0 rgba(94, 166, 214, 0.20),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.85),
+    0 6px 22px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 1080px) {
+  .main-grid {
+    grid-template-columns: minmax(220px, 0.32fr) minmax(0, 0.68fr);
+  }
+
+  .utility-column {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    max-height: 260px;
+  }
+
+  .utility-column .status-panel + .status-panel {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .presence-bar .participant-strip-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .command-row {
+    grid-template-columns: 1fr;
+  }
+
+  .command-prompt {
+    border-right: 1px solid rgba(99, 212, 133, 0.26);
+    border-bottom: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TURN FEED — FRAMED LOG ENTRIES  (2026-05-01)
+   Slice: turn-feed-framing
+   CSS-only. No JSX changes. Targets .turn inside .turn-feed.
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Stronger card enclosure ─────────────────────────────── */
+.turn {
+  border-color: rgba(94, 166, 214, 0.30);
+}
+
+/* 2. Speaker-specific border tint + left-fade background ─── */
+.turn-player {
+  border-color: rgba(195, 74, 67, 0.45);
+  background:
+    linear-gradient(90deg, rgba(195, 74, 67, 0.07), transparent 30%),
+    rgba(5, 10, 13, 0.80);
+}
+
+.turn-gm {
+  border-color: rgba(200, 162, 74, 0.40);
+  background:
+    linear-gradient(90deg, rgba(200, 162, 74, 0.06), transparent 30%),
+    rgba(5, 10, 13, 0.80);
+}
+
+.turn-system-location {
+  border-color: rgba(82, 198, 179, 0.40);
+}
+
+.turn-system-clock {
+  border-color: rgba(200, 162, 74, 0.40);
+}
+
+.turn-system-secret {
+  border-color: rgba(192, 132, 252, 0.40);
+}
+
+/* 3. Meta row: flex header with divider line below ──────── */
+.mode-live .turn-feed .turn-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 9px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Timestamp pushed to far right, dimmed + smaller */
+.mode-live .turn-feed .turn-meta > span:last-child {
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0.45;
+  font-size: 0.64rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-family: var(--font-display, "Chakra Petch", monospace);
+}
+
+/* 5. (fill removed from source rule above — no override needed) */
+
+/* 6. Layout: feed-column spans both grid rows; presence-bar occupies row-2 cols 2-3 */
+.shell-layout {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.main-grid {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.feed-column {
+  grid-row: 1 / 3;
+}
+
+.presence-bar {
+  grid-column: 2 / 4;
+  grid-row: 2;
+}
+
+/* 4. Fix hierarchy opacity fade (was targeting .turn-item, not .turn) */
+.frame-shell .turn-list .turn {
+  opacity: 0.78;
+  transition: opacity 200ms ease;
+}
+
+.frame-shell .turn-list .turn:nth-last-child(-n+2) {
+  opacity: 1;
+}
+
+.frame-shell .turn-list .turn:nth-last-child(n+6) {
+  opacity: 0.55;
+}
+
+/* 7. Scene Presence: title above cards (was side-by-side grid) */
+.presence-bar .participant-strip {
+  max-height: 170px;
+}
+
+.presence-bar .participant-strip-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.presence-bar .participant-strip-header .panel-chrome {
+  padding: 0 0 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 2px;
+}
+
+/* 8. Main grid: shrink 3rd col to rail width; scene column gets extra space */
+.main-grid {
+  grid-template-columns: minmax(340px, 1.1fr) minmax(400px, 1.7fr) 56px;
+}
+
+/* 9. Utility column: strip column chrome, allow popout overflow */
+.utility-column {
+  position: relative;
+  overflow: visible;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UI REPAIRS + ASSET OVERLAY
+   Restores feed scrolling, makes the utility popout closable,
+   and exposes opt-in nine-slice asset hotspots.
+   ═══════════════════════════════════════════════════════════ */
+
+.secondary-button.active {
+  border-color: var(--scene-accent);
+  color: var(--text);
+  box-shadow: 0 0 20px var(--scene-glow);
+}
+
+.turn-feed {
+  isolation: isolate;
+}
+
+.turn-feed::after {
+  display: none;
+}
+
+.turn-feed-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-gutter: stable;
+}
+
+.turn-list {
+  min-height: min-content;
+}
+
+.frame-shell .sidebar-popout.frame-module {
+  display: flex;
+  flex-direction: column;
+  width: min(320px, calc(100vw - 120px));
+  overflow: hidden;
+}
+
+.sidebar-popout-header {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px 0;
+}
+
+.sidebar-popout-title,
+.sidebar-popout-close {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sidebar-popout-title {
+  color: rgba(210, 197, 154, 0.9);
+  font-size: 0.92rem;
+}
+
+.sidebar-popout-close {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 4px;
+  border: 1px solid rgba(200, 162, 74, 0.34);
+  background: rgba(8, 12, 16, 0.82);
+  color: rgba(232, 222, 188, 0.88);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.sidebar-popout-close:hover {
+  border-color: rgba(200, 162, 74, 0.6);
+}
+
+.sidebar-popout .status-panel {
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 12px;
+}
+
+.sidebar-popout .panel-chrome {
+  position: relative;
+  z-index: 8;
+}
+
+.asset-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+}
+
+.asset-overlay-frame-label {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  z-index: 8;
+  padding: 3px 6px;
+  border: 1px solid rgba(94, 166, 214, 0.28);
+  background: rgba(3, 8, 12, 0.88);
+  color: #d7e8f5;
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+
+.asset-overlay-slice {
+  position: absolute;
+  border: 1px dashed rgba(94, 166, 214, 0.55);
+  background: rgba(94, 166, 214, 0.12);
+  pointer-events: auto;
+}
+
+.asset-overlay-slice.is-center {
+  border-style: dotted;
+  background: rgba(200, 162, 74, 0.08);
+}
+
+.asset-overlay-slice.is-corner {
+  background: rgba(195, 74, 67, 0.18);
+}
+
+.asset-overlay-tooltip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  gap: 2px;
+  min-width: 132px;
+  padding: 6px 8px;
+  border: 1px solid rgba(94, 166, 214, 0.35);
+  background: rgba(4, 9, 14, 0.96);
+  color: #deebf4;
+  font-family: var(--font-pixel);
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 120ms ease;
+  white-space: nowrap;
+}
+
+.asset-overlay-tooltip strong {
+  font-weight: 400;
+  color: #f2f7fb;
+}
+
+.asset-overlay-slice:hover .asset-overlay-tooltip {
+  opacity: 1;
+}
+
+.asset-overlay-mode .turn-feed > :not(.asset-overlay),
+.asset-overlay-mode .scene-backdrop-panel > :not(.asset-overlay),
+.asset-overlay-mode .participant-strip > :not(.asset-overlay),
+.asset-overlay-mode .input-panel > :not(.asset-overlay),
+.asset-overlay-mode .sidebar-icon-rail > :not(.asset-overlay),
+.asset-overlay-mode .sidebar-popout > :not(.asset-overlay),
+.asset-overlay-mode .status-panel > :not(.asset-overlay),
+.asset-overlay-mode .topbar > :not(.asset-overlay) {
+  position: relative;
+  z-index: 6;
+}

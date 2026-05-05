@@ -1,7 +1,9 @@
 import { ActionBar } from "./ActionBar";
+import { AssetOverlay } from "./AssetOverlay";
 
 export function PlayerInput({
   actions,
+  assetOverlayMode,
   disabled,
   isSubmitting,
   onSelectAction,
@@ -24,9 +26,10 @@ export function PlayerInput({
 
   return (
     <form className="input-panel frame-cmd" onSubmit={handleSubmit}>
+      {assetOverlayMode ? <AssetOverlay frameId="commandBar" /> : null}
       <div className="input-terminal-bar">
         <label className="panel-label" htmlFor="player-input">
-          Command line
+          Command Relay
         </label>
         <span className="hint">
           {disabled
@@ -34,13 +37,14 @@ export function PlayerInput({
             : "Secure relay. Hidden state remains server-side."}
         </span>
       </div>
+      <ActionBar
+        actions={actions}
+        disabled={disabled}
+        onSelectAction={onSelectAction}
+        sceneTone={sceneTone}
+      />
       <div className="command-row">
-        <ActionBar
-          actions={actions}
-          disabled={disabled}
-          onSelectAction={onSelectAction}
-          sceneTone={sceneTone}
-        />
+        <span className="command-prompt" aria-hidden="true">ares&gt;</span>
         <textarea
           disabled={disabled || isSubmitting}
           id="player-input"

@@ -7,6 +7,7 @@ import { PlayerInput } from "./components/PlayerInput";
 import { SceneBackdrop } from "./components/SceneBackdrop";
 import { StatusPanel } from "./components/StatusPanel";
 import { TurnFeed } from "./components/TurnFeed";
+import { AssetOverlay } from "./components/AssetOverlay";
 import {
   fetchMemories,
   getCampaignState,
@@ -17,7 +18,15 @@ import {
   submitClarification,
   submitTurn,
 } from "./lib/api";
-import { createDevUiSnapshot, DEV_UI_QUERY, DEV_UI_ROUTE, isDevUiMode } from "./lib/devUiFixture";
+import {
+  ASSET_OVERLAY_QUERY,
+  createDevUiSnapshot,
+  DEV_UI_QUERY,
+  DEV_UI_ROUTE,
+  isAssetOverlayMode,
+  isDevUiMode,
+  setQueryFlag,
+} from "./lib/devUiFixture";
 import { UNIVERSAL_STORY_SCENES } from "./lib/introContent";
 import { deriveShellReadiness } from "./lib/readiness";
 import { buildActionPresets, buildSceneParticipants, deriveSceneTone } from "./lib/uiTheme";
@@ -278,6 +287,7 @@ function buildShellStatusText(loadingShell, healthStatus) {
 
 export default function App() {
   const devUiMode = isDevUiMode();
+  const [assetOverlayMode, setAssetOverlayMode] = useState(() => isAssetOverlayMode());
   const [healthStatus, setHealthStatus] = useState(null);
   const [systemStatus, setSystemStatus] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
@@ -718,10 +728,18 @@ export default function App() {
     setIsClarifySidebarOpen((current) => !current);
   }
 
+  function handleToggleAssetOverlay() {
+    setAssetOverlayMode((current) => {
+      const next = !current;
+      setQueryFlag(ASSET_OVERLAY_QUERY, next);
+      return next;
+    });
+  }
+
   const shellMode = "live";
 
   return (
-    <div className={`app-shell frame-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""}`}>
+    <div className={`app-shell frame-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""} ${assetOverlayMode ? "asset-overlay-mode" : ""}`}>
       {devUiMode ? null : (
         <IntroOverlay
           activeSceneIndex={storySceneIndex}
@@ -739,11 +757,13 @@ export default function App() {
       )}
 
       <div className="shell-atmosphere" />
+      {assetOverlayMode ? <AssetOverlay frameId="shell" /> : null}
 
       <header className="topbar">
+        {assetOverlayMode ? <AssetOverlay frameId="topbar" /> : null}
         <div className="topbar-brand">
+          <img className="topbar-wordmark" src="/chrome/ares-logo-white-emblem.png" alt="ARES" />
           <p className="eyebrow">Live narrative shell</p>
-          <h1>ARES</h1>
         </div>
 
         <div className="topbar-center">
@@ -784,6 +804,15 @@ export default function App() {
           >
             ?
           </button>
+          {devUiMode || assetOverlayMode ? (
+            <button
+              className={`secondary-button topbar-asset-button ${assetOverlayMode ? "active" : ""}`}
+              onClick={handleToggleAssetOverlay}
+              type="button"
+            >
+              Assets {assetOverlayMode ? "On" : "Off"}
+            </button>
+          ) : null}
           {devUiMode ? null : (
             <button className="secondary-button topbar-session-button" onClick={handleToggleAudio} type="button">
               {audioMuted ? "Muted" : "Audio"}
@@ -799,10 +828,11 @@ export default function App() {
         </section>
       ) : null}
 
-      <main className="layout">
-        <section className="play-column">
-          <section className="story-grid">
+      <main className="layout shell-layout">
+        <section className="main-grid">
+          <section className="feed-column">
             <TurnFeed
+              assetOverlayMode={assetOverlayMode}
               campaignName={selectedCampaign?.name}
               isThinking={isSubmittingTurn}
               objective={campaignState?.active_objective}
@@ -815,19 +845,38 @@ export default function App() {
               }
               turns={turns}
             />
-            <div className="scene-column">
-              <SceneBackdrop
-                campaignState={campaignState}
-                currentLocation={campaignState?.current_location ?? selectedCampaign?.current_location_label}
-                objective={campaignState?.active_objective}
-                sceneTone={sceneTone}
-                selectedCampaign={selectedCampaign}
-              />
-              <ParticipantStrip participants={participants} sceneTone={sceneTone} />
-            </div>
           </section>
+
+          <section className="scene-column">
+            <SceneBackdrop
+              assetOverlayMode={assetOverlayMode}
+              campaignState={campaignState}
+              currentLocation={campaignState?.current_location ?? selectedCampaign?.current_location_label}
+              objective={campaignState?.active_objective}
+              sceneTone={sceneTone}
+              selectedCampaign={selectedCampaign}
+            />
+          </section>
+
+          <StatusPanel
+            assetOverlayMode={assetOverlayMode}
+            campaignState={campaignState}
+            healthStatus={healthStatus}
+            memories={memories}
+            selectedCampaign={selectedCampaign}
+            shellReadiness={shellReadiness}
+            systemStatus={systemStatus}
+          />
+
+          <section className="presence-bar">
+            <ParticipantStrip assetOverlayMode={assetOverlayMode} participants={participants} sceneTone={sceneTone} />
+          </section>
+        </section>
+
+        <section className="command-bar">
           <PlayerInput
             actions={activeActions}
+            assetOverlayMode={assetOverlayMode}
             disabled={!selectedCampaign}
             isSubmitting={isSubmittingTurn}
             onSelectAction={handleSelectAction}
@@ -835,22 +884,13 @@ export default function App() {
             onValueChange={setInputValue}
             placeholder={
               selectedCampaign
-                ? "ares> execute cell directive..."
-                : "ares> campaign link required"
+                ? "execute cell directive..."
+                : "campaign link required"
             }
             sceneTone={sceneTone}
             value={inputValue}
           />
         </section>
-
-        <StatusPanel
-          campaignState={campaignState}
-          healthStatus={healthStatus}
-          memories={memories}
-          selectedCampaign={selectedCampaign}
-          shellReadiness={shellReadiness}
-          systemStatus={systemStatus}
-        />
       </main>
 
       <ClarifySidebar
@@ -865,6 +905,7 @@ export default function App() {
           <span>UI Dev Mode</span>
           <span>{DEV_UI_ROUTE}</span>
           <span>?{DEV_UI_QUERY}=1</span>
+          <span>?{ASSET_OVERLAY_QUERY}=1</span>
         </section>
       ) : null}
     </div>

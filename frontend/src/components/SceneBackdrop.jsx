@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { AssetOverlay } from "./AssetOverlay";
 import { resolveSceneArt } from "../lib/sceneArtLibrary";
 import { getCasteColorToken } from "../lib/uiTheme";
 
@@ -142,12 +143,20 @@ function MapView({ currentLocation }) {
   );
 }
 
-export function SceneBackdrop({ campaignState, currentLocation, objective, sceneTone, selectedCampaign }) {
+export function SceneBackdrop({
+  assetOverlayMode,
+  campaignState,
+  currentLocation,
+  objective,
+  sceneTone,
+  selectedCampaign,
+}) {
   const [activeTab, setActiveTab] = useState("scene");
   const playerCharacter = campaignState?.player_character;
 
   return (
     <section className={`scene-backdrop-panel frame-screen tone-${sceneTone}`}>
+      {assetOverlayMode ? <AssetOverlay frameId="sceneScreen" /> : null}
       <div className="scene-tabs" role="tablist" aria-label="Scene display mode">
         {TABS.map((tab) => (
           <button

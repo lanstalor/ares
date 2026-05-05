@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { AssetOverlay } from "./AssetOverlay";
 
 function renderFlag(value) {
   return value ? "enabled" : "disabled";
@@ -24,7 +25,7 @@ function renderIntegrityBar(value, segments = 10) {
   return `${filled}${empty} ${normalized}/10`;
 }
 
-function CharacterPanel({ playerCharacter }) {
+function CharacterPanel({ assetOverlayMode, playerCharacter }) {
   const sections = [
     ["Name", playerCharacter?.name ?? "No operative loaded"],
     ["Race", playerCharacter?.race ?? "Unknown"],
@@ -35,6 +36,7 @@ function CharacterPanel({ playerCharacter }) {
   ];
   return (
     <section className="status-panel">
+      {assetOverlayMode ? <AssetOverlay frameId="statusPanel" /> : null}
       <div className="panel-chrome">
         <div>
           <p className="eyebrow">Operative Status</p>
@@ -56,7 +58,7 @@ function CharacterPanel({ playerCharacter }) {
   );
 }
 
-function CampaignPanel({ campaignState, selectedCampaign }) {
+function CampaignPanel({ assetOverlayMode, campaignState, selectedCampaign }) {
   const activeCampaign = campaignState?.campaign ?? selectedCampaign;
   const sections = [
     ["Campaign", activeCampaign?.name ?? "No active campaign"],
@@ -68,6 +70,7 @@ function CampaignPanel({ campaignState, selectedCampaign }) {
   ];
   return (
     <section className="status-panel">
+      {assetOverlayMode ? <AssetOverlay frameId="statusPanel" /> : null}
       <div className="panel-chrome">
         <div>
           <p className="eyebrow">Campaign State</p>
@@ -87,9 +90,10 @@ function CampaignPanel({ campaignState, selectedCampaign }) {
   );
 }
 
-function MemoriesPanel({ memories }) {
+function MemoriesPanel({ assetOverlayMode, memories }) {
   return (
     <section className="status-panel">
+      {assetOverlayMode ? <AssetOverlay frameId="statusPanel" /> : null}
       <div className="panel-chrome">
         <div>
           <p className="eyebrow">Campaign Log</p>
@@ -110,7 +114,7 @@ function MemoriesPanel({ memories }) {
   );
 }
 
-function ReadinessPanel({ shellReadiness }) {
+function ReadinessPanel({ assetOverlayMode, shellReadiness }) {
   const readinessCards = [
     { label: "Generation Provider", value: shellReadiness.provider.label, detail: shellReadiness.provider.detail, tone: shellReadiness.provider.tone },
     { label: "world_bible.md", value: shellReadiness.worldBible.label, detail: shellReadiness.worldBible.detail, tone: shellReadiness.worldBible.tone },
@@ -118,6 +122,7 @@ function ReadinessPanel({ shellReadiness }) {
   ];
   return (
     <section className="status-panel">
+      {assetOverlayMode ? <AssetOverlay frameId="statusPanel" /> : null}
       <div className="panel-chrome">
         <div>
           <p className="eyebrow">Readiness</p>
@@ -137,7 +142,7 @@ function ReadinessPanel({ shellReadiness }) {
   );
 }
 
-function SystemPanel({ healthStatus, systemStatus }) {
+function SystemPanel({ assetOverlayMode, healthStatus, systemStatus }) {
   const sections = [
     ["Health", healthStatus?.status ?? "offline"],
     ["Application", systemStatus?.app_name ?? "unknown"],
@@ -149,6 +154,7 @@ function SystemPanel({ healthStatus, systemStatus }) {
   ];
   return (
     <section className="status-panel">
+      {assetOverlayMode ? <AssetOverlay frameId="statusPanel" /> : null}
       <div className="panel-chrome">
         <div>
           <p className="eyebrow">System Status</p>
@@ -170,55 +176,84 @@ function SystemPanel({ healthStatus, systemStatus }) {
   );
 }
 
-const TABS = [
-  { id: 'character', glyph: '◈', label: 'Field Readout' },
-  { id: 'campaign', glyph: '◎', label: 'Current Brief' },
-  { id: 'memories', glyph: '◉', label: 'Campaign Log' },
-  { id: 'readiness', glyph: '⊙', label: 'GM Stack' },
-  { id: 'system', glyph: '⊞', label: 'Machine State' },
-];
+export function StatusPanel({
+  assetOverlayMode,
+  campaignState,
+  healthStatus,
+  memories,
+  selectedCampaign,
+  shellReadiness,
+  systemStatus,
+}) {
+  const [activeTab, setActiveTab] = useState("character");
+  const [isOpen, setIsOpen] = useState(false);
 
-export function StatusPanel({ campaignState, healthStatus, memories, selectedCampaign, shellReadiness, systemStatus }) {
-  const [activeTab, setActiveTab] = useState(null);
+  const tabs = [
+    { id: "character", label: "OP", title: "Operative Status" },
+    { id: "campaign", label: "BR", title: "Campaign Brief" },
+    { id: "memories", label: "LG", title: "Campaign Log" },
+    { id: "readiness", label: "RD", title: "GM Stack" },
+    { id: "system", label: "SY", title: "System State" },
+  ];
 
-  function handleTabClick(id) {
-    setActiveTab((current) => (current === id ? null : id));
+  const activeTabConfig = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
+
+  function handleTabToggle(nextTab) {
+    if (nextTab === activeTab) {
+      setIsOpen((current) => !current);
+      return;
+    }
+
+    setActiveTab(nextTab);
+    setIsOpen(true);
+  }
+
+  function renderPanel() {
+    switch (activeTab) {
+      case "character": return <CharacterPanel assetOverlayMode={assetOverlayMode} playerCharacter={campaignState?.player_character} />;
+      case "campaign": return <CampaignPanel assetOverlayMode={assetOverlayMode} campaignState={campaignState} selectedCampaign={selectedCampaign} />;
+      case "memories": return <MemoriesPanel assetOverlayMode={assetOverlayMode} memories={memories} />;
+      case "readiness": return <ReadinessPanel assetOverlayMode={assetOverlayMode} shellReadiness={shellReadiness} />;
+      case "system": return <SystemPanel assetOverlayMode={assetOverlayMode} healthStatus={healthStatus} systemStatus={systemStatus} />;
+      default: return null;
+    }
   }
 
   return (
-    <aside className="status-stack">
-      <nav className="sidebar-icon-rail frame-module">
-        {TABS.map((tab) => (
+    <aside className="status-stack utility-column" aria-label="Utility telemetry">
+      <nav className="sidebar-icon-rail frame-module" aria-label="Panel tabs">
+        {assetOverlayMode ? <AssetOverlay frameId="utilityRail" /> : null}
+        {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`sidebar-icon-btn frame-chip${activeTab === tab.id ? ' is-active' : ''}`}
-            onClick={() => handleTabClick(tab.id)}
-            title={tab.label}
+            aria-controls="utility-panel-popout"
+            aria-expanded={isOpen && activeTab === tab.id}
+            className={`sidebar-icon-btn frame-chip${isOpen && activeTab === tab.id ? " is-active" : ""}`}
+            onClick={() => handleTabToggle(tab.id)}
+            title={tab.title}
             type="button"
           >
-            {tab.glyph}
+            {tab.label}
           </button>
         ))}
       </nav>
-      {activeTab && (
-        <div className="sidebar-popout frame-module">
-          {activeTab === 'character' && (
-            <CharacterPanel playerCharacter={campaignState?.player_character} />
-          )}
-          {activeTab === 'campaign' && (
-            <CampaignPanel campaignState={campaignState} selectedCampaign={selectedCampaign} />
-          )}
-          {activeTab === 'memories' && (
-            <MemoriesPanel memories={memories} />
-          )}
-          {activeTab === 'readiness' && (
-            <ReadinessPanel shellReadiness={shellReadiness} />
-          )}
-          {activeTab === 'system' && (
-            <SystemPanel healthStatus={healthStatus} systemStatus={systemStatus} />
-          )}
+      {isOpen ? (
+        <div className="sidebar-popout frame-module is-open" id="utility-panel-popout">
+          {assetOverlayMode ? <AssetOverlay frameId="utilityPopout" /> : null}
+          <div className="sidebar-popout-header">
+            <span className="sidebar-popout-title">{activeTabConfig.title}</span>
+            <button
+              aria-label="Close utility panel"
+              className="sidebar-popout-close"
+              onClick={() => setIsOpen(false)}
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+          {renderPanel()}
         </div>
-      )}
+      ) : null}
     </aside>
   );
 }

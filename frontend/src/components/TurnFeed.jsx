@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { AssetOverlay } from "./AssetOverlay";
+import { resolvePortrait } from "../lib/portraitLibrary";
 import { getCasteColorToken } from "../lib/uiTheme";
 
 function escapeRegExp(value) {
@@ -20,6 +22,7 @@ function getTurnAvatar(turn, speakerName, speakerCaste) {
       initials: (speakerName ?? "DA").slice(0, 2).toUpperCase(),
       name: speakerName ?? "Player",
       caste: speakerCaste ?? "HighRed",
+      portraitSrc: resolvePortrait(speakerName),
     };
   }
 
@@ -28,6 +31,7 @@ function getTurnAvatar(turn, speakerName, speakerCaste) {
       initials: "GM",
       name: "Ares Relay",
       caste: "System",
+      portraitSrc: "/chrome/gm-relay-emblem.png",
     };
   }
 
@@ -166,6 +170,7 @@ function renderText(text, speaker, nameColorMap) {
 }
 
 export function TurnFeed({
+  assetOverlayMode,
   campaignName,
   isThinking,
   objective,
@@ -210,6 +215,7 @@ export function TurnFeed({
 
   return (
     <section className="turn-feed">
+      {assetOverlayMode ? <AssetOverlay frameId="turnFeed" /> : null}
       <div className="panel-chrome">
         <div>
           <p className="eyebrow">Narrative Feed</p>
@@ -218,28 +224,12 @@ export function TurnFeed({
         <span className="panel-chip">{statusText}</span>
       </div>
 
-      <article className="speaker-card">
-        <div className="speaker-portrait">
-          <span>{(speakerName ?? "AR").slice(0, 2).toUpperCase()}</span>
-        </div>
-        <div className="speaker-copy">
-          <p className="speaker-kicker">Current moment</p>
-          <p className="speaker-name" style={{ color: getCasteColorToken(speakerCaste) }}>
-            {speakerName ?? "Ares Runtime"}
-          </p>
-          <p className="speaker-meta">
-            {speakerCaste ?? "System"} / {speakerRole ?? "Live story conduit"}
-          </p>
-        </div>
-        <div className="speaker-waveform" aria-hidden="true" />
-      </article>
-
       <div className="turn-feed-scroll" ref={scrollRef}>
         <div className="turn-list">
           {turns.length === 0 ? (
             <article className="turn turn-gm turn-opening">
               <div className="turn-avatar" style={{ borderColor: getCasteColorToken("System") }}>
-                <span>GM</span>
+                <img alt="" className="turn-avatar-image" src="/chrome/gm-relay-emblem.png" />
               </div>
               <div className="turn-copy">
                 <div className="turn-meta">
@@ -265,7 +255,11 @@ export function TurnFeed({
                   key={turn.id}
                 >
                   <div className="turn-avatar" style={{ borderColor: getCasteColorToken(avatar.caste) }}>
-                    <span>{avatar.initials}</span>
+                    {avatar.portraitSrc ? (
+                      <img alt="" className="turn-avatar-image" src={avatar.portraitSrc} />
+                    ) : (
+                      <span>{avatar.initials}</span>
+                    )}
                   </div>
                   <div className="turn-copy">
                     <div className="turn-meta">
@@ -282,7 +276,7 @@ export function TurnFeed({
           {isThinking ? (
             <article className="turn turn-gm turn-thinking">
               <div className="turn-avatar" style={{ borderColor: getCasteColorToken("System") }}>
-                <span>GM</span>
+                <img alt="" className="turn-avatar-image" src="/chrome/gm-relay-emblem.png" />
               </div>
               <div className="turn-copy">
                 <div className="turn-meta">

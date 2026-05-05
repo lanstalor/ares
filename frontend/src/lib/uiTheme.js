@@ -1,3 +1,5 @@
+import { resolvePortrait } from "./portraitLibrary";
+
 const CASTE_COLOR_MAP = {
   red: "var(--color-red)",
   highred: "var(--color-red)",
@@ -92,6 +94,7 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
         role: playerCharacter.character_class ?? "Operative",
         tone: "player",
         active: true,
+        portraitSrc: resolvePortrait(playerCharacter.name),
         level: playerCharacter.level ?? 3,
         hp: {
           current: playerCharacter.current_hp ?? 38,
@@ -109,6 +112,7 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
       role: npc.role ?? "Unknown",
       tone: "npc",
       active: false,
+      portraitSrc: resolvePortrait(npc.name),
       disposition: npc.disposition ?? "unaware",
     }));
 
@@ -119,6 +123,7 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
     role: selectedCampaign ? "Encrypted GM runtime" : "Standby link",
     tone: "system",
     active: !player,
+    portraitSrc: "/chrome/gm-relay-emblem.png",
   };
 
   return [player, ...gmNpcs, systemParticipant].filter(Boolean);
