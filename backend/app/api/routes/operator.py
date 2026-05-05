@@ -4,7 +4,7 @@ from sqlalchemy import select
 from app.core.enums import SecretStatus
 from app.db.session import SessionDep
 from app.models.campaign import Campaign, Clock, Objective
-from app.models.character import Character
+from app.models.character import Character, Item
 from app.models.memory import Secret, Turn
 from app.models.world import Area, Faction, LorePage, NPC, POI
 from app.schemas.operator import (
@@ -44,6 +44,7 @@ def get_campaign_full_state(campaign_id: str, session: SessionDep) -> CampaignFu
         clocks=campaign.clocks,
         secrets=campaign.secrets,
         characters=campaign.characters,
+        items=campaign.items,
         turns=campaign.turns,
         memories=campaign.memories,
         world=world,
@@ -96,6 +97,13 @@ def patch_campaign_state(
             if char and char.campaign_id == campaign_id:
                 for field, value in update.model_dump(exclude_unset=True, exclude={"id"}).items():
                     setattr(char, field, value)
+
+    if payload.items:
+        for update in payload.items:
+            item = session.get(Item, update.id)
+            if item and item.campaign_id == campaign_id:
+                for field, value in update.model_dump(exclude_unset=True, exclude={"id"}).items():
+                    setattr(item, field, value)
 
     if payload.npcs:
         for update in payload.npcs:

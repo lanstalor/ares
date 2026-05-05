@@ -20,6 +20,7 @@ class Campaign(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     memories: Mapped[list["Memory"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
     secrets: Mapped[list["Secret"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
     characters: Mapped[list["Character"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
+    items: Mapped[list["Item"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
 
 
 class Objective(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -48,5 +49,5 @@ class Clock(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     campaign: Mapped["Campaign"] = relationship(back_populates="clocks")
 
 
-from app.models.character import Character  # noqa: E402
+from app.models.character import Character, Item  # noqa: E402
 from app.models.memory import Memory, Secret, Turn  # noqa: E402
