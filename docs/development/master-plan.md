@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| C1 | `track-c/C1-admin-api` | `~/ares-track-c/C1` | Gemini | review | Merge C1, then bootstrap C2 |
+| — | — | — | — | none in flight | run `make bootstrap-slice SLICE=A2` (or B2, or C2) to start |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -20,7 +20,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Title | Status |
 |---|---|---|
-| A1 | Dice + skill check primitive | not-started |
+| A1 | Dice + skill check primitive | finished |
 | A2 | Itemized inventory | not-started |
 | A3 | Conditions + status effects | not-started |
 | A4 | Turn-based combat mode | not-started |
@@ -30,7 +30,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Title | Status |
 |---|---|---|
-| B1 | MediaProvider abstraction | not-started |
+| B1 | MediaProvider abstraction | finished |
 | B2 | Scene art generation pipeline | not-started |
 | B3 | NPC portrait generation | not-started |
 | B4 | TTS narration | not-started |
@@ -40,7 +40,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Title | Status |
 |---|---|---|
-| C1 | Operator-only API surface | not-started |
+| C1 | Operator-only API surface | finished |
 | C2 | Operator React app | not-started |
 | C3 | Lore-page authoring | not-started |
 | C4 | Session prep workflow | not-started |
@@ -50,7 +50,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Status | Next step |
 |---|---|---|
-| UI overhaul (golden slice merged) | follow-up | Reskin remaining panels (turn feed, participant strip, action bar, status panel interiors) using frame primitives — see `docs/development/workstreams/ui-design-pass.md` |
+| UI overhaul (golden slice merged) | finished | Completed in session 2026-05-05 |
 | GM anti-stall safeguards | ready | Build structural scene-progression guardrails using `docs/development/workstreams/playtester-prompt-pass.md` and the `2026-04-30-00-28.md` benchmark |
 
 ## Later
@@ -69,6 +69,10 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-05-05 | C1: Operator-only API surface | GET /full-state, PATCH /state, GET /audit endpoints for manual repair |
+| 2026-05-05 | B1: MediaProvider abstraction | MediaProvider protocol + OpenAI/Replicate/Stub implementations |
+| 2026-05-05 | A1: Dice + skill check primitive | Attribute checks (Strength, Cunning, etc.) with system-roll feed events |
+| 2026-05-05 | UI Design Pass Phase 2 | Restored 3-column layout, branding assets, portrait avatars, utility rail |
 | 2026-04-30 | Icon sidebar + 4:3 scene aspect ratio | Status panel replaced with 56px icon rail + popout overlay; scene backdrop locked to 4:3 aspect ratio |
 | 2026-04-30 | UI design pass Phase 1 (CSS frames) | Panel accent strips, grain texture slot, column separator, caste icon slot |
 | 2026-04-30 | Playtester prompt pass + OpenAI benchmark | Shared GM prompt tightened, playtester made provider-configurable, and the first OpenAI benchmark documented that prompt-only changes did not yet fix repetition or scene stall |
