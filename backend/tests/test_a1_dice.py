@@ -211,6 +211,8 @@ def test_system_prompt_includes_dice_guidance_when_enabled() -> None:
     assert "skill check" in lowered or "attribute check" in lowered
     assert "cunning" in lowered
     assert "do not call for a roll" in lowered or "do not roll" in lowered
+    assert "bluff" in lowered
+    assert "must emit one roll" in lowered
 
 
 from sqlalchemy import create_engine
