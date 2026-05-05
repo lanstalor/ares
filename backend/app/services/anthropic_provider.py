@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import copy
 from typing import Any, Callable
 
 from app.core.enums import SecretStatus, Visibility
-from app.services.ai_provider import NarrationProvider, NarrationRequest, NarrationResponse
+from app.services.ai_provider import NarrationProvider, NarrationRequest, NarrationResponse, Roll
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
@@ -220,6 +221,55 @@ _TOOL_SCHEMA = {
     },
 }
 
+_ROLLS_PROPERTY_SCHEMA = {
+    "type": "array",
+    "description": (
+        "Skill checks the GM called for this turn. Emit only when the player's "
+        "action genuinely warrants a check (uncertainty, pressure, opposed will). "
+        "Routine narration does not need a roll."
+    ),
+    "items": {
+        "type": "object",
+        "properties": {
+            "attribute": {
+                "type": "string",
+                "enum": ["strength", "cunning", "will", "charm", "tech"],
+                "description": "Red Rising attribute being tested.",
+            },
+            "target": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 25,
+                "description": "Difficulty class. 8 trivial, 12 average, 15 hard, 18+ heroic.",
+            },
+            "dice_total": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30,
+                "description": "Final roll total after modifier.",
+            },
+            "outcome": {
+                "type": "string",
+                "enum": ["critical_success", "success", "failure", "critical_failure"],
+            },
+            "narration": {
+                "type": "string",
+                "description": "One short sentence flavoring the roll. No more than ~20 words.",
+            },
+        },
+        "required": ["attribute", "target", "dice_total", "outcome", "narration"],
+    },
+    "maxItems": 3,
+}
+
+
+def build_tool_schema(*, enable_dice: bool = False) -> dict:
+    schema = copy.deepcopy(_TOOL_SCHEMA)
+    if enable_dice:
+        schema["input_schema"]["properties"]["rolls"] = copy.deepcopy(_ROLLS_PROPERTY_SCHEMA)
+    return schema
+
+
 _CLARIFY_SYSTEM_PROMPT = """You are the hidden-state Game Master for Project Ares, answering a direct out-of-character question from the player.
 
 Your job: explain the current situation plainly, in plain prose, in as few words as the question needs. No more.
@@ -235,6 +285,25 @@ Rules:
 """
 
 
+_DICE_PROMPT_ADDENDUM = """
+
+Skill checks (dice):
+- Some player actions warrant a Red Rising attribute check. Call for one ONLY when the outcome is genuinely uncertain or under pressure: opposed will, deception, infiltration, lifting under load, threading a dataspike, etc. Do not call for a roll on routine narration, dialogue, or movement.
+- If the player's action is an explicit bluff, lie, forged-ident check, infiltration attempt, opposed threat, dataspike hack, violent physical strain, or similar pressure move, you MUST emit one roll. These are not routine narration.
+- Available attributes: strength, cunning, will, charm, tech.
+- For each check, emit one entry in the rolls array with attribute, target (8 trivial / 12 average / 15 hard / 18+ heroic), dice_total (the resolved total — be honest, do not always favour the player), outcome (critical_success / success / failure / critical_failure), and narration (one short sentence flavouring the result).
+- The narrative you produce must align with the roll outcome — failed rolls land as cost, complication, or partial success. Do not narrate success when the roll failed.
+- Never explain dice mechanics in the narrative. The roll record is structural; the narrative is fiction.
+- Maximum 3 rolls per turn. Most turns should have zero.
+"""
+
+
+def build_system_prompt(*, enable_dice: bool = False) -> str:
+    if enable_dice:
+        return _SYSTEM_PROMPT + _DICE_PROMPT_ADDENDUM
+    return _SYSTEM_PROMPT
+
+
 class AnthropicNarrationProvider:
     def __init__(
         self,
@@ -242,12 +311,14 @@ class AnthropicNarrationProvider:
         messages_create: Callable[..., Any] | None = None,
         model: str = "claude-haiku-4-5",
         max_tokens: int = 4096,
+        enable_dice: bool = False,
     ) -> None:
         if not model:
             raise ValueError("AnthropicNarrationProvider requires a non-empty model.")
         self._messages_create = messages_create
         self._model = model
         self._max_tokens = max_tokens
+        self._enable_dice = enable_dice
 
     def _get_messages_create(self) -> Callable[..., Any]:
         if self._messages_create is None:
@@ -263,11 +334,11 @@ class AnthropicNarrationProvider:
             system=[
                 {
                     "type": "text",
-                    "text": _SYSTEM_PROMPT,
+                    "text": build_system_prompt(enable_dice=self._enable_dice),
                     "cache_control": {"type": "ephemeral"},
                 }
             ],
-            tools=[_TOOL_SCHEMA],
+            tools=[build_tool_schema(enable_dice=self._enable_dice)],
             tool_choice={"type": "tool", "name": _TOOL_NAME},
             messages=[{"role": "user", "content": _format_user_message(request)}],
         )
@@ -351,11 +422,30 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
             participant["max_hp"] = item["max_hp"]
         scene_participants.append(participant)
 
+    raw_rolls = tool_input.get("rolls") or []
+    rolls: list[Roll] = []
+    for item in raw_rolls:
+        if not isinstance(item, dict):
+            continue
+        try:
+            rolls.append(
+                Roll(
+                    attribute=item["attribute"],
+                    target=int(item["target"]),
+                    dice_total=int(item["dice_total"]),
+                    outcome=item["outcome"],
+                    narration=item["narration"],
+                )
+            )
+        except (KeyError, TypeError, ValueError):
+            continue
+
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
         suggested_actions=suggested_actions,
         scene_participants=scene_participants,
+        rolls=rolls,
         consequences=Consequences(
             clock_ticks=[
                 ClockTick(label=item["label"], delta=int(item.get("delta", 1)))

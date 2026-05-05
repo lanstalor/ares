@@ -14,12 +14,22 @@ class NarrationRequest:
 
 
 @dataclass
+class Roll:
+    attribute: str
+    target: int
+    dice_total: int
+    outcome: str
+    narration: str
+
+
+@dataclass
 class NarrationResponse:
     narrative: str
     player_safe_summary: str
     consequences: Consequences = field(default_factory=Consequences)
     suggested_actions: list[dict] = field(default_factory=list)
     scene_participants: list[dict] = field(default_factory=list)
+    rolls: list[Roll] = field(default_factory=list)
 
 
 class NarrationProvider(Protocol):

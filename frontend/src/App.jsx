@@ -131,6 +131,18 @@ function buildConsequenceEvents(resolution) {
     });
   }
 
+  for (const roll of resolution.rolls ?? []) {
+    events.push({
+      id: `${id}-roll-${roll.attribute}-${events.length}`,
+      speaker: "system-roll",
+      label: "Roll",
+      meta: `${roll.attribute} vs ${roll.target}`,
+      text: `${roll.dice_total} -> ${roll.outcome.replace("_", " ")} - ${roll.narration}`,
+      timestamp: null,
+      roll,
+    });
+  }
+
   return events;
 }
 
