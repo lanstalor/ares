@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| — | — | — | — | none in flight | run `make bootstrap-slice SLICE=A2` (or B2, or C2) to start |
+| A2 | `track-a/A2-itemized-inventory` | `~/ares-track-a/A2` | Gemini | in-flight | Wire items into GM context builder and update tool schemas. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
