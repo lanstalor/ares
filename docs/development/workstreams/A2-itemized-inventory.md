@@ -21,27 +21,33 @@ Transition from a flat `inventory_summary` string to a structured `Item` model, 
 
 ## Last-known-good commit
 
-`HEAD` — `chore(A2): bootstrap slice — branch + workstream doc`
+`51a7974` — `feat(A2): create Item model, Alembic migration, and operator schemas`
 
 Test status at this commit:
-- backend (`make backend-test`): ✅
+- backend (`make backend-test`): ✅ 98 passed
 - frontend (`make check`): ✅
-- playtester (offline, stub provider): ✅
-- playwright screenshot at 5180: ✅
+- playtester (offline, stub provider): not-run
+- playwright screenshot at 5180: not-run
 
 ## In-flight WIP
 
-- `clean` — no uncommitted edits, last commit is a `chore:`.
+- `wip 51a7974` — Item model and DB migration are complete. Next is updating the GM context.
 
 ## Files touched so far
 
 Append entries as you edit. Mark files complete with ✅, in-progress with ⚠️.
 
-- `docs/development/workstreams/A2-itemized-inventory.md` — initialized ✅
+- `docs/development/workstreams/A2-itemized-inventory.md` — updated ⚠️
+- `backend/app/models/character.py` — Added `Item` model ✅
+- `backend/app/models/campaign.py` — Added `items` relationship ✅
+- `backend/alembic/versions/05561cace318_add_items_table.py` — Migration generated ✅
+- `backend/app/schemas/character.py` — Added `ItemRead` and updated `CharacterRead` ✅
+- `backend/app/schemas/operator.py` — Added `ItemUpdate` to patch schemas ✅
+- `backend/app/api/routes/operator.py` — Handled items in state repair ✅
 
 ## Next concrete step
 
-Create `backend/app/models/item.py` defining the `Item` model (linked to `Character` and `Campaign`) and generate the Alembic migration to add the `items` table.
+Update `backend/app/services/context_builder.py` to include the character's items in the GM's system prompt context (e.g., formatting them under an "INVENTORY" section). Then update `AnthropicNarrationProvider` to include an `inventory_updates` array in the `_TOOL_SCHEMA` so the GM can add/remove items as a consequence.
 
 ## Open questions / blockers
 
@@ -51,6 +57,7 @@ Create `backend/app/models/item.py` defining the `Item` model (linked to `Charac
 
 Append-only. One line per session.
 
+- `2026-05-05 23:55 UTC` — Gemini → Bootstrapped slice A2, created `Item` model, Alembic migration, and operator API schemas. Backend tests green. Next: wiring GM context.
 - `YYYY-MM-DD HH:MM UTC` — Agent → what was done; status at end of session
 - ...
 
