@@ -24,6 +24,7 @@ Add a provider-backed media abstraction for image generation that works offline 
 Test status at this commit:
 - backend (`make backend-test`): ✅ 77 passed
 - frontend (`make check`): ✅ compileall + node syntax checks passed
+- frontend (`npm run build`): ✅ passed after rebasing onto `origin/main` with PR #12 merged
 - playtester (offline, stub provider): not-run (no turn-loop or frontend behavior changed)
 - playwright screenshot at 5180: not-run (backend/provider-only slice)
 
@@ -54,6 +55,7 @@ Open B2 on `track-b/B2-scene-art`: add the scene-art generation service/cache ar
 Append-only. One line per session.
 
 - `2026-05-05 22:23 UTC` — Codex → implemented B1 media provider abstraction, config/status wiring, and tests; status review at `HEAD`.
+- `2026-05-05 23:17 UTC` — Codex → rebased B1 onto updated `origin/main` after PR #12 scene-art baseline merge; verified `make backend-test` (77 passed), `make check`, and `npm run build`.
 
 ## Verification on completion
 

@@ -14,6 +14,37 @@ This is **not** a chatbot wrapper. The value is in the hidden-state engine: cloc
 
 ## Latest Session Summary
 
+Date: 2026-05-05
+
+### Fables.gg gap-closing wave — A1/B1 kickoff and scene-art baseline
+
+**Current branch/PR state:**
+- A1 Dice + Skill Check Primitive: `track-a/A1-dice-skill-checks`, draft PR #10.
+  - Tasks 1-12 are implemented and rebased onto updated `origin/main`.
+  - `ARES_ENABLE_DICE` defaults off.
+  - Backend response path is complete: conditional Anthropic tool schema/prompt, typed `Roll`, `TurnEngineResult.rolls`, API `TurnResolution.rolls`.
+  - Frontend path is complete: `system-roll` consequence events, Skill Check avatar, amber/copper styling.
+  - Verified after rebase: backend suite (85 passed), `make check`, and `npm run build`.
+  - Still pending before ready: Docker/5180 smoke with `ARES_ENABLE_DICE=true`, Playwright screenshot saved under `assets/samples/ui-iteration/`, optional playtester regression.
+- B1 MediaProvider abstraction: `track-b/B1-media-provider`, draft PR #11.
+  - Implemented `MediaProvider`, `StubMediaProvider`, `OpenAIImageProvider`, `ReplicateImageProvider`, `get_media_provider()`, `ARES_MEDIA_PROVIDER`, `ARES_MEDIA_MODEL`, and `/system/status` media fields.
+  - Rebased onto updated `origin/main` after PR #12 merged.
+  - Verified: `make backend-test` (77 passed), `make check`, and `npm run build`.
+- Frontend baseline fix: PR #12 merged to `main`.
+  - Added missing `frontend/src/lib/sceneArtLibrary.js` and the campaign scene-art PNGs it references.
+  - This fixed the build blocker where `SceneBackdrop.jsx` imported a file absent from `main`.
+
+**Important local/worktree notes:**
+- `/home/lans/ares` remains dirty with broad UI/assets work from another lane. Do not clean or revert it casually.
+- A1 worktree: `/home/lans/ares-track-a/A1`.
+- B1 worktree: `/home/lans/ares-track-b/B1`.
+- C1 worktree exists but is still not-started: `/home/lans/ares-track-c/C1`.
+
+**Resume next:**
+1. If continuing A1, start with `docs/development/workstreams/A1-dice-skill-checks.md`; next action is Docker/5180 dice smoke with `ARES_ENABLE_DICE=true`.
+2. If continuing B1, start with `docs/development/workstreams/B1-media-provider.md`; next action is human review or B2 scene-art generation pipeline.
+3. Before ending any slice session, update the workstream doc, commit, and push.
+
 Date: 2026-04-30 (continued)
 
 ### Pixel-art rebel terminal UI overhaul — golden slice

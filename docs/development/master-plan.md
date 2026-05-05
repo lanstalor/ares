@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| A1 | `track-a/A1-dice-skill-checks` | `~/ares-track-a/A1` | Claude | in-flight | Continue A1 from its workstream doc; Codex is avoiding this lane. |
+| A1 | `track-a/A1-dice-skill-checks` | `~/ares-track-a/A1` | Codex | in-flight | Smoke dice at 5180 with `ARES_ENABLE_DICE=true` and capture screenshot. |
 | B1 | `track-b/B1-media-provider` | `~/ares-track-b/B1` | Codex | review | Human review or open B2 for scene-art cache/service work. |
 | C1 | `track-c/C1-admin-api` | `~/ares-track-c/C1` | any | not-started | Start C1 if a third independent lane is needed. |
 
@@ -22,7 +22,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Title | Status |
 |---|---|---|
-| A1 | Dice + skill check primitive | not-started |
+| A1 | Dice + skill check primitive | in-flight |
 | A2 | Itemized inventory | not-started |
 | A3 | Conditions + status effects | not-started |
 | A4 | Turn-based combat mode | not-started |
