@@ -64,3 +64,65 @@ def test_tool_schema_includes_rolls_when_enabled() -> None:
         "failure",
         "critical_failure",
     ]
+
+
+from app.services.anthropic_provider import _build_response
+
+
+_BASE_TOOL_INPUT = {
+    "narrative": "n",
+    "player_safe_summary": "s",
+    "consequences": {},
+    "suggested_actions": [
+        {"label": "A", "prompt": "do A"},
+        {"label": "B", "prompt": "do B"},
+        {"label": "C", "prompt": "do C"},
+    ],
+    "scene_participants": [],
+}
+
+
+def test_build_response_extracts_rolls() -> None:
+    tool_input = {
+        **_BASE_TOOL_INPUT,
+        "rolls": [
+            {
+                "attribute": "cunning",
+                "target": 14,
+                "dice_total": 17,
+                "outcome": "success",
+                "narration": "Davan reads the tell before it lands.",
+            }
+        ],
+    }
+    response = _build_response(tool_input)
+    assert len(response.rolls) == 1
+    roll = response.rolls[0]
+    assert roll.attribute == "cunning"
+    assert roll.target == 14
+    assert roll.outcome == "success"
+
+
+def test_build_response_handles_missing_rolls() -> None:
+    response = _build_response(_BASE_TOOL_INPUT)
+    assert response.rolls == []
+
+
+def test_build_response_skips_malformed_rolls() -> None:
+    tool_input = {
+        **_BASE_TOOL_INPUT,
+        "rolls": [
+            "not-a-dict",
+            {"attribute": "will"},  # missing required fields
+            {
+                "attribute": "tech",
+                "target": 12,
+                "dice_total": 8,
+                "outcome": "failure",
+                "narration": "The dataspike chirps the wrong tone.",
+            },
+        ],
+    }
+    response = _build_response(tool_input)
+    assert len(response.rolls) == 1
+    assert response.rolls[0].attribute == "tech"

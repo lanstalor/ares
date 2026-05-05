@@ -4,7 +4,7 @@ import copy
 from typing import Any, Callable
 
 from app.core.enums import SecretStatus, Visibility
-from app.services.ai_provider import NarrationProvider, NarrationRequest, NarrationResponse
+from app.services.ai_provider import NarrationProvider, NarrationRequest, NarrationResponse, Roll
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
@@ -401,11 +401,30 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
             participant["max_hp"] = item["max_hp"]
         scene_participants.append(participant)
 
+    raw_rolls = tool_input.get("rolls") or []
+    rolls: list[Roll] = []
+    for item in raw_rolls:
+        if not isinstance(item, dict):
+            continue
+        try:
+            rolls.append(
+                Roll(
+                    attribute=item["attribute"],
+                    target=int(item["target"]),
+                    dice_total=int(item["dice_total"]),
+                    outcome=item["outcome"],
+                    narration=item["narration"],
+                )
+            )
+        except (KeyError, TypeError, ValueError):
+            continue
+
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
         suggested_actions=suggested_actions,
         scene_participants=scene_participants,
+        rolls=rolls,
         consequences=Consequences(
             clock_ticks=[
                 ClockTick(label=item["label"], delta=int(item.get("delta", 1)))
