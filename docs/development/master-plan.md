@@ -10,7 +10,9 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| — | — | — | — | none in flight | run `make bootstrap-slice SLICE=A1` (or B1, or C1) to start |
+| A1 | `track-a/A1-dice-skill-checks` | `~/ares-track-a/A1` | Claude | in-flight | Continue A1 from its workstream doc; Codex is avoiding this lane. |
+| B1 | `track-b/B1-media-provider` | `~/ares-track-b/B1` | Codex | review | Human review or open B2 for scene-art cache/service work. |
+| C1 | `track-c/C1-admin-api` | `~/ares-track-c/C1` | any | not-started | Start C1 if a third independent lane is needed. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -30,7 +32,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Slice | Title | Status |
 |---|---|---|
-| B1 | MediaProvider abstraction | not-started |
+| B1 | MediaProvider abstraction | review |
 | B2 | Scene art generation pipeline | not-started |
 | B3 | NPC portrait generation | not-started |
 | B4 | TTS narration | not-started |
