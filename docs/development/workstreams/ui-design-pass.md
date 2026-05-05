@@ -304,3 +304,76 @@ Replaced the always-visible status panel column with a 56px icon rail + popout o
 ## Next Step
 
 Reskin remaining panels (turn feed → embedded system log, participant strip → tactical dossier chips, action bar → hardware toggles) with the same frame primitives. All asset hooks already in place per the asset-drop pattern.
+
+---
+
+## VS Code Co-Dev Loop
+
+This section is the canonical process for all UI-iteration work on this slice. Read and follow it at the start of every co-dev session.
+
+### Environment decision by change type
+
+| Change type | Loop | Port |
+|---|---|---|
+| CSS-only (colours, spacing, font weight, no layout) | `make frontend-dev` — Vite HMR, no rebuild needed | 5173 |
+| Layout / JSX structural / anything touching state or API | Full stack already running — `docker compose up --build --no-deps -d frontend` after each batch of changes | 5180 |
+
+**Canonical test URL:** `http://localhost:5180/`  
+Skip intro: set `localStorage.ares_intro_seen=1` in the browser console before screenshotting.
+
+### Visual aids in VS Code
+
+1. **VS Code Simple Browser** — keep open at `http://localhost:5173` (Vite) for live watching during CSS edits. Switch to `http://localhost:5180` when validating layout-level changes.
+2. **Playwright MCP** — use for durable checkpoint captures at the end of each slice. Screenshots are the evidence record, not optional.
+
+### Slice contract
+
+Every UI slice must define the following before work begins:
+
+```
+Goal:         <one sentence, one visual objective>
+Scope in:     <explicit list of files / components>
+Scope out:    <explicit exclusions to prevent scope creep>
+Exit criteria:<list of checklist items that must pass>
+```
+
+### Verification checklist (run at each slice boundary)
+
+Capture a Playwright screenshot at **1366×1024** on port **5180** after rebuilding. Store it in `assets/samples/ui-iteration/` named `{YYYY-MM-DD}-{slice-name}-{before|after}.png`. Then manually compare against the previous checkpoint and the target reference (`assets/samples/ui.png`).
+
+- [ ] Layout hierarchy: feed column narrow, scene dominant, utility always-visible
+- [ ] Narrative feed readable at normal reading distance (text not competing with frame chrome)
+- [ ] Command bar prominent — EXECUTE visible and affordance clear
+- [ ] Scene backdrop visible and not obscured by overlay panels
+- [ ] Panel borders visible (not washed out) — depth is real, not implied
+- [ ] No regression in existing golden-slice panels (topbar, command line, scene bezel, sidebar assembly)
+- [ ] No hidden-state data in player-visible UI
+- [ ] `npm run build` passes with no errors before checkpoint is recorded
+
+### Handoff evidence (required before pausing or switching agents)
+
+Add to the workstream doc under a **"Last verified"** heading:
+
+```
+Last verified: {date}
+Before screenshot: assets/samples/ui-iteration/{file}
+After screenshot:  assets/samples/ui-iteration/{file}
+Checklist result:  all pass | <list any fails>
+Known visual debt: <describe anything left undone>
+Next slice:        <exact goal sentence for the next session>
+```
+
+---
+
+## Last Verified
+
+```
+Last verified: 2026-05-01
+Before screenshot: assets/samples/ui-iteration/2026-05-01-baseline-before.png
+After screenshot:  (none yet — this is the opening baseline)
+Checklist result:  n/a — baseline capture only, no changes applied yet
+Known visual debt: Turn feed cards, participant strip, action bar, and status panel interiors
+                   still have Phase 1 (accent strip only) styling — not yet given frame-module treatment
+Next slice:        Reskin the turn feed into a framed embedded system log — each turn card gets
+                   visible 2px border, left-stripe speaker accent, source badge, and timestamp chip
+```

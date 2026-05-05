@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| — | — | — | — | none in flight | run `make bootstrap-slice SLICE=A1` (or B1, or C1) to start |
+| C1 | `track-c/C1-admin-api` | `~/ares-track-c/C1` | Gemini | review | Merge C1, then bootstrap C2 |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 

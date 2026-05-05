@@ -4,7 +4,7 @@
 
 **Reference image:** `assets/samples/ui.png` — study it before reading anything else.  
 **Style guide:** `docs/layout.md` — read fully, pay special attention to §"What to Change" and §"Style Guide".  
-**Dev workflow:** `docker compose up --build --no-deps -d frontend` to rebuild after changes; verify at `http://localhost:5180/?devui=1` with Playwright screenshot.
+**Dev workflow:** `docker compose up --build --no-deps -d frontend` to rebuild after changes; verify the direct game shell at `http://localhost:5180/` with Playwright screenshot. For direct-to-game captures, seed browser localStorage with `ares_intro_seen=1`; do not use `/ui-dev` for UI-overhaul testing.
 
 ---
 
@@ -268,15 +268,28 @@ The prior CSS section `UI OVERHAUL — PIXEL TERMINAL` (at the very end of `styl
 
 ## Verification
 
-After each step, rebuild and screenshot:
+**Hybrid loop:** Use Vite (5173) for CSS-only iteration; rebuild Docker and verify at 5180 for any layout or JSX changes.
+
+After each layout step, rebuild:
 ```bash
 docker compose up --build --no-deps -d frontend
 ```
-Then Playwright:
+
+Then Playwright (or VS Code Simple Browser) at:
 ```
-navigate to http://localhost:5180/?devui=1
-resize to 1366x1024
-take screenshot
+URL:      http://localhost:5180/
+Storage:  localStorage.ares_intro_seen=1
+Viewport: 1366×1024
 ```
 
-Compare screenshot against `assets/samples/ui.png`. The layout proportions (narrow feed / wide scene / utility column) and panel depth (visible thick borders, inset surfaces) should be clearly visible.
+Save screenshots to `assets/samples/ui-iteration/` named `{date}-{slice}-{before|after}.png`.
+
+**Checklist before marking any layout step complete:**
+- [ ] Proportions match reference (`assets/samples/ui.png`): narrow feed / wide scene / utility column
+- [ ] Panel borders visible at 2-3px, high opacity — not implied by shadow alone
+- [ ] Narrative feed readable at normal zoom
+- [ ] Command bar and EXECUTE button clearly prominent
+- [ ] No regression in topbar, scene bezel, or sidebar assembly (golden-slice panels)
+- [ ] `npm run build` passes
+
+Full slice contract and checklist spec lives in `docs/development/workstreams/ui-design-pass.md` §"VS Code Co-Dev Loop".
