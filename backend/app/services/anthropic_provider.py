@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import Any, Callable
 
 from app.core.enums import SecretStatus, Visibility
@@ -219,6 +220,55 @@ _TOOL_SCHEMA = {
         "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants"],
     },
 }
+
+_ROLLS_PROPERTY_SCHEMA = {
+    "type": "array",
+    "description": (
+        "Skill checks the GM called for this turn. Emit only when the player's "
+        "action genuinely warrants a check (uncertainty, pressure, opposed will). "
+        "Routine narration does not need a roll."
+    ),
+    "items": {
+        "type": "object",
+        "properties": {
+            "attribute": {
+                "type": "string",
+                "enum": ["strength", "cunning", "will", "charm", "tech"],
+                "description": "Red Rising attribute being tested.",
+            },
+            "target": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 25,
+                "description": "Difficulty class. 8 trivial, 12 average, 15 hard, 18+ heroic.",
+            },
+            "dice_total": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30,
+                "description": "Final roll total after modifier.",
+            },
+            "outcome": {
+                "type": "string",
+                "enum": ["critical_success", "success", "failure", "critical_failure"],
+            },
+            "narration": {
+                "type": "string",
+                "description": "One short sentence flavoring the roll. No more than ~20 words.",
+            },
+        },
+        "required": ["attribute", "target", "dice_total", "outcome", "narration"],
+    },
+    "maxItems": 3,
+}
+
+
+def build_tool_schema(*, enable_dice: bool = False) -> dict:
+    schema = copy.deepcopy(_TOOL_SCHEMA)
+    if enable_dice:
+        schema["input_schema"]["properties"]["rolls"] = copy.deepcopy(_ROLLS_PROPERTY_SCHEMA)
+    return schema
+
 
 _CLARIFY_SYSTEM_PROMPT = """You are the hidden-state Game Master for Project Ares, answering a direct out-of-character question from the player.
 

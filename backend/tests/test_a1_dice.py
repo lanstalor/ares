@@ -38,3 +38,29 @@ def test_roll_dataclass_instantiates() -> None:
 def test_narration_response_has_empty_rolls_by_default() -> None:
     resp = NarrationResponse(narrative="x", player_safe_summary="x")
     assert resp.rolls == []
+
+
+from app.services.anthropic_provider import build_tool_schema
+
+
+def test_tool_schema_omits_rolls_when_disabled() -> None:
+    schema = build_tool_schema(enable_dice=False)
+    properties = schema["input_schema"]["properties"]
+    assert "rolls" not in properties
+
+
+def test_tool_schema_includes_rolls_when_enabled() -> None:
+    schema = build_tool_schema(enable_dice=True)
+    properties = schema["input_schema"]["properties"]
+    assert "rolls" in properties
+    rolls_schema = properties["rolls"]
+    assert rolls_schema["type"] == "array"
+    item_props = rolls_schema["items"]["properties"]
+    assert set(item_props.keys()) == {"attribute", "target", "dice_total", "outcome", "narration"}
+    assert item_props["attribute"]["enum"] == ["strength", "cunning", "will", "charm", "tech"]
+    assert item_props["outcome"]["enum"] == [
+        "critical_success",
+        "success",
+        "failure",
+        "critical_failure",
+    ]
