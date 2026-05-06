@@ -12,6 +12,7 @@ import app.models.character  # noqa: F401
 import app.models.media      # noqa: F401
 import app.models.memory     # noqa: F401
 import app.models.world      # noqa: F401
+import app.models.portraits  # noqa: F401
 
 config = context.config
 
