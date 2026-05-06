@@ -22,6 +22,7 @@ class Campaign(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     characters: Mapped[list["Character"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
     items: Mapped[list["Item"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
     scene_art: Mapped[list["SceneArt"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
+    npc_portraits: Mapped[list["NpcPortrait"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
 
 
 class Objective(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -53,3 +54,4 @@ class Clock(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 from app.models.character import Character, Item  # noqa: E402
 from app.models.media import SceneArt  # noqa: E402
 from app.models.memory import Memory, Secret, Turn  # noqa: E402
+from app.models.portraits import NpcPortrait  # noqa: E402
