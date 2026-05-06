@@ -1,7 +1,8 @@
 import base64
 from types import SimpleNamespace
+from unittest import mock
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.api.routes.campaigns import create_campaign
@@ -9,6 +10,7 @@ from app.api.routes.portraits import get_portrait_detail, list_portraits, regene
 from app.core.config import get_settings
 from app.models.base import Base
 from app.models.character import Character
+from app.models.portraits import NpcPortrait
 from app.schemas.campaign import CampaignCreate
 from app.schemas.portraits import PortraitRegenerateRequest
 from app.services.media_provider import MediaRequest, MediaResponse
@@ -30,7 +32,14 @@ def test_slugify_npc_name_is_stable() -> None:
 
 def test_list_portraits_returns_empty_initially() -> None:
     session = _make_session()
-    campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
+    # Mock portrait generation to prevent it from running during campaign creation
+    with mock.patch("app.services.npc_portrait_service.ensure_portrait"):
+        campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
+    # Clear any portraits created by create_campaign
+    session.query(NpcPortrait).delete()
+    session.commit()
 
     portraits = list_portraits(campaign.id, session)
 
@@ -39,7 +48,15 @@ def test_list_portraits_returns_empty_initially() -> None:
 
 def test_list_portraits_after_ensure_portrait(tmp_path) -> None:
     session = _make_session()
-    campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
+    # Mock portrait generation during campaign creation
+    with mock.patch("app.services.npc_portrait_service.ensure_portrait"):
+        campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
+    # Clear any portraits created by create_campaign
+    session.query(NpcPortrait).delete()
+    session.commit()
+
     npc = Character(campaign_id=campaign.id, name="Test NPC")
     session.add(npc)
     session.commit()
@@ -73,7 +90,11 @@ def test_list_portraits_after_ensure_portrait(tmp_path) -> None:
 
 def test_get_portrait_detail_by_npc_id(tmp_path) -> None:
     session = _make_session()
-    campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
+    # Mock portrait generation during campaign creation
+    with mock.patch("app.services.npc_portrait_service.ensure_portrait"):
+        campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
     npc = Character(campaign_id=campaign.id, name="Alia of House Visigoth")
     session.add(npc)
     session.commit()
@@ -107,7 +128,11 @@ def test_get_portrait_detail_by_npc_id(tmp_path) -> None:
 
 def test_regenerate_portrait_with_force(tmp_path) -> None:
     session = _make_session()
-    campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
+    # Mock portrait generation during campaign creation
+    with mock.patch("app.services.npc_portrait_service.ensure_portrait"):
+        campaign = create_campaign(CampaignCreate(name="Portrait Route Test"), session)
+
     npc = Character(campaign_id=campaign.id, name="Test NPC")
     session.add(npc)
     session.commit()
@@ -138,14 +163,26 @@ def test_regenerate_portrait_with_force(tmp_path) -> None:
 
     assert call_count[0] == 1
 
-    # Regenerate with force=True
-    portrait = regenerate_portrait(
-        campaign.id,
-        npc.id,
-        PortraitRegenerateRequest(force=True),
-        session,
-    )
+    # Regenerate with force=True - mock the provider factory again for the route call
+    with mock.patch(
+        "app.services.npc_portrait_service.get_media_provider"
+    ) as mock_provider_factory:
+        mock_provider_factory.return_value = Provider()
+
+        with mock.patch(
+            "app.services.npc_portrait_service.get_settings"
+        ) as mock_settings:
+            settings_instance = mock.MagicMock()
+            settings_instance.project_root = tmp_path
+            mock_settings.return_value = settings_instance
+
+            portrait = regenerate_portrait(
+                campaign.id,
+                npc.id,
+                PortraitRegenerateRequest(force=True),
+                session,
+            )
     session.commit()
 
-    assert call_count[0] == 2
-    assert portrait.status == "ready"
+    assert call_count[0] == 2, f"Expected 2 provider calls, got {call_count[0]}"
+    assert portrait.status == "ready", f"Portrait generation failed: {portrait.error}"
