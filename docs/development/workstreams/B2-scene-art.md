@@ -4,12 +4,12 @@
 
 | Field | Value |
 |---|---|
-| **Track** | A / B / C |
+| **Track** | B |
 | **Branch** | `track-b/B2-scene-art` |
 | **Worktree** | `~/ares-track-b/B2` |
 | **PR** | TBD |
-| **Status** | not-started / in-flight / review / blocked |
-| **Last agent** | — |
+| **Status** | in-flight |
+| **Last agent** | Codex |
 | **Next agent** | any |
 | **Parent plan** | `~/.claude/plans/a-i-happy-matsumoto.md` |
 
@@ -17,54 +17,67 @@
 
 ## Goal
 
-One sentence. What does "done" look like for this slice?
+Generate, cache, and surface player-safe scene art for the current campaign location through the existing MediaProvider abstraction, with offline stub behavior as the default.
 
 ## Last-known-good commit
 
-`{sha}` — `{message}`
+`85c37ba` — `feat(B2): add scene art generation pipeline`
 
 Test status at this commit:
-- backend (`make backend-test`): ✅ / ❌ / not-run
-- frontend (`make check`): ✅ / ❌ / not-run
-- playtester (offline, stub provider): ✅ / ❌ / not-run
-- playwright screenshot at 5180: ✅ / ❌ / not-run
+- backend (`make backend-test`): ✅ 105 passed
+- frontend (`make check`): ✅
+- frontend (`npm run build`): ✅
+- alembic smoke (`DATABASE_URL=sqlite:////tmp/ares-b2-migrate.db alembic upgrade head`): ✅
+- docker config (`docker compose config` with temporary `.env -> .env.example` symlink): ✅
+- playtester (offline, stub provider): not-run
+- playwright screenshot at 5180: not-run
 
 ## In-flight WIP
 
-State exactly one of:
-
-- `clean` — no uncommitted edits, last commit is a `feat:` or `fix:`.
-- `wip {sha}` — committed-but-incomplete; tests pass; what is still missing: ___
-- `handoff {sha}` — committed-but-broken; what is broken: ___; what works: ___
+`wip 85c37ba` — tests pass; scene-art service/cache, API route, turn-trigger, and frontend consumption are implemented. Remaining: run the Docker 5180 visual checkpoint, decide whether to add a small operator-facing regenerate control in the UI, and create/update the draft PR description.
 
 ## Files touched so far
 
 Append entries as you edit. Mark files complete with ✅, in-progress with ⚠️.
 
-- `backend/app/...` — what changed
-- `frontend/src/...` — what changed
+- ✅ `.env.example` — documented media provider and scene-art cache settings.
+- ✅ `docker-compose.yml` — passes media provider/cache settings into the backend container.
+- ✅ `backend/alembic/env.py` — imports the media model for migrations.
+- ✅ `backend/alembic/versions/c4b16f7a8b2d_add_scene_art_cache.py` — adds the scene-art cache table.
+- ✅ `backend/app/models/media.py` — adds `SceneArt`.
+- ✅ `backend/app/models/campaign.py` / `backend/app/models/__init__.py` — wires campaign scene-art relationship and model exports.
+- ✅ `backend/app/schemas/media.py`, `backend/app/schemas/campaign.py`, `backend/app/schemas/turn.py` — adds scene-art API/read schemas and state/turn fields.
+- ✅ `backend/app/services/scene_art.py` — builds player-safe prompts, calls `MediaProvider`, caches b64 images, and reuses cached records.
+- ✅ `backend/app/api/routes/media.py`, `backend/app/api/router.py` — adds list/current/regenerate endpoints plus backend file serving for generated PNGs.
+- ✅ `backend/app/api/routes/campaigns.py` — includes cached current scene art in campaign state.
+- ✅ `backend/app/api/routes/turns.py` — triggers scene-art generation when a turn changes location.
+- ✅ `frontend/src/lib/api.js` — adds scene-art API helpers.
+- ✅ `frontend/src/App.jsx` — fetches current scene art when the active location changes and stores turn-triggered art.
+- ✅ `frontend/src/components/SceneBackdrop.jsx` — renders API-backed scene art with static-library fallback.
+- ✅ `backend/tests/test_scene_art.py` — covers prompt safety, caching, routes, and slugging.
 
 ## Next concrete step
 
-Literal 1–3 sentences. Not "continue work on inventory" — instead: "wire `Roll` into `_TOOL_SCHEMA._properties` in `anthropic_provider.py:142`, then update `_build_response` to translate `tool_input['rolls']` into `RollResult` dataclass instances."
+Start the Docker truth checkpoint at 5180, open a campaign, and confirm the scene backdrop uses the API-provided `scene_art.image_url` without layout regressions. Then add a focused Playwright screenshot under `assets/samples/ui-iteration/` and mark the slice ready for review if the visual pass is clean.
 
 ## Open questions / blockers
 
-- ...
+- The backend serves generated b64 PNGs at `/api/v1/media/scene-art/{filename}` so Docker does not require the frontend container to see backend-written files.
+- The frontend still falls back to the existing static scene-art library when the scene-art API is unavailable.
+- No in-app regenerate button was added yet; the API endpoint exists at `POST /api/v1/campaigns/{campaign_id}/scene-art/regenerate`.
 
 ## Agent rotation log
 
 Append-only. One line per session.
 
-- `YYYY-MM-DD HH:MM UTC` — Agent → what was done; status at end of session
-- ...
+- `2026-05-06 08:59 UTC` — Codex → Bootstrapped B2, added scene-art model/migration/service/API/frontend wiring, verified backend/frontend checks; next: Docker 5180 visual checkpoint and PR polish.
 
 ## Verification on completion
 
 Before marking this slice **review**:
 
-- [ ] `make backend-test` passes
-- [ ] `make check` passes
+- [x] `make backend-test` passes
+- [x] `make check` passes
 - [ ] Playtester runs 30 turns clean with feature flag off (default) and on
 - [ ] Playwright screenshot at 5180 (UI slices only) saved under `assets/samples/ui-iteration/`
 - [ ] Workstream doc fully reflects final state
@@ -73,8 +86,8 @@ Before marking this slice **review**:
 
 ## Hard constraints checklist
 
-- [ ] Hidden state does not leak to player
-- [ ] Canon guard not bypassed
-- [ ] Player character remains Davan of Tharsis
-- [ ] All AI/media/TTS calls go through a Provider Protocol
-- [ ] Stub provider works offline (no API key required for `make backend-test`)
+- [x] Hidden state does not leak to player
+- [x] Canon guard not bypassed
+- [x] Player character remains Davan of Tharsis
+- [x] All AI/media/TTS calls go through a Provider Protocol
+- [x] Stub provider works offline (no API key required for `make backend-test`)

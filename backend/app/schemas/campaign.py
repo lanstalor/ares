@@ -3,6 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.character import CharacterRead
+from app.schemas.media import SceneArtRead
 
 
 class CampaignCreate(BaseModel):
@@ -30,4 +31,5 @@ class CampaignState(BaseModel):
     active_objective: str | None
     recent_turns: list[str]
     player_character: CharacterRead | None
+    scene_art: SceneArtRead | None = None
     hidden_state_summary: str

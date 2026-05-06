@@ -77,6 +77,17 @@ export function fetchMemories(campaignId, limit = 5) {
   return request(`/campaigns/${campaignId}/memories?limit=${limit}`, {}, "Memory fetch failed");
 }
 
+export function getCurrentSceneArt(campaignId) {
+  return request(`/campaigns/${campaignId}/scene-art/current`, {}, "Scene art request failed");
+}
+
+export function regenerateSceneArt(campaignId, payload = {}) {
+  return request(`/campaigns/${campaignId}/scene-art/regenerate`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }, "Scene art regeneration failed");
+}
+
 export function seedWorldBible(payload = {}) {
   return request("/seed/world-bible", {
     method: "POST",

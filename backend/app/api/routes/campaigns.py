@@ -4,6 +4,7 @@ from sqlalchemy import select
 from app.db.session import SessionDep
 from app.models.campaign import Campaign
 from app.models.character import Character
+from app.services.scene_art import get_cached_scene_art
 from app.schemas.campaign import CampaignCreate, CampaignRead, CampaignState
 
 router = APIRouter()
@@ -61,11 +62,17 @@ def get_campaign_state(campaign_id: str, session: SessionDep) -> CampaignState:
         for turn in sorted(campaign.turns, key=lambda turn: turn.created_at, reverse=True)[:5]
     ]
     active_objective = next((objective.title for objective in campaign.objectives if objective.is_active), None)
+    scene_art = get_cached_scene_art(
+        session=session,
+        campaign_id=campaign.id,
+        location_label=campaign.current_location_label,
+    )
     return CampaignState(
         campaign=campaign,
         current_location=campaign.current_location_label,
         active_objective=active_objective,
         recent_turns=recent_turns,
         player_character=latest_character,
+        scene_art=scene_art,
         hidden_state_summary="Hidden state remains server-only.",
     )

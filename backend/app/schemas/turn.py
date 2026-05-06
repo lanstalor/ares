@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.media import SceneArtRead
+
 
 class TurnCreate(BaseModel):
     player_input: str = Field(min_length=1, max_length=8000)
@@ -30,3 +32,4 @@ class TurnResolution(BaseModel):
     scene_participants: list[dict] = Field(default_factory=list)
     revealed_secrets: list[dict] = Field(default_factory=list)
     rolls: list[dict] = Field(default_factory=list)
+    scene_art: SceneArtRead | None = None

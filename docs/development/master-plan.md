@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| _None_ | — | — | — | — | Bootstrap the next slice |
+| B2 | `track-b/B2-scene-art` | `~/ares-track-b/B2` | Codex | in-flight | Add scene art service/cache, media API route, and frontend scene-art refresh |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -31,7 +31,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | Slice | Title | Status |
 |---|---|---|
 | B1 | MediaProvider abstraction | finished |
-| B2 | Scene art generation pipeline | not-started |
+| B2 | Scene art generation pipeline | in-flight |
 | B3 | NPC portrait generation | not-started |
 | B4 | TTS narration | not-started |
 | B5 | World map + token movement | not-started |
