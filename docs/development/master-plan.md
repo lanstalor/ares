@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| B2 | `track-b/B2-scene-art` | `~/ares-track-b/B2` | Codex | in-flight | Run/record playtester benchmark or mark PR #13 ready after review decision |
+| C2 | `track-c/C2-operator-app` | `~/ares-track-c/C2` | Codex | in-flight | Create draft PR #14, await review before merge |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -41,7 +41,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | Slice | Title | Status |
 |---|---|---|
 | C1 | Operator-only API surface | finished |
-| C2 | Operator React app | not-started |
+| C2 | Operator React app | in-flight |
 | C3 | Lore-page authoring | not-started |
 | C4 | Session prep workflow | not-started |
 | C5 | Post-session continuity review | not-started |
