@@ -90,11 +90,10 @@ docker compose up --build --no-deps -d frontend
 - **Inventory**: Itemized Item model (tags, quantity, rarity, equipped) wired to consequences + frontend rendering (Slice A2).
 - **Media System**: Provider-backed image generation abstraction (OpenAI/Replicate/Stub) (Slice B1).
 - **Scene Art**: Generated/cached per location, turn-triggered, with player-safe prompt building (Slice B2).
+- **NPC Portraits**: Generated on NPC creation/first appearance, cached per NPC, lazy-load with initials fallback, operator regenerate endpoint (Slice B3).
 - **Operator API**: Full manual state repair, auditing, and read-only campaign introspection (Slice C1).
+- **Operator Admin UI**: `/admin` route with token-gating, sidebar nav, entity editors for all hidden state (Slice C2).
 - **Web UI**: 3-column rebel terminal, pixel-art aesthetic, VT323 font, live portrait avatars, responsive layout.
-
-**In Draft PR (C2):**
-- **Operator Admin UI**: `/admin` route with token-gating, sidebar nav, entity editors for all hidden state (Objectives, Clocks, Secrets, NPCs, Campaign metadata).
 
 ---
 

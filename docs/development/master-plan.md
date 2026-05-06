@@ -30,7 +30,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 |---|---|---|
 | B1 | MediaProvider abstraction | finished |
 | B2 | Scene art generation pipeline | finished |
-| B3 | NPC portrait generation | not-started |
+| B3 | NPC portrait generation | finished |
 | B4 | TTS narration | not-started |
 | B5 | World map + token movement | not-started |
 
@@ -67,6 +67,7 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-05-06 | B3: NPC portrait generation | NpcPortrait model + service, eager generation on NPC creation, lazy generation on first appearance, operator regenerate endpoint, MediaProvider integration, frontend lazy-load with initials fallback |
 | 2026-05-06 | C2: Operator React app | Separate /admin route with token-gating, sidebar nav, entity editors (Campaign, Objectives, Clocks, Secrets, NPCs), reusable table/modal components |
 | 2026-05-06 | B2: Scene art generation | SceneArt cache model, player-safe prompt building, MediaProvider integration, turn-triggered generation, API endpoints, frontend rendering |
 | 2026-05-06 | A2: Itemized inventory | Structured Item model, inventory consequences, GM context, operator schemas, frontend inventory rendering |
