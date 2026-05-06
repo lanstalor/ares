@@ -4,6 +4,7 @@ from sqlalchemy import select
 from app.db.session import SessionDep
 from app.models.campaign import Campaign
 from app.models.character import Character
+from app.services.npc_portrait_service import ensure_portrait
 from app.services.scene_art import get_cached_scene_art
 from app.schemas.campaign import CampaignCreate, CampaignRead, CampaignState
 
@@ -26,21 +27,33 @@ def create_campaign(payload: CampaignCreate, session: SessionDep) -> Campaign:
     )
     session.add(campaign)
     session.flush()
-    session.add(
-        Character(
-            campaign_id=campaign.id,
-            name="Davan of Tharsis",
-            race="HighRed",
-            character_class="Operative",
-            cover_identity="Dav of Vashti",
-            current_hp=38,
-            max_hp=38,
-            cover_integrity=8,
-            inventory_summary="Work harness, tools, forged sigil.",
-            notes="Default scaffold character pending world-bible seed integration.",
-        )
+    character = Character(
+        campaign_id=campaign.id,
+        name="Davan of Tharsis",
+        race="HighRed",
+        character_class="Operative",
+        cover_identity="Dav of Vashti",
+        current_hp=38,
+        max_hp=38,
+        cover_integrity=8,
+        inventory_summary="Work harness, tools, forged sigil.",
+        notes="Default scaffold character pending world-bible seed integration.",
     )
+    session.add(character)
     session.commit()
+
+    # Queue portrait generation for player character
+    try:
+        ensure_portrait(
+            session=session,
+            campaign=campaign,
+            character=character,
+            force=False,
+        )
+    except Exception as e:
+        # Log error but don't fail campaign creation
+        print(f"Warning: Failed to generate portrait for {character.name}: {e}")
+
     session.refresh(campaign)
     return campaign
 

@@ -11,6 +11,7 @@ from app.models.character import Character
 from app.models.memory import Secret
 from app.models.world import Area, Faction, LorePage, NPC, POI
 from app.schemas.seed_runtime import SeedImportResponse
+from app.services.npc_portrait_service import ensure_portrait
 from app.services.seed_service import build_seed_bundle_from_file
 
 
@@ -54,6 +55,9 @@ def seed_world_bible_into_campaign(
     objective_count = _insert_opening_objective(session, campaign.id, bundle.campaign_opening)
 
     session.commit()
+
+    # Queue portrait generation for NPCs and player character
+    _queue_npc_portraits(session, campaign)
 
     return SeedImportResponse(
         campaign_id=campaign.id,
@@ -205,3 +209,32 @@ def _insert_opening_objective(session: Session, campaign_id: str, campaign_openi
     )
     session.add(objective)
     return 1
+
+
+def _queue_npc_portraits(session: Session, campaign: Campaign) -> None:
+    """
+    Queue portrait generation for all NPCs and the player character in a campaign.
+
+    Generates portraits eagerly after campaign/seed initialization. Handles errors
+    gracefully, storing failure state in the portrait record without raising.
+
+    Args:
+        session: SQLAlchemy session
+        campaign: Campaign instance
+    """
+    characters = session.scalars(
+        select(Character).where(Character.campaign_id == campaign.id)
+    ).all()
+
+    for character in characters:
+        try:
+            ensure_portrait(
+                session=session,
+                campaign=campaign,
+                character=character,
+                force=False,
+            )
+        except Exception as e:
+            # Log error but don't fail campaign creation
+            print(f"Warning: Failed to generate portrait for {character.name}: {e}")
+            continue
