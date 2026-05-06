@@ -8,9 +8,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 ## Now (In-Flight Slices)
 
-| Slice | Branch | Worktree | Agent | Status | Next concrete step |
-|---|---|---|---|---|---|
-| C2 | `track-c/C2-operator-app` | `~/ares-track-c/C2` | Codex | in-flight | Create draft PR #14, await review before merge |
+None currently. Ready for Wave 3 Sprint 1 (A3, B3, C3).
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -41,7 +39,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | Slice | Title | Status |
 |---|---|---|
 | C1 | Operator-only API surface | finished |
-| C2 | Operator React app | in-flight |
+| C2 | Operator React app | finished |
 | C3 | Lore-page authoring | not-started |
 | C4 | Session prep workflow | not-started |
 | C5 | Post-session continuity review | not-started |
@@ -69,7 +67,9 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
-| 2026-05-06 | A2: Itemized inventory | Structured Item model, inventory consequences, GM context, operator schemas, and frontend inventory rendering |
+| 2026-05-06 | C2: Operator React app | Separate /admin route with token-gating, sidebar nav, entity editors (Campaign, Objectives, Clocks, Secrets, NPCs), reusable table/modal components |
+| 2026-05-06 | B2: Scene art generation | SceneArt cache model, player-safe prompt building, MediaProvider integration, turn-triggered generation, API endpoints, frontend rendering |
+| 2026-05-06 | A2: Itemized inventory | Structured Item model, inventory consequences, GM context, operator schemas, frontend inventory rendering |
 | 2026-05-05 | C1: Operator-only API surface | GET /full-state, PATCH /state, GET /audit endpoints for manual repair |
 | 2026-05-05 | B1: MediaProvider abstraction | MediaProvider protocol + OpenAI/Replicate/Stub implementations |
 | 2026-05-05 | A1: Dice + skill check primitive | Attribute checks (Strength, Cunning, etc.) with system-roll feed events |

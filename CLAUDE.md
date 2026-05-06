@@ -8,39 +8,38 @@
 
 Date: 2026-05-06
 
-### Wave 2 Sprint — Slices B2 + C2 Completed; Ready for Full Review & Merge
+### ✅ Wave 2 Sprint 1 Complete — A2, B2, C2 All Merged to Main
 
-**Delivered:**
-- **B2: Scene Art Generation Pipeline** (merged to main, commit bf4b759)
+**Delivered (all merged):**
+- **A2: Itemized Inventory** (merged commit 67700ab)
+  - Item model (tags, quantity, rarity, equipped status).
+  - Inventory delta consequences (items_added, items_removed).
+  - GM engine integration via consequence applier.
+  - Frontend rendering in SceneBackdrop.
+  
+- **B2: Scene Art Generation Pipeline** (merged commit bf4b759)
   - SceneArt cache model + Alembic migration.
-  - Player-safe scene art prompt/service using MediaProvider (B1).
-  - API endpoints: list/current/regenerate scene art.
-  - Backend file serving for generated b64 PNGs.
-  - Turn-triggered scene art generation on location changes.
-  - Frontend fetch/render with static fallback, mobile stacking fix.
-  - 105 backend tests passing; all verification checks ✅.
-
-- **C2: Operator React Admin App** (draft PR #14 ready for review)
-  - Separate `/admin` route (lazy-loaded from main app).
-  - Token-gated login (localStorage-persisted ARES_OPERATOR_TOKEN).
-  - Sidebar nav + 5 entity pages: Campaign, Objectives, Clocks, Secrets, NPCs.
-  - Reusable EntityTable + EntityModal components for CRUD workflows.
-  - Single source of truth: full state from C1 GET /operator/campaigns/{id}/full-state.
-  - Refetch after PATCH to keep UI in sync.
-  - 14 implementation tasks completed via subagent-driven-development.
-  - Full integration testing + Playwright screenshots (desktop + mobile).
+  - Player-safe scene art service using MediaProvider (B1).
+  - API endpoints: list/current/regenerate.
+  - Backend file serving for generated PNGs.
+  - Turn-triggered generation + frontend fetch/render with fallback.
+  
+- **C2: Operator React Admin App** (merged commit 1f2b994)
+  - Separate `/admin` route (lazy-loaded, token-gated).
+  - Sidebar navigation + 5 entity pages (Campaign, Objectives, Clocks, Secrets, NPCs).
+  - Reusable EntityTable + EntityModal for CRUD workflows.
+  - useOperatorApi hook with tests.
+  - Full integration testing + Playwright screenshots.
 
 **Status:**
-- **Wave 1** (Foundations A1, B1, C1) — ✅ **Finished & merged**.
-- **Wave 2 Sprint 1** (A2, B2, C2) — ✅ **A2 & B2 merged; C2 in draft PR #14**.
-- All tests passing (105 backend tests).
-- Ready for full wave 2 review before pushing C2 to main.
+- **Wave 1** (A1, B1, C1) — ✅ Finished & merged.
+- **Wave 2 Sprint 1** (A2, B2, C2) — ✅ **All merged to main.**
+- Backend tests: 105 passing.
+- All hard constraints respected (no hidden-state leaks, canon guard intact).
 
-**Next Steps (Session Priority):**
-1. **Review A2, B2, C2** — Ensure all three slices meet spec/quality bar before final merge.
-2. **Merge C2** (PR #14) once review passes.
-3. **Update CLAUDE.md** with A2/B2/C2 in "Recently Finished" and implementation status.
-4. **Reset for next wave** (Track A: A3, Track B: B3, Track C: C3).
+**Ready for:**
+- Wave 3 Sprint 1 kickoff: A3, B3, C3
+- Next agent session can start fresh with clean main branch.
 
 ---
 
