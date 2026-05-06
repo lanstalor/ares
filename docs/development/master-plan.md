@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| A2 | `track-a/A2-itemized-inventory` | `~/ares-track-a/A2` | Gemini | review | Merge A2 into main |
+| _None_ | — | — | — | — | Bootstrap the next slice |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -21,7 +21,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | Slice | Title | Status |
 |---|---|---|
 | A1 | Dice + skill check primitive | finished |
-| A2 | Itemized inventory | not-started |
+| A2 | Itemized inventory | finished |
 | A3 | Conditions + status effects | not-started |
 | A4 | Turn-based combat mode | not-started |
 | A5 | Abilities/equipment registry | not-started |
@@ -69,6 +69,7 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-05-06 | A2: Itemized inventory | Structured Item model, inventory consequences, GM context, operator schemas, and frontend inventory rendering |
 | 2026-05-05 | C1: Operator-only API surface | GET /full-state, PATCH /state, GET /audit endpoints for manual repair |
 | 2026-05-05 | B1: MediaProvider abstraction | MediaProvider protocol + OpenAI/Replicate/Stub implementations |
 | 2026-05-05 | A1: Dice + skill check primitive | Attribute checks (Strength, Cunning, etc.) with system-roll feed events |
