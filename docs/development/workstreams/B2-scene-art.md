@@ -7,7 +7,7 @@
 | **Track** | B |
 | **Branch** | `track-b/B2-scene-art` |
 | **Worktree** | `~/ares-track-b/B2` |
-| **PR** | TBD |
+| **PR** | https://github.com/lanstalor/ares/pull/13 |
 | **Status** | in-flight |
 | **Last agent** | Codex |
 | **Next agent** | any |
@@ -62,6 +62,7 @@ Start the Docker truth checkpoint at 5180, open a campaign, and confirm the scen
 
 ## Open questions / blockers
 
+- Draft PR: https://github.com/lanstalor/ares/pull/13
 - The backend serves generated b64 PNGs at `/api/v1/media/scene-art/{filename}` so Docker does not require the frontend container to see backend-written files.
 - The frontend still falls back to the existing static scene-art library when the scene-art API is unavailable.
 - No in-app regenerate button was added yet; the API endpoint exists at `POST /api/v1/campaigns/{campaign_id}/scene-art/regenerate`.
@@ -70,6 +71,7 @@ Start the Docker truth checkpoint at 5180, open a campaign, and confirm the scen
 
 Append-only. One line per session.
 
+- `2026-05-06 09:02 UTC` — Codex → Created draft PR #13 and pushed branch; next: Docker 5180 visual checkpoint and PR polish.
 - `2026-05-06 08:59 UTC` — Codex → Bootstrapped B2, added scene-art model/migration/service/API/frontend wiring, verified backend/frontend checks; next: Docker 5180 visual checkpoint and PR polish.
 
 ## Verification on completion
@@ -81,7 +83,7 @@ Before marking this slice **review**:
 - [ ] Playtester runs 30 turns clean with feature flag off (default) and on
 - [ ] Playwright screenshot at 5180 (UI slices only) saved under `assets/samples/ui-iteration/`
 - [ ] Workstream doc fully reflects final state
-- [ ] Draft PR description summarizes the slice
+- [x] Draft PR description summarizes the slice
 - [ ] `CLAUDE.md` "Recently Finished" updated if this is a major capability
 
 ## Hard constraints checklist
