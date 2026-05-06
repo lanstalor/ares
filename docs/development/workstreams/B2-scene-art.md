@@ -21,7 +21,7 @@ Generate, cache, and surface player-safe scene art for the current campaign loca
 
 ## Last-known-good commit
 
-`85c37ba` — `feat(B2): add scene art generation pipeline`
+`99d2782` — `feat(B2): add scene art generation pipeline`
 
 Test status at this commit:
 - backend (`make backend-test`): ✅ 105 passed
@@ -34,7 +34,7 @@ Test status at this commit:
 
 ## In-flight WIP
 
-`wip 85c37ba` — tests pass; scene-art service/cache, API route, turn-trigger, and frontend consumption are implemented. Remaining: run the Docker 5180 visual checkpoint, decide whether to add a small operator-facing regenerate control in the UI, and create/update the draft PR description.
+`wip 99d2782` — tests pass; scene-art service/cache, API route, turn-trigger, and frontend consumption are implemented. Remaining: run the Docker 5180 visual checkpoint, decide whether to add a small operator-facing regenerate control in the UI, and create/update the draft PR description.
 
 ## Files touched so far
 
