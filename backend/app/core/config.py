@@ -82,6 +82,7 @@ class Settings(BaseSettings):
     generation_model: str = Field(default="claude-haiku-4-5", alias="ARES_MODEL")
     media_provider: str = Field(default="stub", alias="ARES_MEDIA_PROVIDER")
     media_model: str = Field(default="gpt-image-1", alias="ARES_MEDIA_MODEL")
+    scene_art_cache_dir_raw: str | None = Field(default=None, alias="ARES_SCENE_ART_CACHE_DIR")
     embedding_provider: str = Field(default="stub", alias="ARES_EMBEDDING_PROVIDER")
     database_bootstrap: Literal["create_all", "disabled"] = Field(
         default="create_all",
@@ -101,6 +102,12 @@ class Settings(BaseSettings):
     @property
     def env_file_candidates(self) -> tuple[Path, ...]:
         return _ENV_FILE_PATHS
+
+    @property
+    def scene_art_cache_dir(self) -> Path:
+        if self.scene_art_cache_dir_raw:
+            return Path(self.scene_art_cache_dir_raw).expanduser().resolve()
+        return (_PROJECT_ROOT / "frontend" / "public" / "scene-art").resolve()
 
     @property
     def world_bible_path(self) -> Path:

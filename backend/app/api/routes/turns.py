@@ -5,6 +5,7 @@ from app.db.session import SessionDep
 from app.models.campaign import Campaign
 from app.models.memory import Turn
 from app.schemas.turn import TurnCreate, TurnRead, TurnResolution
+from app.services.scene_art import ensure_scene_art
 from app.services.turn_engine import resolve_turn
 
 router = APIRouter()
@@ -48,8 +49,17 @@ def create_turn(campaign_id: str, payload: TurnCreate, session: SessionDep) -> T
         player_safe_summary=result.player_safe_summary,
     )
     session.add(turn)
+    scene_art = None
+    if result.location_changed_to:
+        scene_art = ensure_scene_art(
+            session=session,
+            campaign=campaign,
+            location_label=result.location_changed_to,
+        )
     session.commit()
     session.refresh(turn)
+    if scene_art is not None:
+        session.refresh(scene_art)
 
     return TurnResolution(
         turn=turn,
@@ -71,4 +81,5 @@ def create_turn(campaign_id: str, payload: TurnCreate, session: SessionDep) -> T
             }
             for roll in result.rolls
         ],
+        scene_art=scene_art,
     )

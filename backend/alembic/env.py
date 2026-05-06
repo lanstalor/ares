@@ -9,6 +9,7 @@ from app.core.config import get_settings
 from app.models.base import Base
 import app.models.campaign   # noqa: F401
 import app.models.character  # noqa: F401
+import app.models.media      # noqa: F401
 import app.models.memory     # noqa: F401
 import app.models.world      # noqa: F401
 

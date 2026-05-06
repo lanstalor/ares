@@ -11,6 +11,7 @@ import { AssetOverlay } from "./components/AssetOverlay";
 import {
   fetchMemories,
   getCampaignState,
+  getCurrentSceneArt,
   getHealth,
   getSystemStatus,
   listCampaigns,
@@ -311,6 +312,7 @@ export default function App() {
     return createDevUiSnapshot().selectedCampaignId;
   });
   const [campaignState, setCampaignState] = useState(null);
+  const [sceneArtByCampaign, setSceneArtByCampaign] = useState({});
   const [turnHistoryByCampaign, setTurnHistoryByCampaign] = useState({});
   const [loadingShell, setLoadingShell] = useState(true);
   const [loadingState, setLoadingState] = useState(false);
@@ -457,6 +459,7 @@ export default function App() {
     setCampaigns(snapshot.campaigns);
     setSelectedCampaignId(snapshot.selectedCampaignId);
     setCampaignState(snapshot.campaignStateById[snapshot.selectedCampaignId]);
+    setSceneArtByCampaign({});
     setSuggestedActions(snapshot.suggestedActionsByCampaign?.[snapshot.selectedCampaignId] ?? []);
     setGmSceneParticipants(snapshot.sceneParticipantsByCampaign?.[snapshot.selectedCampaignId] ?? []);
     setTurnHistoryByCampaign(snapshot.turnHistoryByCampaign);
@@ -493,6 +496,7 @@ export default function App() {
         setSystemStatus(null);
         setCampaigns([]);
         setCampaignState(null);
+        setSceneArtByCampaign({});
         setErrorMessage(error.message);
       } finally {
         if (isMounted) {
@@ -563,8 +567,40 @@ export default function App() {
     };
   }, [devUiMode, selectedCampaignId]);
 
+  useEffect(() => {
+    if (devUiMode || !selectedCampaignId || !campaignState?.current_location) {
+      return undefined;
+    }
+
+    let isMounted = true;
+
+    async function loadSceneArt() {
+      try {
+        const sceneArt = await getCurrentSceneArt(selectedCampaignId);
+        if (!isMounted) return;
+        setSceneArtByCampaign((current) => ({
+          ...current,
+          [selectedCampaignId]: sceneArt,
+        }));
+      } catch {
+        if (!isMounted || !campaignState?.scene_art) return;
+        setSceneArtByCampaign((current) => ({
+          ...current,
+          [selectedCampaignId]: campaignState.scene_art,
+        }));
+      }
+    }
+
+    loadSceneArt();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [campaignState?.current_location, devUiMode, selectedCampaignId]);
+
   const selectedCampaign = campaigns.find((campaign) => campaign.id === selectedCampaignId) ?? null;
   const turns = buildCampaignTurns(selectedCampaign, campaignState, turnHistoryByCampaign);
+  const currentSceneArt = sceneArtByCampaign[selectedCampaignId] ?? campaignState?.scene_art ?? null;
   const shellStatusText = buildShellStatusText(loadingShell, healthStatus);
   const shellReadiness = deriveShellReadiness({ healthStatus, systemStatus, campaigns, lastSeedResult: null });
   const inferredSceneTone = deriveSceneTone({ campaignState, selectedCampaign, turns });
@@ -630,6 +666,12 @@ export default function App() {
       const [state, turnHistory] = await fetchCampaignSnapshot(selectedCampaign.id);
 
       setCampaignState(state);
+      if (resolution.scene_art) {
+        setSceneArtByCampaign((current) => ({
+          ...current,
+          [selectedCampaign.id]: resolution.scene_art,
+        }));
+      }
       setTurnHistoryByCampaign((current) => ({
         ...current,
         [selectedCampaign.id]: patchTurnHistoryWithResolution(turnHistory, resolution),
@@ -865,6 +907,7 @@ export default function App() {
               campaignState={campaignState}
               currentLocation={campaignState?.current_location ?? selectedCampaign?.current_location_label}
               objective={campaignState?.active_objective}
+              sceneArt={currentSceneArt}
               sceneTone={sceneTone}
               selectedCampaign={selectedCampaign}
             />

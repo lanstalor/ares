@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { AssetOverlay } from "./AssetOverlay";
+import { API_BASE_URL } from "../lib/api";
 import { resolveSceneArt } from "../lib/sceneArtLibrary";
 import { getCasteColorToken } from "../lib/uiTheme";
 
@@ -12,8 +13,17 @@ const TABS = [
   { id: "map", label: "Map" },
 ];
 
-function SceneArt({ currentLocation, objective, sceneTone, selectedCampaign }) {
-  const art = resolveSceneArt({ currentLocation, objective, sceneTone, selectedCampaign });
+function SceneArt({ currentLocation, objective, sceneArt, sceneTone, selectedCampaign }) {
+  const fallbackArt = resolveSceneArt({ currentLocation, objective, sceneTone, selectedCampaign });
+  const sceneArtSrc = sceneArt?.image_url?.startsWith("/api/")
+    ? `${API_BASE_URL}${sceneArt.image_url}`
+    : sceneArt?.image_url;
+  const art = sceneArt?.image_url
+    ? {
+        src: sceneArtSrc,
+        label: sceneArt.location_label ?? fallbackArt.label,
+      }
+    : fallbackArt;
 
   return (
     <>
@@ -154,6 +164,7 @@ export function SceneBackdrop({
   campaignState,
   currentLocation,
   objective,
+  sceneArt,
   sceneTone,
   selectedCampaign,
 }) {
@@ -182,6 +193,7 @@ export function SceneBackdrop({
         <SceneArt
           currentLocation={currentLocation}
           objective={objective}
+          sceneArt={sceneArt}
           sceneTone={sceneTone}
           selectedCampaign={selectedCampaign}
         />
