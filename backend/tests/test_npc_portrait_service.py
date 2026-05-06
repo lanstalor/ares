@@ -1,3 +1,6 @@
+import base64
+from pathlib import Path
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -454,3 +457,266 @@ class TestBuildPortraitPrompt:
         assert isinstance(prompt, str)
         assert len(prompt) > 0
         assert "Minimal" in prompt
+
+
+# Tests for get_cached_portrait function
+class TestGetCachedPortrait:
+    def test_get_cached_portrait_found(self):
+        """Test that get_cached_portrait returns portrait when found."""
+        from app.services.npc_portrait_service import get_cached_portrait
+
+        session = _make_session()
+        campaign = Campaign(name="Test Campaign")
+        session.add(campaign)
+        session.commit()
+
+        npc = Character(campaign_id=campaign.id, name="Test NPC")
+        session.add(npc)
+        session.commit()
+
+        portrait = NpcPortrait(
+            campaign_id=campaign.id,
+            npc_id=npc.id,
+            slug="test-npc",
+            prompt="A portrait",
+            image_url="https://example.com/portrait.png",
+            provider="openai",
+            status="ready",
+        )
+        session.add(portrait)
+        session.commit()
+
+        result = get_cached_portrait(session, campaign.id, npc.id)
+        assert result is not None
+        assert result.id == portrait.id
+        assert result.slug == "test-npc"
+
+    def test_get_cached_portrait_not_found(self):
+        """Test that get_cached_portrait returns None when not found."""
+        from app.services.npc_portrait_service import get_cached_portrait
+
+        session = _make_session()
+        campaign = Campaign(name="Test Campaign")
+        session.add(campaign)
+        session.commit()
+
+        result = get_cached_portrait(session, campaign.id, "nonexistent-npc-id")
+        assert result is None
+
+
+# Tests for ensure_portrait function
+class TestEnsurePortrait:
+    def test_ensure_portrait_generates_if_missing(self):
+        """Test that ensure_portrait generates a new portrait when none exists."""
+        from app.services.npc_portrait_service import ensure_portrait
+        from unittest.mock import Mock
+
+        session = _make_session()
+        campaign = Campaign(name="Test Campaign", current_date_pce=728)
+        session.add(campaign)
+        session.commit()
+
+        character = Character(campaign_id=campaign.id, name="Test NPC")
+        session.add(character)
+        session.commit()
+
+        # Mock media provider
+        mock_response = Mock()
+        mock_response.provider = "openai"
+        mock_response.model = "dall-e-3"
+        mock_response.b64_json = base64.b64encode(b"fake-png-data").decode("utf-8")
+        mock_response.url = None
+        mock_response.revised_prompt = "Revised prompt"
+
+        mock_provider = Mock()
+        mock_provider.generate_image.return_value = mock_response
+
+        # Mock cache_dir to avoid writing actual files
+        import tempfile
+        temp_dir = tempfile.mkdtemp()
+
+        portrait = ensure_portrait(
+            session=session,
+            campaign=campaign,
+            character=character,
+            force=False,
+            media_provider=mock_provider,
+            cache_dir=Path(temp_dir),
+        )
+
+        assert portrait is not None
+        assert portrait.status == "ready"
+        assert portrait.campaign_id == campaign.id
+        assert portrait.npc_id == character.id
+        assert portrait.provider == "openai"
+        assert portrait.model == "dall-e-3"
+
+        # Verify file was written
+        expected_path = Path(temp_dir) / "test-npc.png"
+        assert expected_path.exists()
+
+    def test_ensure_portrait_returns_cached(self):
+        """Test that ensure_portrait returns cached portrait when available."""
+        from app.services.npc_portrait_service import ensure_portrait
+        from unittest.mock import Mock
+
+        session = _make_session()
+        campaign = Campaign(name="Test Campaign")
+        session.add(campaign)
+        session.commit()
+
+        character = Character(campaign_id=campaign.id, name="Test NPC")
+        session.add(character)
+        session.commit()
+
+        # Create cached portrait
+        cached_portrait = NpcPortrait(
+            campaign_id=campaign.id,
+            npc_id=character.id,
+            slug="test-npc",
+            prompt="Cached prompt",
+            image_url="/portraits/test-npc.png",
+            provider="openai",
+            model="dall-e-3",
+            status="ready",
+        )
+        session.add(cached_portrait)
+        session.commit()
+
+        # Mock media provider that should NOT be called
+        mock_provider = Mock()
+
+        portrait = ensure_portrait(
+            session=session,
+            campaign=campaign,
+            character=character,
+            force=False,
+            media_provider=mock_provider,
+        )
+
+        assert portrait.id == cached_portrait.id
+        # Verify media provider was NOT called
+        mock_provider.generate_image.assert_not_called()
+
+    def test_ensure_portrait_force_regenerates(self):
+        """Test that ensure_portrait regenerates when force=True."""
+        from app.services.npc_portrait_service import ensure_portrait
+        from unittest.mock import Mock
+
+        session = _make_session()
+        campaign = Campaign(name="Test Campaign")
+        session.add(campaign)
+        session.commit()
+
+        character = Character(campaign_id=campaign.id, name="Test NPC")
+        session.add(character)
+        session.commit()
+
+        # Create cached portrait
+        cached_portrait = NpcPortrait(
+            campaign_id=campaign.id,
+            npc_id=character.id,
+            slug="test-npc",
+            prompt="Old prompt",
+            image_url="/portraits/test-npc.png",
+            provider="openai",
+            status="ready",
+        )
+        session.add(cached_portrait)
+        session.commit()
+
+        # Mock media provider
+        mock_response = Mock()
+        mock_response.provider = "openai"
+        mock_response.model = "dall-e-3"
+        mock_response.b64_json = base64.b64encode(b"new-fake-png-data").decode("utf-8")
+        mock_response.url = None
+        mock_response.revised_prompt = "New revised prompt"
+
+        mock_provider = Mock()
+        mock_provider.generate_image.return_value = mock_response
+
+        # Mock cache_dir
+        import tempfile
+        temp_dir = tempfile.mkdtemp()
+
+        portrait = ensure_portrait(
+            session=session,
+            campaign=campaign,
+            character=character,
+            force=True,
+            media_provider=mock_provider,
+            cache_dir=Path(temp_dir),
+        )
+
+        assert portrait.id == cached_portrait.id
+        assert portrait.status == "ready"
+        assert portrait.revised_prompt == "New revised prompt"
+        # Verify media provider WAS called
+        mock_provider.generate_image.assert_called_once()
+
+    def test_ensure_portrait_handles_provider_error(self):
+        """Test that ensure_portrait handles provider errors gracefully."""
+        from app.services.npc_portrait_service import ensure_portrait
+        from unittest.mock import Mock
+
+        session = _make_session()
+        campaign = Campaign(name="Test Campaign")
+        session.add(campaign)
+        session.commit()
+
+        character = Character(campaign_id=campaign.id, name="Test NPC")
+        session.add(character)
+        session.commit()
+
+        # Mock media provider that raises an error
+        mock_provider = Mock()
+        mock_provider.generate_image.side_effect = RuntimeError("Provider timeout")
+
+        portrait = ensure_portrait(
+            session=session,
+            campaign=campaign,
+            character=character,
+            force=False,
+            media_provider=mock_provider,
+        )
+
+        assert portrait is not None
+        assert portrait.status == "failed"
+        assert "Provider timeout" in portrait.error
+
+    def test_ensure_portrait_handles_cache_error(self):
+        """Test that ensure_portrait handles caching errors gracefully."""
+        from app.services.npc_portrait_service import ensure_portrait
+        from unittest.mock import Mock
+
+        session = _make_session()
+        campaign = Campaign(name="Test Campaign")
+        session.add(campaign)
+        session.commit()
+
+        character = Character(campaign_id=campaign.id, name="Test NPC")
+        session.add(character)
+        session.commit()
+
+        # Mock media provider with invalid b64_json
+        mock_response = Mock()
+        mock_response.provider = "openai"
+        mock_response.model = "dall-e-3"
+        mock_response.b64_json = "invalid-base64!!!"
+        mock_response.url = None
+
+        mock_provider = Mock()
+        mock_provider.generate_image.return_value = mock_response
+
+        portrait = ensure_portrait(
+            session=session,
+            campaign=campaign,
+            character=character,
+            force=False,
+            media_provider=mock_provider,
+        )
+
+        assert portrait is not None
+        assert portrait.status == "failed"
+        assert portrait.error is not None
