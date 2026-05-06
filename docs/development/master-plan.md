@@ -29,7 +29,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | Slice | Title | Status |
 |---|---|---|
 | B1 | MediaProvider abstraction | finished |
-| B2 | Scene art generation pipeline | in-flight |
+| B2 | Scene art generation pipeline | finished |
 | B3 | NPC portrait generation | not-started |
 | B4 | TTS narration | not-started |
 | B5 | World map + token movement | not-started |

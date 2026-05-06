@@ -1,0 +1,143 @@
+[
+  {
+    "id": "orbital-shipyard",
+    "label": "Orbital Shipyard",
+    "scope": "generic",
+    "category": "industrial",
+    "status": "covered",
+    "preferredAssetId": "space-docks",
+    "needsNewImage": false,
+    "notes": "Use existing orbital docks art for most shipyard and docking scenes.",
+    "searchTerms": ["orbital docks", "shipyard", "space dock", "drydock", "hangar"]
+  },
+  {
+    "id": "starship-corridor",
+    "label": "Starship Corridor",
+    "scope": "generic",
+    "category": "interior",
+    "status": "covered",
+    "preferredAssetId": "ship-halls",
+    "needsNewImage": false,
+    "notes": "Use for corridors, bulkheads, passageways, and contained ship interiors.",
+    "searchTerms": ["ship interior", "corridor", "bulkhead", "hall", "passageway"]
+  },
+  {
+    "id": "worker-bar",
+    "label": "Worker Bar",
+    "scope": "generic",
+    "category": "social",
+    "status": "covered",
+    "preferredAssetId": "red-bar",
+    "needsNewImage": false,
+    "notes": "Covers low-district bars, taprooms, and cramped meeting spaces.",
+    "searchTerms": ["bar", "cantina", "taproom", "club", "drinking hole"]
+  },
+  {
+    "id": "mars-wasteland",
+    "label": "Mars Wasteland",
+    "scope": "generic",
+    "category": "exterior",
+    "status": "covered",
+    "preferredAssetId": "mars-wasteland",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/mars_wasteland.png",
+    "notes": "Dedicated generated wasteland art is now placed in the frontend scene-art library.",
+    "searchTerms": ["mars wasteland", "desert plain", "surface exterior", "dust storm", "empty red horizon"]
+  },
+  {
+    "id": "maintenance-deck",
+    "label": "Maintenance Deck",
+    "scope": "generic",
+    "category": "interior",
+    "status": "covered",
+    "preferredAssetId": "maintenance-deck",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/maintenance_deck.png",
+    "notes": "Dedicated generated maintenance-deck art is now placed in the frontend scene-art library.",
+    "searchTerms": ["maintenance deck", "service tunnel", "conduit", "exposed piping", "fluorescent flicker"]
+  },
+  {
+    "id": "crescent-block-barracks",
+    "label": "Crescent Block Barracks",
+    "scope": "campaign",
+    "category": "habitation",
+    "status": "covered",
+    "preferredAssetId": "crescent-block-barracks",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/crescent_block_barracks.png",
+    "notes": "Dedicated generated Crescent Block Barracks art is now placed in the frontend scene-art library.",
+    "searchTerms": ["crescent block barracks", "barracks", "hab block", "davan quarters"]
+  },
+  {
+    "id": "the-melt",
+    "label": "The Melt",
+    "scope": "campaign",
+    "category": "industrial",
+    "status": "covered",
+    "preferredAssetId": "the-melt",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/the_melt.png",
+    "notes": "Dedicated generated Melt art is now placed in the frontend scene-art library.",
+    "searchTerms": ["the melt", "molten extraction", "hellish orange glow", "industrial corridor", "panel j 14"]
+  },
+  {
+    "id": "the-gyre",
+    "label": "The Gyre",
+    "scope": "campaign",
+    "category": "market",
+    "status": "covered",
+    "preferredAssetId": "the-gyre",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/the_gyre.png",
+    "notes": "Dedicated generated Gyre art is now placed in the frontend scene-art library.",
+    "searchTerms": ["the gyre", "underground market", "amber lighting", "diverse colors", "black market"]
+  },
+  {
+    "id": "codovan-tier",
+    "label": "The Codovan Tier",
+    "scope": "campaign",
+    "category": "imperial",
+    "status": "covered",
+    "preferredAssetId": "codovan-tier",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/codovan_tier.png",
+    "notes": "Dedicated generated Codovan Tier art is now placed in the frontend scene-art library.",
+    "searchTerms": ["codovan tier", "white marble atrium", "jupiter through dome glass", "prefect hall"]
+  },
+  {
+    "id": "lykos-station",
+    "label": "Lykos Station",
+    "scope": "campaign",
+    "category": "habitation",
+    "status": "covered",
+    "preferredAssetId": "lykos-station",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/lykos_station.png",
+    "notes": "Dedicated generated Lykos Station art is now placed in the frontend scene-art library.",
+    "searchTerms": ["lykos station", "cramped habitation", "graffiti", "small port", "jupiter visible"]
+  },
+  {
+    "id": "copper-admin-hub",
+    "label": "Copper Admin Hub",
+    "scope": "campaign",
+    "category": "bureaucratic",
+    "status": "covered",
+    "preferredAssetId": "copper-admin-hub",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/copper_admin_hub.png",
+    "notes": "Dedicated generated Copper Admin Hub art is now placed in the frontend scene-art library.",
+    "searchTerms": ["copper admin hub", "bureaucratic office", "filing systems", "clerks", "clinical admin"]
+  },
+  {
+    "id": "surface-relay-tower",
+    "label": "Surface Relay Tower",
+    "scope": "campaign",
+    "category": "exterior",
+    "status": "covered",
+    "preferredAssetId": "surface-relay-tower",
+    "needsNewImage": false,
+    "candidateAssetPath": "output/imagegen/scene-art-candidates/surface_relay_tower.png",
+    "notes": "Dedicated generated Surface Relay Tower art is now placed in the frontend scene-art library.",
+    "searchTerms": ["surface relay tower", "ganymede exterior", "communication array", "radiation shield", "ice plain"]
+  }
+]

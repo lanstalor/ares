@@ -1,0 +1,25 @@
+- generic [ref=e3] [box=0,0,1366,1024]:
+  - banner [ref=e4] [box=18,14,1330,70]:
+    - generic [ref=e5] [box=35,29,341,42]:
+      - img "ARES" [ref=e6] [box=35,29,191,42]
+      - paragraph [ref=e7] [box=236,44,140,12]: Live narrative shell
+    - generic [ref=e8] [box=390,26,359,46]:
+      - generic [ref=e9] [box=390,26,105,12]: Ganymede / Melt
+      - paragraph [ref=e10] [box=390,42,359,30]: The Society believes it has perfected humanity. Ares believes it has only perfected its chains.
+    - generic [ref=e11] [box=763,26,568,47]:
+      - generic [ref=e12] [box=763,33,78,34]
+      - generic [ref=e15] [box=853,33,78,34]
+      - generic [ref=e18] [box=943,33,78,34]
+      - 'button "Tone: auto" [ref=e21] [cursor=pointer] [box=1033,29,132,42]'
+      - button "?" [ref=e22] [cursor=pointer] [box=1177,26,48,47]
+      - button "Audio" [ref=e23] [cursor=pointer] [box=1238,26,93,47]
+  - main [ref=e24] [box=18,96,1330,890]:
+    - generic [ref=e25] [box=18,96,1330,756]:
+      - generic [ref=e27] [box=18,96,493,756]
+      - generic [ref=e657] [box=521,96,761,630]
+      - complementary "Utility telemetry" [ref=e682] [box=1292,96,56,630]
+      - generic [ref=e691] [box=534,748,801,93]
+    - generic [ref=e711] [box=18,862,1330,124]:
+      - generic [ref=e712] [box=33,875,1300,10]
+      - generic "Suggested actions" [ref=e715] [box=33,891,1300,34]
+      - generic [ref=e728] [box=33,933,1300,42]

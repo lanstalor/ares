@@ -1,0 +1,142 @@
+[
+  {
+    "name": "divider_index_label_10",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_divider_index_label_10_default.png"
+  },
+  {
+    "name": "horizontal_divider_07",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_horizontal_divider_07_default.png"
+  },
+  {
+    "name": "sci_fi_horizontal_divider_07",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_sci_fi_horizontal_divider_07_default.png"
+  },
+  {
+    "name": "horizontal_divider_short",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_horizontal_divider_short_default.png"
+  },
+  {
+    "name": "sci_fi_divider_05",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_sci_fi_divider_05_default.png"
+  },
+  {
+    "name": "label_index_09",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_label_index_09_default.png"
+  },
+  {
+    "name": "numeric_label_02",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_numeric_label_02_default.png"
+  },
+  {
+    "name": "numeric_label_01",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_numeric_label_01_default.png"
+  },
+  {
+    "name": "metallic_divider_bar_09",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_metallic_divider_bar_09_default.png"
+  },
+  {
+    "name": "index_label_08",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_index_label_08_default.png"
+  },
+  {
+    "name": "index_label_05",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_index_label_05_default.png"
+  },
+  {
+    "name": "sci_fi_divider_medium_04",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_sci_fi_divider_medium_04_default.png"
+  },
+  {
+    "name": "horizontal_divider_bar_08",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_horizontal_divider_bar_08_default.png"
+  },
+  {
+    "name": "sci_fi_divider_large",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_sci_fi_divider_large_default.png"
+  },
+  {
+    "name": "horizontal_divider_bar_03",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_horizontal_divider_bar_03_default.png"
+  },
+  {
+    "name": "index_label_04",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_index_label_04_default.png"
+  },
+  {
+    "name": "number_label_03",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_number_label_03_default.png"
+  },
+  {
+    "name": "sci_fi_divider_bar_06",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_sci_fi_divider_bar_06_default.png"
+  },
+  {
+    "name": "index_label_06",
+    "type": "icon",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_icon_index_label_06_default.png"
+  },
+  {
+    "name": "sci_fi_ui_divider_02",
+    "type": "divider",
+    "state": "default",
+    "category": "core",
+    "path": "assets/ui_assets_final/core_divider_sci_fi_ui_divider_02_default.png"
+  }
+]
