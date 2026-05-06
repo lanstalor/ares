@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
+import { Routes, Route } from "react-router-dom";
 
 import { ClarifySidebar } from "./components/ClarifySidebar";
 import { IntroOverlay } from "./components/IntroOverlay";
@@ -31,6 +32,8 @@ import {
 import { UNIVERSAL_STORY_SCENES } from "./lib/introContent";
 import { deriveShellReadiness } from "./lib/readiness";
 import { buildActionPresets, buildSceneParticipants, deriveSceneTone } from "./lib/uiTheme";
+
+const AdminApp = lazy(() => import("./admin/AdminApp"));
 
 const STORY_SCENE_DURATION_MS = 5400;
 const STORY_BLACKOUT_OFFSET_MS = 4500;
@@ -793,7 +796,17 @@ export default function App() {
   const shellMode = "live";
 
   return (
-    <div className={`app-shell frame-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""} ${assetOverlayMode ? "asset-overlay-mode" : ""}`}>
+    <Routes>
+      <Route
+        path="/admin"
+        element={
+          <Suspense fallback={<div style={{ padding: '2rem' }}>Loading admin...</div>}>
+            <AdminApp />
+          </Suspense>
+        }
+      />
+      <Route path="/" element={
+        <div className={`app-shell frame-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""} ${assetOverlayMode ? "asset-overlay-mode" : ""}`}>
       {devUiMode ? null : (
         <IntroOverlay
           activeSceneIndex={storySceneIndex}
@@ -963,6 +976,8 @@ export default function App() {
           <span>?{ASSET_OVERLAY_QUERY}=1</span>
         </section>
       ) : null}
-    </div>
+      </div>
+      } />
+    </Routes>
   );
 }
