@@ -3,6 +3,62 @@ import { createPortal } from "react-dom";
 
 import { AssetOverlay } from "./AssetOverlay";
 import { DISPOSITION_META, DISPOSITION_ORDER, getCasteColorToken } from "../lib/uiTheme";
+import { regeneratePortrait } from "../lib/api";
+
+function PortraitImage({ portraitSrc, characterId, campaignId, name }) {
+  const [imageSrc, setImageSrc] = useState(portraitSrc);
+  const [isLoading, setIsLoading] = useState(!!portraitSrc);
+  const [failedToLoad, setFailedToLoad] = useState(false);
+
+  useEffect(() => {
+    if (!portraitSrc) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Try to load the image
+    const img = new Image();
+    img.onload = () => {
+      setImageSrc(portraitSrc);
+      setIsLoading(false);
+    };
+    img.onerror = async () => {
+      // If 404 and we have characterId/campaignId, try to regenerate
+      if (characterId && campaignId && !failedToLoad) {
+        try {
+          await regeneratePortrait(campaignId, characterId);
+          setFailedToLoad(false);
+          // Retry loading after a short delay
+          setTimeout(() => {
+            const retryImg = new Image();
+            retryImg.onload = () => {
+              setImageSrc(portraitSrc);
+              setIsLoading(false);
+            };
+            retryImg.onerror = () => {
+              setIsLoading(false);
+              setFailedToLoad(true);
+            };
+            retryImg.src = portraitSrc;
+          }, 500);
+        } catch {
+          setIsLoading(false);
+          setFailedToLoad(true);
+        }
+      } else {
+        setIsLoading(false);
+        setFailedToLoad(true);
+      }
+    };
+    img.src = portraitSrc;
+  }, [portraitSrc, characterId, campaignId, failedToLoad]);
+
+  if (!imageSrc) {
+    return null;
+  }
+
+  return <img alt="" className="participant-portrait-image" src={imageSrc} />;
+}
 
 function hpPercent(hp) {
   if (!hp || !hp.max) return 0;
@@ -88,8 +144,14 @@ function ParticipantModal({ participant, onClose }) {
         <div className="participant-modal-header">
           <div className={`participant-portrait tone-${participant.tone} participant-modal-avatar`}>
             {participant.portraitSrc ? (
-              <img alt="" className="participant-portrait-image" src={participant.portraitSrc} />
-            ) : (
+              <PortraitImage
+                portraitSrc={participant.portraitSrc}
+                characterId={participant.id}
+                campaignId={participant.campaignId}
+                name={participant.name}
+              />
+            ) : null}
+            {(!participant.portraitSrc || !participant.portraitSrc.startsWith("/portraits/")) && (
               <span>{participant.name.slice(0, 2).toUpperCase()}</span>
             )}
             {participant.level ? (
@@ -170,8 +232,14 @@ function ParticipantCard({ participant, onOpen }) {
         type="button"
       >
         {participant.portraitSrc ? (
-          <img alt="" className="participant-portrait-image" src={participant.portraitSrc} />
-        ) : (
+          <PortraitImage
+            portraitSrc={participant.portraitSrc}
+            characterId={participant.id}
+            campaignId={participant.campaignId}
+            name={participant.name}
+          />
+        ) : null}
+        {(!participant.portraitSrc || !participant.portraitSrc.startsWith("/portraits/")) && (
           <span>{participant.name.slice(0, 2).toUpperCase()}</span>
         )}
         {participant.level ? (

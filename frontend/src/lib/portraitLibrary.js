@@ -1,6 +1,7 @@
 const PORTRAIT_BY_NAME = new Map([
   ["dancer epsilon callo faran mine", "/portraits/dancer-epsilon-callo-faran-mine.png"],
   ["davan o tharsis", "/portraits/davan-o-tharsis.png"],
+  ["davan of tharsis", "/portraits/davan-of-tharsis.png"],
   ["fitchner au barca ares", "/portraits/fitchner-au-barca-ares.png"],
   ["holiday ti nakamura", "/portraits/holiday-ti-nakamura.png"],
   ["legate voss ti harlan", "/portraits/legate-voss-ti-harlan.png"],
@@ -18,6 +19,27 @@ function normalizePortraitName(value) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+}
+
+/**
+ * Slugify a character name to match backend slug generation.
+ * Mirrors app/services/npc_portrait_service.py slugify_npc_name()
+ */
+export function slugifyCharacterName(name) {
+  if (!name) {
+    return "unknown-npc";
+  }
+
+  let slug = String(name).toLowerCase();
+  slug = slug.replace(/[^a-z0-9]+/g, "-");
+  slug = slug.replace(/^-+|-+$/g, "");
+  slug = slug.substring(0, 120);
+
+  if (!slug) {
+    return "unknown-npc";
+  }
+
+  return slug;
 }
 
 export function resolvePortrait(name) {
@@ -43,4 +65,16 @@ export function resolvePortrait(name) {
   }
 
   return null;
+}
+
+/**
+ * Get the computed portrait URL for a character, using the backend-generated slug.
+ * Falls back to static library if needed.
+ */
+export function getGeneratedPortraitUrl(character) {
+  if (!character || !character.name) {
+    return null;
+  }
+
+  return `/portraits/${slugifyCharacterName(character.name)}.png`;
 }

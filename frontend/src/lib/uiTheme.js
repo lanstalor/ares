@@ -1,4 +1,4 @@
-import { resolvePortrait } from "./portraitLibrary";
+import { getGeneratedPortraitUrl, resolvePortrait } from "./portraitLibrary";
 
 const CASTE_COLOR_MAP = {
   red: "var(--color-red)",
@@ -89,12 +89,13 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
   const player = playerCharacter
     ? {
         id: playerCharacter.id,
+        campaignId: campaignState?.campaign?.id,
         name: playerCharacter.name,
         caste: playerCharacter.race ?? "HighRed",
         role: playerCharacter.character_class ?? "Operative",
         tone: "player",
         active: true,
-        portraitSrc: resolvePortrait(playerCharacter.name),
+        portraitSrc: getGeneratedPortraitUrl(playerCharacter) || resolvePortrait(playerCharacter.name),
         level: playerCharacter.level ?? 3,
         hp: {
           current: playerCharacter.current_hp ?? 38,
@@ -107,12 +108,13 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
     .filter((npc) => npc && typeof npc.name === "string" && npc.name.length > 0)
     .map((npc, i) => ({
       id: `gm-npc-${i}-${npc.name}`,
+      campaignId: campaignState?.campaign?.id,
       name: npc.name,
       caste: npc.caste ?? "Gray",
       role: npc.role ?? "Unknown",
       tone: "npc",
       active: false,
-      portraitSrc: resolvePortrait(npc.name),
+      portraitSrc: getGeneratedPortraitUrl(npc) || resolvePortrait(npc.name),
       disposition: npc.disposition ?? "unaware",
     }));
 

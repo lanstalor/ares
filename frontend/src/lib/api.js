@@ -88,6 +88,13 @@ export function regenerateSceneArt(campaignId, payload = {}) {
   }, "Scene art regeneration failed");
 }
 
+export function regeneratePortrait(campaignId, npcId, payload = { force: true }) {
+  return request(`/campaigns/${campaignId}/portraits/${npcId}/regenerate`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }, "Portrait regeneration failed");
+}
+
 export function seedWorldBible(payload = {}) {
   return request("/seed/world-bible", {
     method: "POST",
