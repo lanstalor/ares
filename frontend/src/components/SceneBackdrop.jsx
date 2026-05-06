@@ -86,22 +86,28 @@ function CharacterView({ playerCharacter }) {
 }
 
 function InventoryView({ playerCharacter }) {
-  const items = (playerCharacter?.inventory_summary ?? "No inventory packet loaded")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
+  const items = playerCharacter?.items || [];
 
   return (
     <div className="scene-data-panel">
       <p className="eyebrow">Inventory</p>
-      <div className="inventory-grid">
-        {items.map((item) => (
-          <div className="inventory-slot" key={item}>
-            <span>▣</span>
-            <strong>{item}</strong>
-          </div>
-        ))}
-      </div>
+      {items.length > 0 ? (
+        <div className="inventory-grid">
+          {items.map((item) => (
+            <div className="inventory-slot" key={item.id || item.name}>
+              <span>▣</span>
+              <span>
+                <strong>{item.name}</strong>
+                {item.quantity > 1 ? ` x${item.quantity}` : ""}
+                {item.is_equipped ? " (equipped)" : ""}
+                {item.tags ? ` [${item.tags}]` : ""}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="scene-terminal-empty">No inventory packet loaded.</p>
+      )}
     </div>
   );
 }

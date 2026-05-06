@@ -77,7 +77,12 @@ export function createDevUiSnapshot() {
         current_hp: 38,
         max_hp: 38,
         cover_integrity: 7,
-        inventory_summary: "Forged sigil, relay wafer, burner ledger, work harness.",
+        items: [
+          { id: "1", name: "Forged sigil", quantity: 1, tags: "ident" },
+          { id: "2", name: "Relay wafer", quantity: 1, tags: "comms" },
+          { id: "3", name: "Burner ledger", quantity: 1, tags: "intel" },
+          { id: "4", name: "Work harness", quantity: 1, is_equipped: true },
+        ],
         notes: "Mock UI state for frontend iteration only.",
         created_at: isoAt(-240),
         updated_at: isoAt(-8),
