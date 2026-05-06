@@ -4785,3 +4785,59 @@ textarea::-webkit-scrollbar-thumb {
 .admin-login-form .admin-error {
   margin: 16px 0;
 }
+
+/* Condition Chip Styling */
+
+.participant-conditions {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.condition-chip {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 3px;
+  font-weight: bold;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.condition-bleeding {
+  background-color: #cc3333;
+}
+
+.condition-poisoned {
+  background-color: #9933cc;
+}
+
+.condition-ident_flagged {
+  background-color: #ffaa00;
+}
+
+.condition-wounded {
+  background-color: #ff6b35;
+}
+
+.condition-exhausted {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.condition-stunned {
+  background-color: #0099ff;
+}
+
+.condition-disarmed {
+  background-color: #666666;
+}
+
+.condition-prone {
+  background-color: #00cc99;
+}
+
+.condition-panicked {
+  background-color: #ff0066;
+}
