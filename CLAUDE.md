@@ -16,6 +16,10 @@ Date: 2026-05-05
   - Integrated into Anthropic and OpenAI providers.
   - New `system-roll` feed events with amber/copper styling.
   - Gated behind `ARES_ENABLE_DICE` (default off).
+- **A2: Itemized Inventory:**
+  - `Item` model added (tags, quantity, rarity, equipped status).
+  - GM engine wired to add/update/remove items via consequences.
+  - Rendered in frontend `SceneBackdrop`.
 - **B1: MediaProvider Abstraction:**
   - Implemented `MediaProvider` Protocol for image generation.
   - Providers: OpenAI (DALL-E 3), Replicate, and offline Stub.
@@ -30,11 +34,12 @@ Date: 2026-05-05
 
 **Status:**
 - Wave 1 (Mechanical/Sensory/Operator foundations) is **Finished**.
-- All tests passing (87 total backend tests).
+- Slice A2 is **Finished**.
+- All tests passing (101 total backend tests).
 - Workspace is clean; stale slice worktrees removed.
 
 **Next:**
-- **Track A:** A2 (Itemized Inventory) — `docs/superpowers/plans/`
+- **Track A:** A3 (Conditions + status effects)
 - **Track B:** B2 (Scene Art Generation pipeline)
 - **Track C:** C2 (Operator React App)
 
