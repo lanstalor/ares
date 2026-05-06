@@ -4348,3 +4348,88 @@ textarea::-webkit-scrollbar-thumb {
   position: relative;
   z-index: 6;
 }
+
+@media (max-width: 760px) {
+  html,
+  body,
+  #root {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .frame-shell.app-shell,
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .layout.shell-layout,
+  .shell-layout,
+  .main-grid {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .feed-column,
+  .scene-column,
+  .utility-column,
+  .presence-bar,
+  .command-bar {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .feed-column {
+    order: 2;
+    grid-row: auto;
+  }
+
+  .scene-column {
+    order: 1;
+  }
+
+  .utility-column {
+    order: 3;
+  }
+
+  .presence-bar {
+    order: 4;
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .command-bar {
+    order: 5;
+  }
+
+  .feed-column .turn-feed,
+  .scene-column .scene-backdrop-panel,
+  .utility-column {
+    min-height: 360px;
+    height: auto;
+  }
+
+  .mode-live .scene-column .scene-backdrop-panel,
+  .scene-column .scene-backdrop-panel {
+    aspect-ratio: auto;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .scene-backdrop-art {
+    min-height: 300px;
+  }
+
+  .topbar-stats,
+  .input-actions,
+  .scene-tabs {
+    flex-wrap: wrap;
+  }
+}

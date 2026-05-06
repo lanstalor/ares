@@ -29,12 +29,13 @@ Test status at this commit:
 - frontend (`npm run build`): ✅
 - alembic smoke (`DATABASE_URL=sqlite:////tmp/ares-b2-migrate.db alembic upgrade head`): ✅
 - docker config (`docker compose config` with temporary `.env -> .env.example` symlink): ✅
+- Docker 5180 visual checkpoint: ✅ desktop + mobile screenshots
 - playtester (offline, stub provider): not-run
-- playwright screenshot at 5180: not-run
+- playwright screenshot at 5180: ✅
 
 ## In-flight WIP
 
-`wip 99d2782` — tests pass; scene-art service/cache, API route, turn-trigger, and frontend consumption are implemented. Remaining: run the Docker 5180 visual checkpoint, decide whether to add a small operator-facing regenerate control in the UI, and create/update the draft PR description.
+`wip 99d2782` — tests pass; scene-art service/cache, API route, turn-trigger, frontend consumption, Docker visual checkpoint, and draft PR are done. Remaining: run/record the playtester benchmark if required before review and decide whether to add a small operator-facing regenerate control in the UI.
 
 ## Files touched so far
 
@@ -54,11 +55,14 @@ Append entries as you edit. Mark files complete with ✅, in-progress with ⚠�
 - ✅ `frontend/src/lib/api.js` — adds scene-art API helpers.
 - ✅ `frontend/src/App.jsx` — fetches current scene art when the active location changes and stores turn-triggered art.
 - ✅ `frontend/src/components/SceneBackdrop.jsx` — renders API-backed scene art with static-library fallback.
+- ✅ `frontend/src/styles.css` — adds a small mobile stack override so the scene panel is usable at 390px.
+- ✅ `assets/samples/ui-iteration/2026-05-06-B2-scene-art-after.png` — Docker 5180 desktop evidence.
+- ✅ `assets/samples/ui-iteration/2026-05-06-B2-scene-art-mobile-after.png` — Docker 5180 mobile evidence.
 - ✅ `backend/tests/test_scene_art.py` — covers prompt safety, caching, routes, and slugging.
 
 ## Next concrete step
 
-Start the Docker truth checkpoint at 5180, open a campaign, and confirm the scene backdrop uses the API-provided `scene_art.image_url` without layout regressions. Then add a focused Playwright screenshot under `assets/samples/ui-iteration/` and mark the slice ready for review if the visual pass is clean.
+Run/record the playtester benchmark if this slice needs the full review gate, then either mark PR #13 ready or add the optional operator-facing regenerate control. The Docker stack is currently serving this branch at `http://localhost:5180/`.
 
 ## Open questions / blockers
 
@@ -66,12 +70,14 @@ Start the Docker truth checkpoint at 5180, open a campaign, and confirm the scen
 - The backend serves generated b64 PNGs at `/api/v1/media/scene-art/{filename}` so Docker does not require the frontend container to see backend-written files.
 - The frontend still falls back to the existing static scene-art library when the scene-art API is unavailable.
 - No in-app regenerate button was added yet; the API endpoint exists at `POST /api/v1/campaigns/{campaign_id}/scene-art/regenerate`.
+- Playtester was not run in this pass because it requires live player/evaluator model calls; all offline unit/build/Docker checks passed.
 
 ## Agent rotation log
 
 Append-only. One line per session.
 
 - `2026-05-06 09:02 UTC` — Codex → Created draft PR #13 and pushed branch; next: Docker 5180 visual checkpoint and PR polish.
+- `2026-05-06 09:07 UTC` — Codex → Rebuilt Docker backend/frontend, verified `/scene-art/current` at 5180, captured desktop/mobile screenshots, and added a narrow mobile stacking fix.
 - `2026-05-06 08:59 UTC` — Codex → Bootstrapped B2, added scene-art model/migration/service/API/frontend wiring, verified backend/frontend checks; next: Docker 5180 visual checkpoint and PR polish.
 
 ## Verification on completion
@@ -81,7 +87,7 @@ Before marking this slice **review**:
 - [x] `make backend-test` passes
 - [x] `make check` passes
 - [ ] Playtester runs 30 turns clean with feature flag off (default) and on
-- [ ] Playwright screenshot at 5180 (UI slices only) saved under `assets/samples/ui-iteration/`
+- [x] Playwright screenshot at 5180 (UI slices only) saved under `assets/samples/ui-iteration/`
 - [ ] Workstream doc fully reflects final state
 - [x] Draft PR description summarizes the slice
 - [ ] `CLAUDE.md` "Recently Finished" updated if this is a major capability

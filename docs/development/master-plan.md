@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| B2 | `track-b/B2-scene-art` | `~/ares-track-b/B2` | Codex | in-flight | Add scene art service/cache, media API route, and frontend scene-art refresh |
+| B2 | `track-b/B2-scene-art` | `~/ares-track-b/B2` | Codex | in-flight | Run/record playtester benchmark or mark PR #13 ready after review decision |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
