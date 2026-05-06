@@ -8,6 +8,7 @@ from app.services.ai_provider import NarrationProvider, NarrationRequest, Narrat
 from app.services.consequence_applier import (
     ClockTick,
     Consequences,
+    InventoryUpdate,
     LocationChange,
     MemoryDraft,
     ObjectiveUpdate,
@@ -170,6 +171,21 @@ _TOOL_SCHEMA = {
                                 },
                             },
                             "required": ["title", "action"],
+                        },
+                    },
+                    "inventory_updates": {
+                        "type": "array",
+                        "description": "Items acquired, lost, or updated this turn.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string", "description": "Name of the item."},
+                                "action": {"type": "string", "enum": ["add", "remove", "update"]},
+                                "quantity": {"type": "integer", "description": "Amount to add/remove/set."},
+                                "description": {"type": "string", "description": "Flavor description of the item."},
+                                "tags": {"type": "string", "description": "Comma-separated tags like 'weapon, energy, heavy'."},
+                            },
+                            "required": ["name", "action"],
                         },
                     },
                 },
@@ -473,6 +489,16 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
                     description=item.get("description"),
                 )
                 for item in raw_consequences.get("objective_updates", [])
+            ],
+            inventory_updates=[
+                InventoryUpdate(
+                    name=item["name"],
+                    action=item["action"],
+                    quantity=item.get("quantity"),
+                    description=item.get("description"),
+                    tags=item.get("tags"),
+                )
+                for item in raw_consequences.get("inventory_updates", [])
             ],
         ),
     )

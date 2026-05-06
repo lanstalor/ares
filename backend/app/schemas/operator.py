@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 
 from app.core.enums import ClockType, SecretStatus, Visibility
 from app.schemas.campaign import CampaignRead
-from app.schemas.character import CharacterRead
+from app.schemas.character import CharacterRead, ItemRead
 from app.schemas.memory import MemoryRead
 from app.schemas.turn import TurnRead
 
@@ -111,6 +111,7 @@ class CampaignFullState(BaseModel):
     clocks: list[ClockRead]
     secrets: list[SecretRead]
     characters: list[CharacterRead]
+    items: list[ItemRead]
     turns: list[TurnRead]
     memories: list[MemoryRead]
     world: WorldState
@@ -182,6 +183,19 @@ class NPCUpdate(BaseModel):
     max_hp: int | None = None
 
 
+class ItemUpdate(BaseModel):
+    id: str
+    name: str | None = None
+    description: str | None = None
+    item_type: str | None = None
+    rarity: str | None = None
+    tags: str | None = None
+    is_equippable: bool | None = None
+    is_equipped: bool | None = None
+    quantity: int | None = None
+    character_id: str | None = None
+
+
 class FactionUpdate(BaseModel):
     id: str
     name: str | None = None
@@ -225,6 +239,7 @@ class CampaignStatePatch(BaseModel):
     secrets: list[SecretUpdate] | None = None
     turns: list[TurnUpdate] | None = None
     characters: list[CharacterUpdate] | None = None
+    items: list[ItemUpdate] | None = None
     npcs: list[NPCUpdate] | None = None
     factions: list[FactionUpdate] | None = None
     areas: list[AreaUpdate] | None = None

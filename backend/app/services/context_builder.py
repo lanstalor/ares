@@ -140,6 +140,16 @@ def _render_player_safe_brief(
                 else ""
             )
         )
+        if character.items:
+            lines.append("Inventory:")
+            for item in character.items:
+                qty = f" x{item.quantity}" if item.quantity != 1 else ""
+                eq = " (equipped)" if item.is_equipped else ""
+                tags = f" [{item.tags}]" if item.tags else ""
+                desc = f": {item.description}" if item.description else ""
+                lines.append(f"  - {item.name}{qty}{eq}{tags}{desc}")
+        elif character.inventory_summary:
+            lines.append(f"Inventory Summary: {character.inventory_summary}")
     if objectives:
         lines.append("Active objectives: " + "; ".join(o.title for o in objectives))
     if recent_turns:
