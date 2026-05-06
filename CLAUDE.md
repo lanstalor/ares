@@ -6,42 +6,41 @@
 
 ## Latest Session Summary
 
-Date: 2026-05-05
+Date: 2026-05-06
 
-### Wave 1 Consolidation — Slices A1, B1, C1 Merged + UI Restore
+### Wave 2 Sprint — Slices B2 + C2 Completed; Ready for Full Review & Merge
 
-**Delivered (all merged to main, commit 9838d11):**
-- **A1: Dice + Skill Check Primitive:**
-  - Added attribute check primitive (Strength, Cunning, Will, Charm, Tech).
-  - Integrated into Anthropic and OpenAI providers.
-  - New `system-roll` feed events with amber/copper styling.
-  - Gated behind `ARES_ENABLE_DICE` (default off).
-- **A2: Itemized Inventory:**
-  - `Item` model added (tags, quantity, rarity, equipped status).
-  - GM engine wired to add/update/remove items via consequences.
-  - Rendered in frontend `SceneBackdrop`.
-- **B1: MediaProvider Abstraction:**
-  - Implemented `MediaProvider` Protocol for image generation.
-  - Providers: OpenAI (DALL-E 3), Replicate, and offline Stub.
-  - Registry selection via `ARES_MEDIA_PROVIDER` setting.
-- **C1: Operator-only API Surface:**
-  - `GET /full-state`: Visibility-unfiltered campaign/world data.
-  - `PATCH /state`: Manual state repair for any entity (Clocks, Secrets, NPCs, etc.).
-  - `GET /audit`: Automated detection of state drift or logic issues.
-- **UI Restoration:**
-  - Recovered and committed "lost" UI improvements: 3-column layout, portrait avatars, and ARES wordmark.
-  - Rebuilt Docker images at 5180 to sync live environment.
+**Delivered:**
+- **B2: Scene Art Generation Pipeline** (merged to main, commit bf4b759)
+  - SceneArt cache model + Alembic migration.
+  - Player-safe scene art prompt/service using MediaProvider (B1).
+  - API endpoints: list/current/regenerate scene art.
+  - Backend file serving for generated b64 PNGs.
+  - Turn-triggered scene art generation on location changes.
+  - Frontend fetch/render with static fallback, mobile stacking fix.
+  - 105 backend tests passing; all verification checks ✅.
+
+- **C2: Operator React Admin App** (draft PR #14 ready for review)
+  - Separate `/admin` route (lazy-loaded from main app).
+  - Token-gated login (localStorage-persisted ARES_OPERATOR_TOKEN).
+  - Sidebar nav + 5 entity pages: Campaign, Objectives, Clocks, Secrets, NPCs.
+  - Reusable EntityTable + EntityModal components for CRUD workflows.
+  - Single source of truth: full state from C1 GET /operator/campaigns/{id}/full-state.
+  - Refetch after PATCH to keep UI in sync.
+  - 14 implementation tasks completed via subagent-driven-development.
+  - Full integration testing + Playwright screenshots (desktop + mobile).
 
 **Status:**
-- Wave 1 (Mechanical/Sensory/Operator foundations) is **Finished**.
-- Slice A2 is **Finished**.
-- All tests passing (101 total backend tests).
-- Workspace is clean; stale slice worktrees removed.
+- **Wave 1** (Foundations A1, B1, C1) — ✅ **Finished & merged**.
+- **Wave 2 Sprint 1** (A2, B2, C2) — ✅ **A2 & B2 merged; C2 in draft PR #14**.
+- All tests passing (105 backend tests).
+- Ready for full wave 2 review before pushing C2 to main.
 
-**Next:**
-- **Track A:** A3 (Conditions + status effects)
-- **Track B:** B2 (Scene Art Generation pipeline)
-- **Track C:** C2 (Operator React App)
+**Next Steps (Session Priority):**
+1. **Review A2, B2, C2** — Ensure all three slices meet spec/quality bar before final merge.
+2. **Merge C2** (PR #14) once review passes.
+3. **Update CLAUDE.md** with A2/B2/C2 in "Recently Finished" and implementation status.
+4. **Reset for next wave** (Track A: A3, Track B: B3, Track C: C3).
 
 ---
 
@@ -86,11 +85,17 @@ docker compose up --build --no-deps -d frontend
 
 ## Implementation Status
 
-- **GM Engine**: Consequence-aware turn loop (clocks, secrets, locations, objective updates).
-- **Dice System**: Attribute check primitive + feed rendering (Slice A1).
-- **Media System**: Provider-backed image generation abstraction (Slice B1).
-- **Operator API**: Full manual state repair and auditing (Slice C1).
-- **Web UI**: 3-column rebel terminal, pixel-art aesthetic, VT323 font, live portrait avatars.
+**Merged to Main:**
+- **GM Engine**: Consequence-aware turn loop (clocks, secrets, locations, objective updates, dice rolls, inventory).
+- **Dice System**: Attribute check primitive (Strength, Cunning, Will, Charm, Tech) + feed rendering (Slice A1).
+- **Inventory**: Itemized Item model (tags, quantity, rarity, equipped) wired to consequences + frontend rendering (Slice A2).
+- **Media System**: Provider-backed image generation abstraction (OpenAI/Replicate/Stub) (Slice B1).
+- **Scene Art**: Generated/cached per location, turn-triggered, with player-safe prompt building (Slice B2).
+- **Operator API**: Full manual state repair, auditing, and read-only campaign introspection (Slice C1).
+- **Web UI**: 3-column rebel terminal, pixel-art aesthetic, VT323 font, live portrait avatars, responsive layout.
+
+**In Draft PR (C2):**
+- **Operator Admin UI**: `/admin` route with token-gating, sidebar nav, entity editors for all hidden state (Objectives, Clocks, Secrets, NPCs, Campaign metadata).
 
 ---
 
