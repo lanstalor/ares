@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next concrete step |
 |---|---|---|---|---|---|
-| A2 | `track-a/A2-itemized-inventory` | `~/ares-track-a/A2` | Gemini | in-flight | Wire items into GM context builder and update tool schemas. |
+| A2 | `track-a/A2-itemized-inventory` | `~/ares-track-a/A2` | Gemini | review | Merge A2 into main |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
