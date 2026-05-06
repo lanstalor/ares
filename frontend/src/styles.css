@@ -4433,3 +4433,355 @@ textarea::-webkit-scrollbar-thumb {
     flex-wrap: wrap;
   }
 }
+
+/* ============================================================================
+   ADMIN UI STYLES
+   ============================================================================ */
+
+.admin-container {
+  display: flex;
+  height: 100vh;
+  background: #0a0e27;
+  color: #aaa;
+  font-family: "VT323", monospace;
+  font-size: 14px;
+}
+
+.admin-sidebar {
+  width: 200px;
+  background: #1a1f3a;
+  border-right: 1px solid #555;
+  padding: 16px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.admin-sidebar nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-sidebar nav li {
+  margin: 8px 0;
+}
+
+.admin-sidebar nav button {
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid #555;
+  color: #aaa;
+  cursor: pointer;
+  text-align: left;
+  font-family: "VT323", monospace;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.admin-sidebar nav button:hover {
+  background: #2a2f4a;
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+.admin-sidebar nav button.active {
+  background: #ff6b35;
+  border-color: #ff6b35;
+  color: #0a0e27;
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-header {
+  padding: 16px;
+  background: #1a1f3a;
+  border-bottom: 1px solid #555;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 18px;
+  color: #aaa;
+}
+
+.admin-logout {
+  padding: 6px 12px;
+  background: #ff6b35;
+  border: none;
+  color: #0a0e27;
+  cursor: pointer;
+  font-family: "VT323", monospace;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.admin-logout:hover {
+  background: #ff8855;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #0a0e27;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #555;
+  background: #1a1f3a;
+  margin: 16px 0;
+}
+
+.admin-table thead {
+  background: #2a2f4a;
+  border-bottom: 1px solid #555;
+}
+
+.admin-table th {
+  padding: 12px;
+  text-align: left;
+  color: #ff6b35;
+  font-weight: bold;
+  border-right: 1px solid #555;
+}
+
+.admin-table th:last-child {
+  border-right: none;
+}
+
+.admin-table td {
+  padding: 10px 12px;
+  border-right: 1px solid #555;
+  border-bottom: 1px solid #555;
+  color: #aaa;
+  word-break: break-word;
+}
+
+.admin-table td:last-child {
+  border-right: none;
+}
+
+.admin-table tbody tr:hover {
+  background: #2a2f4a;
+}
+
+.admin-table button {
+  padding: 4px 8px;
+  margin: 0 4px;
+  background: #ff6b35;
+  border: none;
+  color: #0a0e27;
+  cursor: pointer;
+  font-family: "VT323", monospace;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.admin-table button:hover {
+  background: #ff8855;
+}
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 39, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.admin-modal {
+  background: #1a1f3a;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #aaa;
+}
+
+.admin-modal h2 {
+  margin: 0 0 16px 0;
+  color: #ff6b35;
+  font-size: 18px;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-form label {
+  color: #ff6b35;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  padding: 8px 12px;
+  background: #0a0e27;
+  border: 1px solid #555;
+  color: #aaa;
+  font-family: "VT323", monospace;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus,
+.admin-form select:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 4px rgba(255, 107, 53, 0.3);
+}
+
+.admin-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.admin-form-actions button {
+  padding: 8px 16px;
+  border: 1px solid #555;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  font-family: "VT323", monospace;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.admin-form-actions button:hover {
+  background: #2a2f4a;
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+.admin-form-actions button.primary {
+  background: #ff6b35;
+  border-color: #ff6b35;
+  color: #0a0e27;
+}
+
+.admin-form-actions button.primary:hover {
+  background: #ff8855;
+}
+
+.admin-error {
+  padding: 12px;
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid #ff6b35;
+  color: #ff6b35;
+  border-radius: 4px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.admin-success {
+  padding: 12px;
+  background: rgba(78, 200, 158, 0.1);
+  border: 1px solid #4ec89e;
+  color: #4ec89e;
+  border-radius: 4px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.admin-loading {
+  display: inline-block;
+  padding: 8px 12px;
+  background: #2a2f4a;
+  border: 1px solid #555;
+  color: #aaa;
+  border-radius: 4px;
+  animation: admin-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes admin-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.admin-login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #0a0e27;
+  color: #aaa;
+  font-family: "VT323", monospace;
+}
+
+.admin-login-form {
+  background: #1a1f3a;
+  border: 1px solid #555;
+  padding: 32px;
+  border-radius: 4px;
+  max-width: 400px;
+  width: 90%;
+}
+
+.admin-login-form h1 {
+  color: #ff6b35;
+  margin: 0 0 24px 0;
+  font-size: 24px;
+}
+
+.admin-login-form .admin-form-group {
+  margin-bottom: 16px;
+}
+
+.admin-login-form button {
+  width: 100%;
+  padding: 12px;
+  background: #ff6b35;
+  border: none;
+  color: #0a0e27;
+  cursor: pointer;
+  font-family: "VT323", monospace;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.admin-login-form button:hover {
+  background: #ff8855;
+}
+
+.admin-login-form .admin-error {
+  margin: 16px 0;
+}
