@@ -34,6 +34,47 @@ def seed_world_bible_into_campaign(
     session.add(campaign)
     session.flush()
 
+    return _seed_world_bible_into_campaign_impl(
+        session, campaign, bundle, resolved_path
+    )
+
+
+def seed_world_bible_into_existing_campaign(
+    session: Session,
+    campaign_id: str,
+    source_path: str | Path | None = None,
+) -> SeedImportResponse:
+    """Seed an existing campaign with world state from world_bible.md.
+
+    Unlike seed_world_bible_into_campaign, this takes an existing campaign
+    and populates it with NPCs, areas, secrets, lore, and objectives.
+    The player character is NOT replaced if it already exists.
+    """
+    settings = get_settings()
+    resolved_path = Path(source_path).expanduser().resolve() if source_path else settings.world_bible_path
+    bundle = build_seed_bundle_from_file(resolved_path)
+
+    campaign = session.get(Campaign, campaign_id)
+    if campaign is None:
+        raise ValueError(f"Campaign {campaign_id} not found")
+
+    # Update campaign fields from bundle (except name if already set)
+    if not campaign.tagline:
+        campaign.tagline = bundle.campaign.tagline
+    if campaign.current_date_pce == 728:  # Default value, assume not set
+        campaign.current_date_pce = bundle.campaign.current_date_pce
+    if not campaign.current_location_label:
+        campaign.current_location_label = "Crescent Block - Callisto Depot District"
+
+    return _seed_world_bible_into_campaign_impl(
+        session, campaign, bundle, resolved_path
+    )
+
+
+def _seed_world_bible_into_campaign_impl(
+    session: Session, campaign: Campaign, bundle, resolved_path: Path
+) -> SeedImportResponse:
+
     faction_ids: dict[str, str] = {}
     for faction_seed in bundle.factions:
         faction = session.scalar(select(Faction).where(Faction.name == faction_seed.name))

@@ -29,6 +29,15 @@ def test_slugify_scene_label_is_stable() -> None:
 def test_scene_art_prompt_uses_player_safe_context_only() -> None:
     session = _make_session()
     campaign = create_campaign(CampaignCreate(name="Prompt Test", tagline="Public premise"), session)
+
+    # Deactivate the bootstrap objective and add a test one
+    default_objective = session.query(Objective).filter(
+        Objective.campaign_id == campaign.id,
+        Objective.is_active == True,
+    ).first()
+    if default_objective:
+        default_objective.is_active = False
+
     session.add(
         Objective(
             campaign_id=campaign.id,

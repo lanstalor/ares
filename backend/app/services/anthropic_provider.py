@@ -48,9 +48,13 @@ Prose discipline — what to cut:
 - No metaphors for NPC internal process ("filing you away", "putting you in a drawer", "weighing the cost"). Stick to what the eye can see.
 
 Naming conventions (enforce silently, never explain):
-- Gold characters use "au" as their middle name: e.g., Vaia au Lysander.
+- Gold characters use "au": e.g., Vaia au Lysander.
 - Copper characters use "cu": e.g., Venn cu Mercator.
-- Silver characters use "si", Gray use "te", Red use "ne", Blue use "de", Obsidian use "ka".
+- Gray characters use "ti": e.g., Legate Voss ti Harlan.
+- Red characters use "of" or "o": e.g., Darrow of Lykos, Pax o Teaia.
+- Blue characters use "xe": e.g., various.
+- Obsidian characters use "ka": e.g., Seraph ka Tul.
+- Silver characters use "si": e.g., various.
 - "Ares" must never appear as a family name — it is the resistance movement, not a bloodline.
 - Recurring NPCs need distinct voices. Give each named or recurring NPC at least one differentiator in rhythm, agenda, or conversational habit. Two Grays in the same arc must not sound interchangeable.
 
@@ -417,6 +421,44 @@ def _find_tool_block(message: Any) -> Any | None:
     return None
 
 
+def _validate_caste_naming_convention(name: str, declared_caste: str) -> str:
+    """Validate that NPC name matches declared caste using Red Rising naming conventions.
+
+    Naming conventions:
+    - Gold: au (e.g., Vaia au Lysander)
+    - Copper: cu (e.g., Venn cu Mercator)
+    - Gray: ti (e.g., Legate Voss ti Harlan)
+    - Red: of/o (e.g., Darrow of Lykos, Pax o Teaia)
+    - Blue: xe (e.g., various)
+    - Obsidian: ka (e.g., Seraph ka Tul)
+    - Silver: si (e.g., various)
+
+    If the name contains a caste prefix, extract and return the correct caste.
+    Otherwise, return the declared caste.
+    """
+    name_lower = name.lower()
+    caste_map = {
+        "au": "Gold",
+        "cu": "Copper",
+        "ti": "Gray",  # Legate Voss ti Harlan
+        "of": "Red",  # Darrow of Lykos
+        " o ": "Red",  # Pax o Teaia (standalone "o" word)
+        "xe": "Blue",
+        "ka": "Obsidian",
+        "si": "Silver",
+    }
+
+    for prefix, caste in caste_map.items():
+        # Check if the name contains the prefix as a word (with spaces around it)
+        # For " o ", this checks " o " directly; for others checks " {prefix} "
+        search_pattern = f" {prefix} "
+        if search_pattern in f" {name_lower} ":
+            if declared_caste.lower() != caste.lower():
+                return caste
+            return declared_caste
+    return declared_caste
+
+
 def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
     raw_consequences = tool_input.get("consequences") or {}
     raw_location = raw_consequences.get("location_change")
@@ -437,9 +479,11 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
     for item in raw_participants:
         if not isinstance(item, dict) or "name" not in item or "caste" not in item:
             continue
+        # Validate caste against naming convention
+        validated_caste = _validate_caste_naming_convention(item["name"], item["caste"])
         participant: dict[str, Any] = {
             "name": item["name"],
-            "caste": item["caste"],
+            "caste": validated_caste,
             "role": item["role"],
             "disposition": item["disposition"],
         }

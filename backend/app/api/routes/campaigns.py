@@ -8,6 +8,8 @@ from app.models.character import Character
 from app.services.npc_portrait_service import ensure_portrait
 from app.services.scene_art import get_cached_scene_art
 from app.schemas.campaign import CampaignCreate, CampaignRead, CampaignState
+from app.schemas.seed_runtime import SeedImportResponse
+from app.services.seed_runtime import seed_world_bible_into_existing_campaign
 
 router = APIRouter()
 
@@ -28,32 +30,31 @@ def create_campaign(payload: CampaignCreate, session: SessionDep) -> Campaign:
     )
     session.add(campaign)
     session.flush()
-    character = Character(
-        campaign_id=campaign.id,
-        name="Davan of Tharsis",
-        race="HighRed",
-        character_class="Operative",
-        cover_identity="Dav of Vashti",
-        current_hp=38,
-        max_hp=38,
-        cover_integrity=8,
-        inventory_summary="Work harness, tools, forged sigil.",
-        notes="Default scaffold character pending world-bible seed integration.",
-    )
-    session.add(character)
-    session.commit()
 
-    # Queue portrait generation for player character
+    # Bootstrap campaign with world state from world_bible
     try:
-        ensure_portrait(
+        seed_world_bible_into_existing_campaign(
             session=session,
-            campaign=campaign,
-            character=character,
-            force=False,
+            campaign_id=campaign.id,
+            source_path=None,
         )
     except Exception as e:
-        # Log error but don't fail campaign creation
-        print(f"Warning: Failed to generate portrait for {character.name}: {e}")
+        # Fallback: create default player character if bootstrap fails
+        print(f"Warning: Failed to bootstrap campaign with world_bible: {e}")
+        character = Character(
+            campaign_id=campaign.id,
+            name="Davan of Tharsis",
+            race="HighRed",
+            character_class="Operative",
+            cover_identity="Dav of Vashti",
+            current_hp=38,
+            max_hp=38,
+            cover_integrity=8,
+            inventory_summary="Work harness, tools, forged sigil.",
+            notes="Default scaffold character (bootstrap failed).",
+        )
+        session.add(character)
+        session.commit()
 
     session.refresh(campaign)
     return campaign
@@ -90,4 +91,18 @@ def get_campaign_state(campaign_id: str, session: SessionDep) -> CampaignState:
         player_character=latest_character,
         scene_art=scene_art,
         hidden_state_summary="Hidden state remains server-only.",
+    )
+
+
+@router.post("/{campaign_id}/bootstrap", response_model=SeedImportResponse, status_code=201)
+def bootstrap_campaign(campaign_id: str, session: SessionDep) -> SeedImportResponse:
+    """Bootstrap an existing campaign with world state from world_bible.md.
+
+    Seeds the campaign with NPCs, areas, factions, secrets, lore, and opening objective.
+    Does not replace existing player character.
+    """
+    return seed_world_bible_into_existing_campaign(
+        session=session,
+        campaign_id=campaign_id,
+        source_path=None,
     )
