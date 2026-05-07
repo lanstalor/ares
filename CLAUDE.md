@@ -6,40 +6,33 @@
 
 ## Latest Session Summary
 
-Date: 2026-05-06
+Date: 2026-05-07
 
-### ✅ Wave 2 Sprint 1 Complete — A2, B2, C2 All Merged to Main
+### ✅ A3: Conditions System Completed
 
-**Delivered (all merged):**
-- **A2: Itemized Inventory** (merged commit 67700ab)
-  - Item model (tags, quantity, rarity, equipped status).
-  - Inventory delta consequences (items_added, items_removed).
-  - GM engine integration via consequence applier.
-  - Frontend rendering in SceneBackdrop.
-  
-- **B2: Scene Art Generation Pipeline** (merged commit bf4b759)
-  - SceneArt cache model + Alembic migration.
-  - Player-safe scene art service using MediaProvider (B1).
-  - API endpoints: list/current/regenerate.
-  - Backend file serving for generated PNGs.
-  - Turn-triggered generation + frontend fetch/render with fallback.
-  
-- **C2: Operator React Admin App** (merged commit 1f2b994)
-  - Separate `/admin` route (lazy-loaded, token-gated).
-  - Sidebar navigation + 5 entity pages (Campaign, Objectives, Clocks, Secrets, NPCs).
-  - Reusable EntityTable + EntityModal for CRUD workflows.
-  - useOperatorApi hook with tests.
-  - Full integration testing + Playwright screenshots.
+**Delivered:**
+- **A3: Conditions + Status Effects** (ready to merge)
+  - ConditionType enum (9 types: bleeding, poisoned, ident_flagged, wounded, exhausted, stunned, disarmed, prone, panicked).
+  - Condition model + Alembic migration (campaign/character FK, duration tracking, source attribution).
+  - ConditionService (apply, remove, tick, query).
+  - Consequence integration: `ConditionUpdate` consequences → automatic application.
+  - Turn resolution: `process_conditions()` decrements/expires on each turn.
+  - ParticipantStrip rendering: color-coded condition chips below character name.
+  - API fix: selectinload(Character.conditions) → conditions now returned in campaign state.
+  - 70+ condition tests, 215 total tests passing.
+  - Desktop (1366×1024) and mobile (390×844) screenshots captured.
 
 **Status:**
 - **Wave 1** (A1, B1, C1) — ✅ Finished & merged.
-- **Wave 2 Sprint 1** (A2, B2, C2) — ✅ **All merged to main.**
-- Backend tests: 105 passing.
-- All hard constraints respected (no hidden-state leaks, canon guard intact).
+- **Wave 2 Sprint 1** (A2, B2, C2) — ✅ Finished & merged.
+- **Wave 2 Sprint 2** (A3) — ✅ Complete. B3, C3 in parallel.
+- Backend tests: 215 passing (70+ condition-specific).
+- All hard constraints verified (hidden state safe, canon guard intact, stub provider works offline).
 
 **Ready for:**
-- Wave 3 Sprint 1 kickoff: A3, B3, C3
-- Next agent session can start fresh with clean main branch.
+- A3 to merge to main.
+- B3 and C3 completion.
+- Wave 3 Sprint 1 planning.
 
 ---
 
@@ -85,9 +78,10 @@ docker compose up --build --no-deps -d frontend
 ## Implementation Status
 
 **Merged to Main:**
-- **GM Engine**: Consequence-aware turn loop (clocks, secrets, locations, objective updates, dice rolls, inventory).
+- **GM Engine**: Consequence-aware turn loop (clocks, secrets, locations, objective updates, dice rolls, inventory, conditions).
 - **Dice System**: Attribute check primitive (Strength, Cunning, Will, Charm, Tech) + feed rendering (Slice A1).
 - **Inventory**: Itemized Item model (tags, quantity, rarity, equipped) wired to consequences + frontend rendering (Slice A2).
+- **Conditions**: 9 condition types (bleeding, poisoned, etc.), applied via consequences, tick on turn, rendered as color-coded chips (Slice A3).
 - **Media System**: Provider-backed image generation abstraction (OpenAI/Replicate/Stub) (Slice B1).
 - **Scene Art**: Generated/cached per location, turn-triggered, with player-safe prompt building (Slice B2).
 - **NPC Portraits**: Generated on NPC creation/first appearance, cached per NPC, lazy-load with initials fallback, operator regenerate endpoint (Slice B3).

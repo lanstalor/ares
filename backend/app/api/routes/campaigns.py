@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.db.session import SessionDep
 from app.models.campaign import Campaign
@@ -67,6 +68,7 @@ def get_campaign_state(campaign_id: str, session: SessionDep) -> CampaignState:
         session.scalars(
             select(Character)
             .where(Character.campaign_id == campaign_id)
+            .options(selectinload(Character.conditions))
             .order_by(Character.created_at.asc())
         ).first()
     )

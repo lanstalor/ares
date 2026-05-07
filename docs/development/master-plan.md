@@ -20,7 +20,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 |---|---|---|
 | A1 | Dice + skill check primitive | finished |
 | A2 | Itemized inventory | finished |
-| A3 | Conditions + status effects | not-started |
+| A3 | Conditions + status effects | finished |
 | A4 | Turn-based combat mode | not-started |
 | A5 | Abilities/equipment registry | not-started |
 
@@ -67,6 +67,7 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-05-06 | A3: Conditions + status effects | ConditionType enum, Condition model + migration, ConditionService, consequence integration, turn-triggered ticking, ParticipantStrip rendering with color-coded chips, 70+ tests, 215 total passing |
 | 2026-05-06 | B3: NPC portrait generation | NpcPortrait model + service, eager generation on NPC creation, lazy generation on first appearance, operator regenerate endpoint, MediaProvider integration, frontend lazy-load with initials fallback |
 | 2026-05-06 | C2: Operator React app | Separate /admin route with token-gating, sidebar nav, entity editors (Campaign, Objectives, Clocks, Secrets, NPCs), reusable table/modal components |
 | 2026-05-06 | B2: Scene art generation | SceneArt cache model, player-safe prompt building, MediaProvider integration, turn-triggered generation, API endpoints, frontend rendering |
