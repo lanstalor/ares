@@ -21,6 +21,7 @@ class Character(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     campaign: Mapped["Campaign"] = relationship(back_populates="characters")
     items: Mapped[list["Item"]] = relationship(back_populates="owner")
     portrait: Mapped["NpcPortrait | None"] = relationship(back_populates="npc")
+    conditions: Mapped[list["Condition"]] = relationship(back_populates="character", cascade="all, delete-orphan")
 
 
 class Item(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -42,4 +43,5 @@ class Item(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 from app.models.campaign import Campaign  # noqa: E402
+from app.models.conditions import Condition  # noqa: E402
 from app.models.portraits import NpcPortrait  # noqa: E402

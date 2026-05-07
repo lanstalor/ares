@@ -21,6 +21,14 @@ class ItemRead(BaseModel):
     updated_at: datetime
 
 
+class ConditionRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    condition_type: str
+    duration_remaining: int
+
+
 class CharacterRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -36,5 +44,6 @@ class CharacterRead(BaseModel):
     inventory_summary: str | None
     notes: str | None
     items: list[ItemRead] = []
+    conditions: list[ConditionRead] = []
     created_at: datetime
     updated_at: datetime

@@ -207,6 +207,19 @@ _TOOL_SCHEMA = {
                         "level": {"type": "integer", "description": "Character combat level, 1–10 scale. Include if provided in the hidden GM context."},
                         "current_hp": {"type": "integer", "description": "Current hit points. Include if provided in the hidden GM context."},
                         "max_hp": {"type": "integer", "description": "Maximum hit points. Include if provided in the hidden GM context."},
+                        "conditions": {
+                            "type": "array",
+                            "description": "Status conditions affecting the character.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {"type": "string"},
+                                    "condition_type": {"type": "string"},
+                                    "duration_remaining": {"type": "integer"},
+                                },
+                                "required": ["id", "condition_type", "duration_remaining"],
+                            },
+                        },
                     },
                     "required": ["name", "caste", "role", "disposition"],
                 },
@@ -436,6 +449,23 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
             participant["current_hp"] = item["current_hp"]
         if "max_hp" in item:
             participant["max_hp"] = item["max_hp"]
+        # Safely extract and validate conditions
+        if "conditions" in item:
+            conditions = item.get("conditions", [])
+            if isinstance(conditions, list):
+                # Filter to valid condition dicts
+                validated = []
+                for c in conditions:
+                    if isinstance(c, dict) and "condition_type" in c and "duration_remaining" in c:
+                        validated.append(c)
+                    else:
+                        self.logger.warning(f"Malformed condition in response: {c}")
+                participant["conditions"] = validated
+            else:
+                self.logger.warning(f"Conditions is not a list: {type(conditions)}")
+                participant["conditions"] = []
+        else:
+            participant["conditions"] = []
         scene_participants.append(participant)
 
     raw_rolls = tool_input.get("rolls") or []

@@ -1,12 +1,15 @@
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.core.enums import ClockType, SecretStatus, Visibility
+from app.core.enums import ClockType, ConditionType, SecretStatus, Visibility
 from app.models.base import Base
 from app.models.campaign import Campaign, Clock, Objective
+from app.models.character import Character
+from app.models.conditions import Condition
 from app.models.memory import Memory, Secret
 from app.services.consequence_applier import (
     ClockTick,
+    ConditionUpdate,
     Consequences,
     LocationChange,
     MemoryDraft,
@@ -327,3 +330,306 @@ def test_apply_consequences_complete_ignores_already_inactive_objective() -> Non
 
     refreshed = session.scalar(select(Objective).where(Objective.id == obj.id))
     assert refreshed.is_active is False
+
+
+# Condition consequence tests
+
+
+def _make_character(session: Session, campaign: Campaign) -> Character:
+    """Helper to create a test character."""
+    character = Character(campaign_id=campaign.id, name="Davan of Tharsis")
+    session.add(character)
+    session.flush()
+    return character
+
+
+def test_apply_consequences_creates_new_condition() -> None:
+    """Test that condition consequences create new Condition records."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="bleeding", duration=3, source="combat_wound")
+            ]
+        ),
+    )
+    session.commit()
+
+    condition = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+            Condition.character_id == character.id,
+            Condition.condition_type == "bleeding",
+        )
+    )
+    assert condition is not None
+    assert condition.duration_remaining == 3
+    assert condition.source == "combat_wound"
+    assert condition.persistence == "persistent"
+
+
+def test_apply_consequences_refreshes_existing_condition() -> None:
+    """Test that condition consequences refresh existing conditions."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+
+    # Create initial condition
+    existing = Condition(
+        campaign_id=campaign.id,
+        character_id=character.id,
+        condition_type="bleeding",
+        duration_remaining=1,
+        persistence="persistent",
+        source="initial_wound",
+    )
+    session.add(existing)
+    session.commit()
+
+    # Apply consequence to refresh it
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="bleeding", duration=5, source="additional_wound")
+            ]
+        ),
+    )
+    session.commit()
+
+    # Verify condition was refreshed
+    refreshed = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+            Condition.character_id == character.id,
+            Condition.condition_type == "bleeding",
+        )
+    )
+    assert refreshed is not None
+    assert refreshed.id == existing.id  # Same condition record
+    assert refreshed.duration_remaining == 5
+    assert refreshed.source == "additional_wound"
+
+
+def test_apply_consequences_uses_base_duration_when_not_specified() -> None:
+    """Test that condition consequences use base_duration from metadata when duration is None."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+
+    # "bleeding" has base_duration of 3 in metadata
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="bleeding", duration=None)
+            ]
+        ),
+    )
+    session.commit()
+
+    condition = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+            Condition.character_id == character.id,
+            Condition.condition_type == "bleeding",
+        )
+    )
+    assert condition is not None
+    assert condition.duration_remaining == 3  # base_duration from metadata
+
+
+def test_apply_consequences_with_invalid_condition_type() -> None:
+    """Test that invalid condition_type is logged and ignored."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+
+    # This should not raise an exception, just log an error
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="invalid_condition_type", duration=3)
+            ]
+        ),
+    )
+    session.commit()
+
+    # Verify no condition was created
+    condition = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+            Condition.character_id == character.id,
+        )
+    )
+    assert condition is None
+
+
+def test_apply_consequences_with_no_character_ignores_conditions() -> None:
+    """Test that condition consequences are ignored if no character exists."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    # Don't create a character
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="bleeding", duration=3)
+            ]
+        ),
+    )
+    session.commit()
+
+    # Verify no condition was created (since there's no character)
+    condition = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+        )
+    )
+    assert condition is None
+
+
+def test_apply_consequences_multiple_conditions() -> None:
+    """Test applying multiple condition consequences in a single call."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="bleeding", duration=3),
+                ConditionUpdate(condition_type="poisoned", duration=2),
+                ConditionUpdate(condition_type="stunned", duration=1),
+            ]
+        ),
+    )
+    session.commit()
+
+    conditions = list(
+        session.scalars(
+            select(Condition).where(
+                Condition.campaign_id == campaign.id,
+                Condition.character_id == character.id,
+            )
+        )
+    )
+    assert len(conditions) == 3
+
+    by_type = {c.condition_type: c for c in conditions}
+    assert by_type["bleeding"].duration_remaining == 3
+    assert by_type["poisoned"].duration_remaining == 2
+    assert by_type["stunned"].duration_remaining == 1
+
+
+def test_apply_consequences_ephemeral_condition() -> None:
+    """Test that ephemeral conditions are created with correct persistence."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="stunned", duration=1)
+            ]
+        ),
+    )
+    session.commit()
+
+    condition = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+            Condition.character_id == character.id,
+            Condition.condition_type == "stunned",
+        )
+    )
+    assert condition is not None
+    assert condition.persistence == "ephemeral"
+    assert condition.duration_remaining == 1
+
+
+def test_apply_consequences_condition_with_no_source() -> None:
+    """Test that conditions created without source use 'system' as default."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            condition_updates=[
+                ConditionUpdate(condition_type="bleeding", duration=3, source=None)
+            ]
+        ),
+    )
+    session.commit()
+
+    condition = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+            Condition.character_id == character.id,
+            Condition.condition_type == "bleeding",
+        )
+    )
+    assert condition is not None
+    assert condition.source == "system"
+
+
+def test_apply_consequences_mixed_consequences_with_conditions() -> None:
+    """Test that conditions work alongside other consequence types."""
+    session = _make_session()
+    campaign = _make_campaign(session)
+    character = _make_character(session, campaign)
+    clock = Clock(
+        campaign_id=campaign.id,
+        label="Combat tension",
+        clock_type=ClockType.TENSION,
+        current_value=1,
+        max_value=4,
+    )
+    session.add(clock)
+    session.commit()
+
+    apply_consequences(
+        session,
+        campaign,
+        Consequences(
+            clock_ticks=[ClockTick(label="Combat tension", delta=1)],
+            condition_updates=[
+                ConditionUpdate(condition_type="wounded", duration=2),
+            ],
+        ),
+    )
+    session.commit()
+
+    # Verify clock was ticked
+    refreshed_clock = session.scalar(select(Clock).where(Clock.id == clock.id))
+    assert refreshed_clock.current_value == 2
+
+    # Verify condition was created
+    condition = session.scalar(
+        select(Condition).where(
+            Condition.campaign_id == campaign.id,
+            Condition.character_id == character.id,
+            Condition.condition_type == "wounded",
+        )
+    )
+    assert condition is not None
+    assert condition.duration_remaining == 2

@@ -260,3 +260,62 @@ def test_provider_objective_updates_empty_when_absent() -> None:
     response = provider.narrate(_make_request())
 
     assert response.consequences.objective_updates == []
+
+
+def test_provider_parses_conditions_from_scene_participants() -> None:
+    def fake_messages_create(**kwargs: Any) -> _FakeMessage:
+        return _FakeMessage(
+            content=[
+                _FakeBlock(
+                    type="tool_use",
+                    name="record_turn",
+                    input={
+                        "narrative": "Vex ti Rhone stands before you, visibly wounded.",
+                        "player_safe_summary": "Vex appears injured.",
+                        "suggested_actions": [
+                            {"label": "Approach", "prompt": "I approach Vex carefully."},
+                            {"label": "Retreat", "prompt": "I back away slowly."},
+                            {"label": "Observe", "prompt": "I watch from a distance."},
+                        ],
+                        "scene_participants": [
+                            {
+                                "name": "Vex ti Rhone",
+                                "caste": "Gray",
+                                "role": "Security escort",
+                                "disposition": "suspicious",
+                                "conditions": [
+                                    {
+                                        "id": "cond-001",
+                                        "condition_type": "bleeding",
+                                        "duration_remaining": 2,
+                                    },
+                                    {
+                                        "id": "cond-002",
+                                        "condition_type": "stunned",
+                                        "duration_remaining": 1,
+                                    },
+                                ],
+                            }
+                        ],
+                        "consequences": {},
+                    },
+                )
+            ]
+        )
+
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
+
+    response = provider.narrate(_make_request())
+
+    assert len(response.scene_participants) == 1
+    participant = response.scene_participants[0]
+    assert participant["name"] == "Vex ti Rhone"
+    assert "conditions" in participant
+    assert len(participant["conditions"]) == 2
+    assert participant["conditions"][0]["condition_type"] == "bleeding"
+    assert participant["conditions"][0]["duration_remaining"] == 2
+    assert participant["conditions"][1]["condition_type"] == "stunned"
+    assert participant["conditions"][1]["duration_remaining"] == 1

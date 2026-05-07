@@ -222,7 +222,7 @@ function ParticipantModal({ participant, onClose }) {
   );
 }
 
-function ParticipantCard({ participant, onOpen }) {
+function ParticipantCard({ participant, onOpen, conditions }) {
   const showStats = participant.hp || participant.disposition;
   return (
     <article className={`participant-card ${participant.active ? "is-active" : ""}`}>
@@ -254,6 +254,21 @@ function ParticipantCard({ participant, onOpen }) {
           {participant.name}
         </p>
         <p className="participant-role">{participant.role}</p>
+
+        {conditions && conditions.length > 0 && (
+          <div className="participant-conditions">
+            {conditions.map(cond => (
+              <div
+                key={cond.id}
+                className={`condition-chip condition-${cond.condition_type}`}
+                title={`${cond.condition_type} (${cond.duration_remaining} turns)`}
+              >
+                {cond.condition_type}
+              </div>
+            ))}
+          </div>
+        )}
+
         {showStats ? (
           <div className="participant-stats">
             <HpMeter hp={participant.hp} compact />
@@ -284,7 +299,7 @@ export function ParticipantStrip({ assetOverlayMode, participants, sceneTone }) 
 
         <div className="participant-scroll">
           {participants.map((participant) => (
-            <ParticipantCard key={participant.id} participant={participant} onOpen={setSelectedParticipant} />
+            <ParticipantCard key={participant.id} participant={participant} onOpen={setSelectedParticipant} conditions={participant.conditions} />
           ))}
         </div>
       </div>

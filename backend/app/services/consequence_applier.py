@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 
 from sqlalchemy import select
@@ -9,6 +10,8 @@ from app.core.enums import SecretStatus, Visibility
 from app.models.campaign import Campaign, Clock, Objective
 from app.models.character import Character, Item
 from app.models.memory import Memory, Secret
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -52,6 +55,13 @@ class InventoryUpdate:
 
 
 @dataclass
+class ConditionUpdate:
+    condition_type: str
+    duration: int | None = None
+    source: str | None = None
+
+
+@dataclass
 class Consequences:
     clock_ticks: list[ClockTick] = field(default_factory=list)
     secret_status_changes: list[SecretStatusChange] = field(default_factory=list)
@@ -59,6 +69,7 @@ class Consequences:
     location_change: LocationChange | None = None
     objective_updates: list[ObjectiveUpdate] = field(default_factory=list)
     inventory_updates: list[InventoryUpdate] = field(default_factory=list)
+    condition_updates: list[ConditionUpdate] = field(default_factory=list)
 
 
 @dataclass
@@ -173,4 +184,44 @@ def apply_consequences(session: Session, campaign: Campaign, consequences: Conse
                         if update.tags:
                             item.tags = update.tags
 
+    # Apply condition consequences if any
+    if consequences.condition_updates:
+        character = session.scalar(select(Character).where(Character.campaign_id == campaign.id))
+        if character:
+            for update in consequences.condition_updates:
+                _apply_condition_consequence(session, campaign, character, update)
+
     return ConsequenceResult(clocks_fired=fired, location_changed_to=location_changed_to, revealed_secrets=revealed)
+
+
+def _apply_condition_consequence(session: Session, campaign: Campaign, character: Character, update: ConditionUpdate) -> None:
+    """Apply a condition consequence to a character."""
+    condition_type = update.condition_type
+    duration = update.duration
+    source = update.source or "system"
+
+    if not condition_type:
+        logger.error("add_condition consequence missing 'condition_type'")
+        return
+
+    # Import at method level to avoid circular imports
+    from app.core.enums import CONDITION_METADATA
+    from app.services.condition_service import add_or_refresh_condition
+
+    # Validate condition type
+    metadata = CONDITION_METADATA.get(condition_type)
+    if not metadata:
+        logger.error(f"Invalid condition_type: {condition_type}")
+        return
+
+    # Use provided duration or default to base_duration from metadata
+    if duration is None:
+        duration = metadata.get("base_duration", 1)
+
+    try:
+        add_or_refresh_condition(
+            session, campaign, character, condition_type, duration, source, metadata
+        )
+    except ValueError as e:
+        logger.error(f"Failed to apply condition: {e}")
+        return

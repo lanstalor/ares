@@ -101,6 +101,7 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
           current: playerCharacter.current_hp ?? 38,
           max: playerCharacter.max_hp ?? 38,
         },
+        conditions: playerCharacter.conditions || [],
       }
     : null;
 
@@ -116,6 +117,7 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
       active: false,
       portraitSrc: getGeneratedPortraitUrl(npc) || resolvePortrait(npc.name),
       disposition: npc.disposition ?? "unaware",
+      conditions: npc.conditions || [],
     }));
 
   const systemParticipant = {
@@ -126,6 +128,7 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
     tone: "system",
     active: !player,
     portraitSrc: "/chrome/gm-relay-emblem.png",
+    conditions: [],
   };
 
   return [player, ...gmNpcs, systemParticipant].filter(Boolean);

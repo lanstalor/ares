@@ -140,6 +140,9 @@ def _render_player_safe_brief(
                 else ""
             )
         )
+        if character.conditions:
+            conditions_str = ", ".join(c.condition_type for c in character.conditions)
+            lines.append(f"  Active conditions: {conditions_str}")
         if character.items:
             lines.append("Inventory:")
             for item in character.items:

@@ -4814,11 +4814,11 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .condition-ident_flagged {
-  background-color: #ffaa00;
+  background-color: #b38600;
 }
 
 .condition-wounded {
-  background-color: #ff6b35;
+  background-color: #c45623;
 }
 
 .condition-exhausted {
@@ -4827,7 +4827,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .condition-stunned {
-  background-color: #0099ff;
+  background-color: #004499;
 }
 
 .condition-disarmed {
@@ -4835,7 +4835,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .condition-prone {
-  background-color: #00cc99;
+  background-color: #00664d;
 }
 
 .condition-panicked {
