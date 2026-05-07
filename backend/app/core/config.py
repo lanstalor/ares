@@ -90,6 +90,7 @@ class Settings(BaseSettings):
     )
     world_bible_path_raw: str | None = Field(default=None, alias="ARES_WORLD_BIBLE_PATH")
     enable_dice: bool = Field(default=False, alias="ARES_ENABLE_DICE")
+    operator_token: str | None = Field(default=None, alias="ARES_OPERATOR_TOKEN")
 
     @property
     def cors_origins(self) -> list[str]:

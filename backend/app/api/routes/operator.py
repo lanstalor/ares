@@ -1,6 +1,10 @@
-from fastapi import APIRouter, HTTPException
+import secrets
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import select
 
+from app.core.config import get_settings
 from app.core.enums import SecretStatus
 from app.db.session import SessionDep
 from app.models.campaign import Campaign, Clock, Objective
@@ -15,7 +19,33 @@ from app.schemas.operator import (
     WorldState,
 )
 
-router = APIRouter()
+
+def require_operator_token(
+    authorization: Annotated[str | None, Header()] = None,
+) -> None:
+    expected_token = get_settings().operator_token
+    if not expected_token:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Operator token is not configured",
+        )
+
+    scheme, separator, token = (authorization or "").partition(" ")
+    if separator != " " or scheme.lower() != "bearer" or not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Operator token required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if not secrets.compare_digest(token, expected_token):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid operator token",
+        )
+
+
+router = APIRouter(dependencies=[Depends(require_operator_token)])
 
 
 @router.get("/health")

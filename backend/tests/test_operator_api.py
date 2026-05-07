@@ -1,4 +1,7 @@
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from app.api.routes.campaigns import create_campaign
+from app.api.routes import operator as operator_routes
 from app.api.routes.operator import (
     audit_campaign_state,
     get_campaign_full_state,
@@ -26,8 +29,60 @@ def _make_session() -> Session:
     return TestingSessionLocal()
 
 
+def _make_operator_client() -> TestClient:
+    app = FastAPI()
+    app.include_router(operator_routes.router, prefix="/operator")
+    return TestClient(app)
+
+
 def test_operator_health():
     assert operator_health() == {"status": "ok", "surface": "operator"}
+
+
+def test_operator_routes_fail_closed_when_token_unconfigured(monkeypatch):
+    monkeypatch.delenv("ARES_OPERATOR_TOKEN", raising=False)
+    get_settings.cache_clear()
+
+    response = _make_operator_client().get("/operator/health")
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Operator token is not configured"
+
+
+def test_operator_routes_require_bearer_token(monkeypatch):
+    monkeypatch.setenv("ARES_OPERATOR_TOKEN", "test-operator-secret")
+    get_settings.cache_clear()
+
+    response = _make_operator_client().get("/operator/health")
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Operator token required"
+
+
+def test_operator_routes_reject_invalid_token(monkeypatch):
+    monkeypatch.setenv("ARES_OPERATOR_TOKEN", "test-operator-secret")
+    get_settings.cache_clear()
+
+    response = _make_operator_client().get(
+        "/operator/health",
+        headers={"Authorization": "Bearer wrong-secret"},
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Invalid operator token"
+
+
+def test_operator_routes_accept_valid_token(monkeypatch):
+    monkeypatch.setenv("ARES_OPERATOR_TOKEN", "test-operator-secret")
+    get_settings.cache_clear()
+
+    response = _make_operator_client().get(
+        "/operator/health",
+        headers={"Authorization": "Bearer test-operator-secret"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok", "surface": "operator"}
 
 
 def test_get_campaign_full_state(monkeypatch):
