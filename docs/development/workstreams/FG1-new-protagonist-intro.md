@@ -76,7 +76,7 @@ Open a draft PR for `focus-group/new-protagonist-intro`, then run the FG1 Intro 
 - [x] `make frontend-build` passes
 - [x] Intro flow visually checked at desktop and mobile
 - [x] Workstream doc fully reflects final state
-- [ ] Branch pushed for handoff
+- [x] Branch pushed for handoff
 
 ## Hard constraints checklist
 
