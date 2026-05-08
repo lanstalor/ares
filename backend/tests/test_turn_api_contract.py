@@ -24,7 +24,8 @@ def test_create_campaign_bootstraps_default_character() -> None:
     assert state.campaign.name == "Test Cell"
     assert state.player_character is not None
     # Character name comes from world_bible seed
-    assert state.player_character.name == "Davan o' Tharsis"
+    assert state.player_character.name == "Mara of Cimmeria"
+    assert state.current_location == "Surface Relay Tower 19"
 
 
 def test_create_turn_persists_response(monkeypatch) -> None:

@@ -150,7 +150,7 @@ These apply to every slice on every track regardless of agent:
 
 1. Hidden state never leaks to the player.
 2. Canon guard is never bypassed (Darrow / Eo / Cassius / Virginia / Mustang are forbidden in narration).
-3. Player character is Davan of Tharsis.
+3. Focus-group player character is Mara of Cimmeria; Red Rising canon, Colors, factions, and 728–732 PCE constraints remain intact.
 4. Campaign window is 728–732 PCE.
 5. Provider abstraction is never bypassed — all AI calls go through a Protocol.
 6. New external integrations gate behind a stub provider so dev/test work offline.

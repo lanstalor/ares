@@ -75,6 +75,6 @@ Before marking this slice **review**:
 
 - [ ] Hidden state does not leak to player
 - [ ] Canon guard not bypassed
-- [ ] Player character remains Davan of Tharsis
+- [ ] Current player-character constraint remains documented for this branch
 - [ ] All AI/media/TTS calls go through a Provider Protocol
 - [ ] Stub provider works offline (no API key required for `make backend-test`)

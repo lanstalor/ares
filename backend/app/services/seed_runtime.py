@@ -14,6 +14,9 @@ from app.schemas.seed_runtime import SeedImportResponse
 from app.services.npc_portrait_service import ensure_portrait
 from app.services.seed_service import build_seed_bundle_from_file
 
+FALLBACK_STARTING_LOCATION = "Surface Relay Tower 19"
+FALLBACK_OPENING_OBJECTIVE = "Recover the ghost packet from Relay 19"
+
 
 def seed_world_bible_into_campaign(
     session: Session,
@@ -29,7 +32,7 @@ def seed_world_bible_into_campaign(
         tagline=bundle.campaign.tagline,
         current_date_pce=bundle.campaign.current_date_pce,
         hidden_state_enabled=bundle.campaign.hidden_state_enabled,
-        current_location_label="Crescent Block - Callisto Depot District",
+        current_location_label=_starting_location_label(bundle),
     )
     session.add(campaign)
     session.flush()
@@ -63,8 +66,8 @@ def seed_world_bible_into_existing_campaign(
         campaign.tagline = bundle.campaign.tagline
     if campaign.current_date_pce == 728:  # Default value, assume not set
         campaign.current_date_pce = bundle.campaign.current_date_pce
-    if not campaign.current_location_label:
-        campaign.current_location_label = "Crescent Block - Callisto Depot District"
+    if not campaign.current_location_label or campaign.current_location_label == "Crescent Block - Callisto Depot District":
+        campaign.current_location_label = _starting_location_label(bundle)
 
     return _seed_world_bible_into_campaign_impl(
         session, campaign, bundle, resolved_path
@@ -113,6 +116,13 @@ def _seed_world_bible_into_campaign_impl(
         characters_imported=character_count,
         objectives_imported=objective_count,
     )
+
+
+def _starting_location_label(bundle) -> str:
+    for poi in bundle.pois:
+        if poi.subtitle and "Campaign starting location" in poi.subtitle:
+            return poi.name
+    return FALLBACK_STARTING_LOCATION
 
 
 def _insert_areas(session: Session, campaign_id: str, areas, faction_ids: dict[str, str]) -> dict[str, str]:
@@ -226,8 +236,8 @@ def _insert_player_character(session: Session, campaign_id: str, player_characte
         race=player_character.race,
         character_class=player_character.character_class,
         cover_identity=player_character.cover_identity.get("Registered name"),
-        current_hp=38,
-        max_hp=38,
+        current_hp=player_character.max_hp or 38,
+        max_hp=player_character.max_hp or 38,
         cover_integrity=8,
         inventory_summary=", ".join(player_character.equipment) if player_character.equipment else None,
         notes=player_character.backstory,
@@ -242,7 +252,7 @@ def _insert_opening_objective(session: Session, campaign_id: str, campaign_openi
 
     objective = Objective(
         campaign_id=campaign_id,
-        title="Check the Melt before shift",
+        title=FALLBACK_OPENING_OBJECTIVE,
         description=campaign_opening.opening_message,
         gm_instructions=campaign_opening.gm_instructions,
         is_active=True,

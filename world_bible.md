@@ -22,7 +22,7 @@
 1. [Solar System — Areas & Districts](#areas)
 1. [Points of Interest](#pois)
 1. [Canon NPCs](#canon-npcs)
-1. [Player Characters — Davan o' Tharsis](#player-characters)
+1. [Player Characters — Mara of Cimmeria](#player-characters)
 1. [Items & Technology](#items)
 1. [Lore Pages](#lore)
 1. [Campaign Opening](#campaign-opening)
@@ -760,11 +760,15 @@ Mid-Belt lawless territory. Hundreds of inhabited rocks, no House authority reac
 Decommissioned ore-processing junction, sub-level 7 — officially sealed after a coolant rupture three years ago. Behind panel J-14 in the north corridor: a magnetic cavity serving as the cell’s primary dead-drop. Holds no more than two items. Leaving a third item is the emergency signal: something has gone badly wrong.
 *Tension mechanic:* Roll d6 at each visit: 1–4 = clear; 5 = someone nearby (Stealth check); 6 = panel has been disturbed — not opened, disturbed. Someone knows something.
 
-**Crescent Block — Dock Workers’ Barracks, East Depot** *(Campaign starting location)* | Parent: Callisto Depot District | Faction: None (cover: House Codovan Dock Authority)
+**Crescent Block — Dock Workers’ Barracks, East Depot** | Parent: Callisto Depot District | Faction: None (cover: House Codovan Dock Authority)
 Forty bunks across two floors, shared mess, common room HoloCan running productivity metrics on loop. Home to Rotation 7. The cell occupies four of the forty bunks under highRed surface worker identities. Bunk 14’s occupant keeps irregular hours. The Gray checkpoint is 200 meters east. The Melt is 400 meters west through sub-level access.
 
 **The Prefect’s Hall** | Parent: The Codovan Tier | Faction: House Codovan
 House Codovan’s seat of governance. Four floors around a central atrium open to dome glass and Jupiter above. Central fountain with actual water — a symbol of Gold resource access. ArchPrefect Syla au Codovan. Two Obsidian bodyguards when she’s present. Getting inside without a legitimate reason is a significant operational problem.
+
+**Surface Relay Tower 19** *(Campaign starting location)* | Parent: Eastern Dome Sector | Faction: House Codovan / Gray Garrison
+Exterior communications mast bolted to the eastern pressure-dome rim, reachable only by mag-rail service cradle and a two-person surface walk across Ganymede ice. HighRed maintenance crews clear micrometeor scoring, retune HoloCan repeaters, and replace radiation-blind sensor plates here under Gray supervision. The tower sees everything the dome broadcasts and nothing the Golds say in private. That makes it useful. That makes it watched.
+`[GM ONLY]` Relay 19 holds a ghost packet injected into last night's HoloCan carrier wave: a half-corrupted whisperCrystal audio fragment and a BoQC routing checksum. The Weaver needs the packet pulled before Station Chief Pelsin si Vorath's morning diagnostics overwrite it. If the player fails, the same data reaches the HoloCan Relay Hub and starts a forged-sigil audit clock two sessions early. Do not reveal the packet's BoQC meaning until the player extracts or loses it.
 
 **The Dueling Court** | Parent: The Codovan Tier | Faction: White Arbiter’s Office
 White-administered ritual space for formal duels under the Bleeding Place rites. White Arbiter Calla au Otan presides. Four duels per year average. Secondary function: Gold social intelligence gathering. Who attends, who cheers, who watches from the doorway — all of it is political text.
@@ -980,88 +984,88 @@ A 400-meter iron-nickel asteroid in the Drift’s outer arc. Single pressurized 
 
 -----
 
-### Davan o' Tharsis
+### Mara of Cimmeria
 
-**Race:** HighRed | **Class:** Operative (Shadow subclass) | **Faction:** Sons of Ares | **Level:** 3
+**Race:** HighRed | **Class:** Howler (Guerrilla subclass) | **Faction:** Sons of Ares | **Level:** 3
 
 **Cover Identity:**
 
-- Registered name: Dav of Vashti
+- Registered name: Mara of Cimmeria
 - Color: HighRed
-- Occupation: Atmospheric loading crew, Rotation 7, Callisto Depot District, East Sector
+- Occupation: Surface relay technician, Eastern Dome maintenance crew
 - Employer: House Codovan Dock Authority
-- Posting: 26 months | Performance: Satisfactory (3 reviews) | Incidents: None
+- Posting: 19 months | Performance: Satisfactory (2 reviews) | Incidents: One radiation-dose reprimand
 
 **Appearance:**
-Twenty-nine. Lean, 5’8” for a highRed — slightly tall for his Color. Uses it by standing slightly wrong — shoulders rolled forward, spine curved — so he reads shorter than he is. Red-brown hair cut close on sides, longer on top, worn flat. Faint scar through his left eyebrow from a mag-clamp accident on a Tharsis atmospheric rig at nineteen. Eyes the color of old copper — warm at distance, cold up close, depending on what he’s decided about you. His forged sigil sits on the inside of his right wrist. He never touches it. Surface worker clothing: thermal underlayer, worn work jacket with Rotation 7 depot insignia on the left breast, mag-boots scuffed from three years of Ganymede deck plates. Nothing about him announces anything. That is the whole point.
+Twenty-six. Tall for a Red at 5'7", wiry from surface work, with rust-red hair shaved close on one side and tied back on the other to fit under a pressure hood. Skin weathered by recycled air, dome glare, and cheap radiation gel. A white scar hooks from the corner of her mouth toward her jaw where a service cradle snapped loose in low gravity. Her eyes are a flat, dark copper that make Gray checkpoint officers repeat themselves. She wears a patched highRed pressure suit with House Codovan maintenance stripes, mag-boots scored by ice dust, and a tool harness that can pass inspection if nobody counts the tools.
 
 **Backstory:**
-Born on the Tharsis plateau surface settlements — atmospheric maintenance crew housing above Mars’s volcanic highlands. His mother ran atmospheric intake seals on the surface rigs. His father was a torchShip deckhand posted to Ganymede when Davan was eleven and sent money back for four years before the money stopped. Nobody explained why.
+Born in the Cimmerian surface settlements above Mars, Mara grew up among highReds who knew the mines were a lie and learned to speak around that knowledge without ever naming it. Her mother repaired atmospheric seals. Her father rode torchShip deck crews until a cargo manifest stopped listing him and a Copper clerk told the family to stop asking. Mara left Mars at twenty-two on a Codovan labor transfer and chose Ganymede because the postings were ugly, cold, and far from anyone who remembered her father's face.
 
-He was twenty-three and working a surface posting on Ganymede’s eastern dome sector when a Sons handler named Wick made contact. Eighteen months in, the BoQC burned the cell. Davan was four kilometers away running a supply errand. He came back on the transit corridor to find the safe house door sealed with BoQC tape and a Gray checkpoint newly established at the district junction. He read all of that in three seconds, kept walking, and didn’t stop for six weeks. He spent that time in the Underbelly under a false Brown identity, eating badly and waiting to find out if he’d been identified. He hadn’t. He doesn’t know why. He thinks about it regularly.
+For nineteen months she has serviced exterior relay towers on the eastern dome rim: HoloCan repeaters, BoQC sensor plates, emergency beacon masts, and the private Gold channels nobody admits run through lowColor hardware. She joined the Sons after a maintenance partner named Pellam of Cimmeria died outside Relay 12 when a Gray overseer delayed decompression rescue to finish a sigil audit. The official record calls it equipment negligence. Mara signed the record because refusing would have killed the rest of the crew.
 
-The Weaver made contact fourteen weeks after the burn — a whisperCrystal in a supply crate with his name on it in phonetic lowRed script. He came. He has been in the current cell for eight months.
+The Weaver contacted her with a dead relay ping in Pellam's old maintenance code. Mara answered because grief is a door and she was tired of standing outside it. She has been in the Ganymede cell for seven months. She is useful because she can reach machines the Society trusts more than people.
 
 **Personality:**
-Quiet with the specific quality of someone who learned that talking is a variable and silence is a constant. His humor is dry enough to miss if you’re not paying attention. He makes it deliberately missable. Strong opinions about most things, volunteers none of them until asked twice. The burning cell left him with a particular relationship to trust — gives it slowly, holds it tightly, and when it breaks he doesn’t show it. He files the break somewhere internal where it compounds. He believes in the Rising the way you believe in something that costs you sleep — not abstractly, but with the specific conviction of someone who has seen what the Society does to people who don’t fight back.
+Blunt, kinetic, and allergic to speeches. Mara believes in the Rising most when it is a wrench in the right gear, a door that fails open, a broadcast that slips through before the Coppers can scrub it. She does not romanticize sacrifice and has very little patience for people who spend other lives proving their courage. She laughs easily with crews and goes quiet around Grays. Her anger is practical: if something cannot be broken today, she starts learning how it is built.
 
 **Mannerisms:**
-Watches doors — not obviously, but always knows where the exit is. Half-second pause before answering questions — deciding whether the question is what it sounds like. Uses “of Tharsis” only when he has to. Goes very still when something is genuinely wrong, voice drops half a register. People who know him read this immediately. People who don’t miss it entirely. Speaks mineSpeak when tired, midLingo when working. Occasionally catches himself using highLingo cadences from years of eavesdropping on Blue navigators. This embarrasses him slightly.
+Checks seals without looking. Taps two fingers against her thigh when waiting for pressure to equalize. Calls bad orders "clean paperwork" and dangerous shortcuts "Gold math." Switches from midLingo to mineSpeak when furious. Never looks at Jupiter for long while outside the dome; it makes people sentimental, and sentiment slows hands.
 
 **Stats:**
 
 |STR|DEX|CON|INT|WIS|CHA|
 |---|---|---|---|---|---|
-|11 |17 |13 |14 |16 |12 |
+|12 |16 |14 |13 |15 |11 |
 
-HP: 38 | AC: 13 | Speed: 30 ft | Hit Dice: d8
+HP: 40 | AC: 13 | Speed: 30 ft | Hit Dice: d8
 
-**Proficiencies:** Athletics, Stealth, Deception, Insight, Perception, light armor, simple weapons, one-handed blades, forgery tools, disguise kit
+**Proficiencies:** Athletics, Stealth, Perception, Survival, Insight, Engineering, relay maintenance tools, pressure-suit repair, simple weapons, light blades
 
-**Class Features (Operative — Shadow):**
+**Class Features (Howler — Guerrilla):**
 
-- Cover Identity (maintain false Color under casual/moderate scrutiny)
-- Dead Drop (leave/retrieve information unobserved — advantage Stealth)
-- Ghost Step (advantage Stealth one round, once per short rest)
-- Threat Assessment (bonus action — identify most dangerous target)
+- Surface-Bred (advantage navigating exterior maintenance routes, low gravity, and vacuum-adjacent hazards)
+- Sabotage (disable or reroute infrastructure with tools and time)
+- Rally (grant an ally advantage on a task when the plan is clear and immediate)
+- Fade (break pursuit through worker corridors or surface access routes once per long rest)
+- Guerrilla Timing (advantage on the first action taken before an alarm fully escalates)
 - Cover Integrity: 8/10
 
 **Equipment:**
 
-- Forged sigil (inner right wrist — highRed surface worker identity)
-- Work jacket with Rotation 7 depot insignia
-- Concealed short blade (inside left boot)
-- WhisperCrystal receiver (looks like a personal comm chip)
-- Tool kit (legitimate dock equipment / break-in kit)
-- 3 days emergency rations in locker
-- One blank whisperCrystal (unused)
+- Patched highRed pressure suit with Codovan maintenance stripes
+- Mag-boots, scored and twice-resealed
+- Relay technician's tool harness
+- Coil-spanner with illegal ceramic edge hidden in the grip
+- Two signal dampers disguised as spare sensor caps
+- Emergency oxygen tab, one use
+- WhisperCrystal receiver sealed inside a dead radiation badge
 
 **Key Relationships:**
 
-- **Delta Sorin** (bunkmate, genuine highRed, Rotation 7) — Not Sons. Davan has spent 26 months building a functional friendship with a man who would report him tomorrow if he knew the truth. Delta is funny, uncomplicated, and loyal to the Society in the specific way of someone who has never had reason to question it. This is a liability Davan hasn’t resolved.
-- **The Weaver** (handler, identity unknown) — Trusts the Weaver the way you trust a tool — based on performance, not relationship. Three unanswered questions about the Weaver that he hasn’t asked yet. Waiting for the right moment.
-- **Wick** (former handler, status unknown) — The Sons operative who recruited him. Burned with the cell 18 months ago. Davan does not know if Wick is dead, in BoQC custody, or somewhere in the Underbelly. This is not hope. It is an unresolved file.
-- **The six** (former cell members, status unknown) — He doesn’t know their real names. He knew their cover names, their faces, their habits. He hasn’t let himself think of them as dead because he has no confirmation. `[GM ONLY]` One of them is alive — Mira of Ganymede, which is Ryanna of Cryssos’s false-Brown identity in Cryssos Block. He and Ryanna’s closest surviving contact are unknowingly 400 meters apart in the same dome sector. Act 2 emotional detonator. Do not surface before session 4.
+- **Oran of Cimmeria** (crew lead, highRed relay supervisor) — Not Sons. Knows Mara is better than her file says and covers for her because useful workers are rare. Would not survive a serious interrogation.
+- **Pellam of Cimmeria** (dead maintenance partner) — Not Sons. His death recruited Mara more effectively than any handler could. His old maintenance code is still accepted by three relay towers because no Copper has reconciled the credential table.
+- **The Weaver** (handler, identity unknown) — Uses dead-channel pings and relay timing windows to reach Mara. The Weaver knows Pellam's code and has never explained how.
+- **Station Chief Pelsin si Vorath** (HoloCan Relay Hub administrator) — Copper verification obsessive. He has flagged Relay 19 for morning diagnostics because last night's carrier wave skipped six checksum beats. `[GM ONLY]` Pelsin does not know what the packet contains yet. If he gets it, he will hand it to the BoQC by procedure, not malice.
+- **The ghost packet** (data fragment, status unstable) — Half whisperCrystal audio, half BoQC routing checksum, lodged in Relay 19's buffer. `[GM ONLY]` The audio includes Pellam's voice saying "Nagasos was not the first." The checksum points toward forged-sigil anomalies in the Ganymede cell. Do not surface both halves in the same reveal.
 
 **GM Notes [SEALED]:**
-Davan’s core tension: he is good at a job requiring him to be invisible, in a campaign where the most important moments require him to be seen. His Cover Integrity is his primary resource and primary vulnerability. He has been in one place too long to be a convincing transient. That clock is running. His wound (the burning cell) manifests as excessive operational caution that reads as professionalism until it reads as paralysis. He will sometimes choose the survivable option over the right one and rationalize it afterward. Call this out through NPC reactions — let Delta Sorin notice that Davan paused too long, let the Weaver’s crystal be a beat too terse after a missed opportunity.
+Mara's core tension: she is brave in emergencies and avoidant in grief. She will risk decompression for a stranger before admitting Pellam's death still chooses her actions. Her focus-group arc should quickly present concrete verbs: climb, splice, hide, reroute, lie, run. Keep her agency physical and legible. Pressure her with crew loyalty, not abstract ideology. Cover Integrity drops when her sabotage becomes visible as intent rather than error.
 
 **Portrait prompt:**
 
 ```
-Photorealistic portrait of a highRed male, 29 years old,
-lean surface-worker build, 5'8", red-brown hair cut close
-on sides and longer on top worn flat, copper-colored eyes
-warm at distance and cold up close, faint scar through
-left eyebrow, shoulders slightly rolled forward -- wearing
-a worn work jacket with a small depot crew insignia on
-the left breast over a thermal underlayer -- expression:
-quiet, watchful, the stillness of someone always listening
-to the room -- three-quarter portrait, industrial Ganymede
-corridor background, amber bioluminescent strip lighting,
-Jupiter's face faintly visible through pressure glass
-in background -- cinematic realism, skin texture visible,
-no smoothing, no text, no labels --ar 2:3 --style raw --v 6
+Photorealistic portrait of a highRed woman, 26 years old,
+tall wiry surface-worker build, rust-red hair shaved close on
+one side and tied back on the other, flat dark copper eyes,
+white hook scar from mouth corner to jaw -- wearing a patched
+highRed pressure suit with House Codovan maintenance stripes,
+mag-boot collar and tool harness visible, no helmet, no text,
+no labels -- expression: practical, defiant, exhausted by
+orders but not by danger -- background: Ganymede exterior
+relay gantry, pressure dome edge, Jupiter blurred through
+frosted radiation glass -- cinematic realism, skin texture
+visible, restrained color, no smoothing --ar 2:3 --style raw --v 6
 ```
 
 -----
@@ -1242,25 +1246,25 @@ Standard-issue gear for a Sons of Ares cell operating on Ganymede. Most of this 
 ### GM Instructions (AI reads, player does not see)
 
 ```
-Opening scene. Player is Davan o' Tharsis — highRed
-dock worker, Rotation 7, Crescent Block barracks. Sons
-of Ares cell member for 8 months under a forged sigil
-identity. Establish: the weight of the ordinary. This
-is a Tuesday. Nothing is wrong yet. Open on the player
-waking to a shift alarm, Jupiter visible through the
-corridor window. Bunkmate Delta Sorin — genuine highRed
-ore-hopper operator, not Sons — is already pulling on
-his work harness and complaining about the food printer
-being down again. The HoloCan in the common room is
-audible: a Copper administrator announcing a 4% helium-3
-quota increase effective next cycle. Tone: grimdark
-mundane. The oppression is background noise. The player
-knows what they are. Nobody else in this room does.
-First player prompt should feel like any other morning
-— until it isn't.
+Opening scene. Player is Mara of Cimmeria — highRed
+surface relay technician, Eastern Dome maintenance crew.
+Sons of Ares cell member for 7 months under a legitimate
+highRed identity. Establish: pressure, exposure, and
+worker competence under surveillance. Open at Surface
+Relay Tower 19 during the 0520 exterior maintenance window.
+Jupiter fills the dome glass behind the tower. The player is
+outside the pressure rim in a mag-rail service cradle with
+Oran of Cimmeria on comms and two Gray supervisors watching
+from the checkpoint blister. Station Chief Pelsin si Vorath's
+morning diagnostics will overwrite the relay buffer in
+twenty minutes. Tone: grimdark industrial thriller. The
+oppression is procedural: dose counters, shift clocks,
+checkpoint authority, and the fact that a Red can die outside
+the dome while a Copper debates form order.
 
-Last night, Rotation 7's whisperCrystal drop window
-opened. Davan has not yet checked the Melt.
+Last night, the Weaver sent a dead-channel ping in Pellam's
+old maintenance code: "Relay 19. Ghost packet. Pull it before
+Pelsin scrubs the carrier."
 ```
 
 -----
@@ -1268,53 +1272,37 @@ opened. Davan has not yet checked the Melt.
 ### Opening Message (Player-facing)
 
 ```
-The alarm pulls you out of a shallow sleep at 0530.
+The maintenance cradle stops with a metallic cough six
+meters below Surface Relay Tower 19.
 
-Shift starts in ninety minutes. You know this before
-you open your eyes — you've known it every morning
-for eight months, the same way you know which bunk
-creaks, which locker sticks, which stretch of corridor
-between here and the depot checkpoint smells of
-coolant leak.
+Beyond the rail, Ganymede's ice runs white and dead under
+your boots. Beyond that, Jupiter fills the sky in bands of
+amber and cream, too large to be scenery and too distant to
+care. Your pressure suit reports green seals, yellow dose,
+eighteen minutes of exterior clearance before the shift clock
+starts billing your body as waste.
 
-Delta Sorin is already up. He's wrestling his work
-harness over his shoulders with the particular
-aggression of a man who hasn't had enough sleep
-and knows the food printer is down again.
+[Red]"Cradle brake is drifting again," Oran of Cimmeria says
+over the crew channel. His voice crackles through static and
+cheap insulation. [Red]"Log says it was fixed last cycle. Log
+is a lying Pixie."
 
-"Gorydamn processor's been out since third shift,"
-he says, not looking at you. "Filed the maintenance
-request myself. You know what Cael said? 'Log it
-with Orange.' I logged it with Orange. You know
-what Orange said?"
+Two Gray supervisors watch from the checkpoint blister inside
+the dome rim. One has a scorcher slung low. The other is
+reading from a slate instead of looking at the ice.
 
-Through the window at the corridor's end, Jupiter
-fills the dome glass — amber and cream and vast,
-the way it always is, the way it was before you
-arrived and will be long after. The depot loading
-bay below it is already running. Gray checkpoint
-lights blink steady at two-second intervals, 200
-meters east.
+The relay mast above you ticks through its diagnostic warm-up:
+carrier light, HoloCan repeater, BoQC sensor plate, private
+Gold band. In twenty minutes Station Chief Pelsin si Vorath's
+morning scrub will overwrite the buffer.
 
-From the common room, a Copper administrator's
-voice carries through the HoloCan on its morning
-loop: "...productivity targets for Cycle 847
-reflect a 4% increase in helium-3 output
-expectations, consistent with Society growth
-projections and the ongoing noble work of—"
+Last night, the Weaver sent a dead-channel ping in Pellam's
+old maintenance code.
 
-Someone turns the volume down.
+Relay 19. Ghost packet. Pull it before Pelsin scrubs the carrier.
 
-Your locker is in front of you. Inside it: your
-work harness, your tools, your forged sigil sitting
-against your skin the way it always does — warm,
-invisible, the weight of everything you are here
-and everything you actually are underneath it.
-
-Last night, Rotation 7's whisperCrystal drop
-window opened.
-
-You haven't checked the Melt yet.
+Your tool harness is locked. Your suit cam is live. The Gray
+with the slate has just looked up.
 
 What do you do?
 ```
@@ -1333,7 +1321,12 @@ Status tracker for all campaign images.
 |Io                     |Planet map icon   |⏳ Pending    |Volcanic, sulfur yellow-orange, Jupiter edge.                    |
 |Phobos                 |Planet map icon   |⏳ Pending    |Irregular potato shape, Mars looming at edge.                    |
 |The Belt               |Planet map icon   |⏳ Pending    |Asteroid field, no single sphere.                                |
-|Davan o' Tharsis       |Character portrait|⏳ Pending    |See portrait prompt in Section 11.                               |
+|Mara of Cimmeria       |Character portrait|⏳ Pending    |See portrait prompt in Section 11.                               |
+|FG1 Relay 19 splash    |Intro splash      |✅ Generated  |`frontend/public/intro/fg1/fg1-splash-relay-19-web.webp`          |
+|FG1 Mara relay slide   |Intro slide       |✅ Generated  |`frontend/public/intro/fg1/fg1-slide-mara-relay-web.webp`         |
+|FG1 ghost packet slide |Intro slide       |✅ Generated  |`frontend/public/intro/fg1/fg1-slide-ghost-packet-web.webp`       |
+|FG1 Gray watch slide   |Intro slide       |✅ Generated  |`frontend/public/intro/fg1/fg1-slide-gray-watch-web.webp`         |
+|Surface Relay Tower 19 |POI cover image   |✅ Generated  |Use FG1 intro relay art for focus-group testing.                 |
 |Crescent Block Barracks|POI cover image   |⏳ Pending    |See prompt in campaign notes.                                    |
 |The Melt               |POI cover image   |⏳ Pending    |Decommissioned industrial corridor, panel J-14.                  |
 |The Gyre               |POI cover image   |⏳ Pending    |Underground market, amber lighting, diverse Colors.              |

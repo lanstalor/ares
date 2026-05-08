@@ -74,6 +74,7 @@ class SeedPlayerCharacter(BaseModel):
     class_features: list[str] = Field(default_factory=list)
     equipment: list[str] = Field(default_factory=list)
     key_relationships: list[str] = Field(default_factory=list)
+    max_hp: int | None = None
     notes: list[SeedNote] = Field(default_factory=list)
 
 

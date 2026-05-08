@@ -49,6 +49,22 @@ Each session is 45-75 minutes:
 
 ## Scenario Scripts
 
+### FG1 Intro Scenario: Relay 19 Opening
+
+Goal: verify that the restored intro and new protagonist establish the premise without facilitator explanation.
+
+Player prompt:
+
+> Start from the title screen. Watch the intro, enter the campaign, identify who you are, where you are, what is urgent, and take the first action that feels right.
+
+Observe:
+
+- Does "Mara of Cimmeria" read as a Red protagonist quickly?
+- Does Relay 19 feel like a concrete starting zone rather than abstract lore?
+- Does the player understand the ghost packet, the timer, and the Gray surveillance pressure?
+- Does the intro art support the scene instead of feeling like unrelated decoration?
+- Does the first objective give the player an obvious verb: pull, hide, reroute, distract, or run?
+
 ### Scenario 1: First Meaningful Turn
 
 Goal: verify onboarding into play without the facilitator explaining the system.

@@ -450,6 +450,7 @@ def _parse_player_character(section: str) -> SeedPlayerCharacter | None:
 
     race_line = next((line for line in body.splitlines() if line.strip().startswith("**Race:**")), "")
     inline_fields = _parse_inline_fields(race_line)
+    hp_match = re.search(r"\bHP:\s*(\d+)\b", body)
     notes: list[SeedNote] = []
     gm_notes = fields.get("GM Notes [SEALED]")
     if gm_notes:
@@ -463,6 +464,11 @@ def _parse_player_character(section: str) -> SeedPlayerCharacter | None:
         if hidden_text and visibility:
             notes.append(SeedNote(label="Key Relationship", content=hidden_text, visibility=visibility))
 
+    class_features_text = next(
+        (value for label, value in fields.items() if label.startswith("Class Features")),
+        "",
+    )
+
     return SeedPlayerCharacter(
         name=heading,
         race=inline_fields.get("Race"),
@@ -475,9 +481,10 @@ def _parse_player_character(section: str) -> SeedPlayerCharacter | None:
         personality=fields.get("Personality"),
         mannerisms=fields.get("Mannerisms"),
         proficiencies=[item.strip() for item in fields.get("Proficiencies", "").split(",") if item.strip()],
-        class_features=_parse_bullet_list(fields.get("Class Features (Operative — Shadow)", "")),
+        class_features=_parse_bullet_list(class_features_text),
         equipment=_parse_bullet_list(fields.get("Equipment", "")),
         key_relationships=key_relationships,
+        max_hp=int(hp_match.group(1)) if hp_match else None,
         notes=notes,
     )
 

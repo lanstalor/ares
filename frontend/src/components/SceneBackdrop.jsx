@@ -43,7 +43,7 @@ function SceneArt({ currentLocation, objective, sceneArt, sceneTone, selectedCam
 
       <div className="scene-backdrop-copy">
         <p className="eyebrow">Environment</p>
-        <h2>{currentLocation ?? "Crescent Block / Callisto Depot District"}</h2>
+        <h2>{currentLocation ?? "Surface Relay Tower 19"}</h2>
         <p>
           {selectedCampaign?.tagline ??
             "Live scene art is selected from the current location and objective packet."}
@@ -151,9 +151,9 @@ function MapView({ currentLocation }) {
   return (
     <div className="scene-map-view">
       <div className="map-grid" />
-      <div className="map-node map-node-active">Crescent Block</div>
-      <div className="map-node map-node-dim">Ceres Row</div>
-      <div className="map-node map-node-cold">Tram Spine</div>
+      <div className="map-node map-node-active">Relay 19</div>
+      <div className="map-node map-node-dim">Dome Rim</div>
+      <div className="map-node map-node-cold">Relay Hub</div>
       <p className="scene-map-label">{currentLocation ?? "Unknown sector"}</p>
     </div>
   );

@@ -26,7 +26,6 @@ def create_campaign(payload: CampaignCreate, session: SessionDep) -> Campaign:
         tagline=payload.tagline,
         current_date_pce=payload.current_date_pce,
         hidden_state_enabled=True,
-        current_location_label="Crescent Block - Callisto Depot District",
     )
     session.add(campaign)
     session.flush()
@@ -43,14 +42,14 @@ def create_campaign(payload: CampaignCreate, session: SessionDep) -> Campaign:
         print(f"Warning: Failed to bootstrap campaign with world_bible: {e}")
         character = Character(
             campaign_id=campaign.id,
-            name="Davan of Tharsis",
+            name="Mara of Cimmeria",
             race="HighRed",
-            character_class="Operative",
-            cover_identity="Dav of Vashti",
-            current_hp=38,
-            max_hp=38,
+            character_class="Howler",
+            cover_identity="Mara of Cimmeria",
+            current_hp=40,
+            max_hp=40,
             cover_integrity=8,
-            inventory_summary="Work harness, tools, forged sigil.",
+            inventory_summary="Pressure suit, relay tools, signal dampers.",
             notes="Default scaffold character (bootstrap failed).",
         )
         session.add(character)

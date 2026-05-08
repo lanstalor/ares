@@ -8,7 +8,9 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 ## Now (In-Flight Slices)
 
-None currently. Ready for Wave 3 Sprint 1 (A3, B3, C3).
+| Slice | Branch | Worktree | Agent | Status | Next step |
+|---|---|---|---|---|---|
+| FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Codex | review | Open draft PR, then run the FG1 Intro Scenario with a human player. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 

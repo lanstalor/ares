@@ -49,12 +49,12 @@ function TitleScreen({ audioMuted, audioReady, onPressStart, onToggleAudio, shel
         <p className="eyebrow">Project Ares</p>
         <div className="title-logo-block">
           <p className="title-super">Sons of Ares era</p>
-          <h1 className="title-logo">Red Rising</h1>
-          <p className="title-subtitle">Ganymede cell command interface</p>
+          <h1 className="title-logo">Ghost Packet</h1>
+          <p className="title-subtitle">Relay 19 / Ganymede cell</p>
         </div>
 
         <p className="intro-copy title-copy">
-          A single-screen tactical narrative shell for a pre-authored campaign handoff into a live LLM GM.
+          A Red Rising hidden-state campaign opening with Mara of Cimmeria outside the pressure dome.
         </p>
 
         <div className="title-meta">
@@ -91,7 +91,7 @@ function StoryScreen({
       <div className="intro-noise" />
 
       <div className="story-topbar">
-        <span className="system-badge">Universal campaign prelude</span>
+        <span className="system-badge">Campaign prelude</span>
         <div className="story-actions">
           <button className="secondary-button" onClick={onToggleAudio} type="button">
             {audioMuted ? "Audio muted" : "Audio live"}
@@ -109,7 +109,10 @@ function StoryScreen({
             key={scene.key}
           >
             <div className="story-visual">
-              <div className={`story-canvas scene-${scene.key}`} />
+              <div
+                className={`story-canvas scene-${scene.key}`}
+                style={scene.image ? { "--story-image": `url(${scene.image})` } : undefined}
+              />
             </div>
             <div className="story-copy-panel">
               <p className="eyebrow">{scene.kicker}</p>

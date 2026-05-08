@@ -2313,7 +2313,7 @@ textarea::-webkit-scrollbar-thumb {
 .intro-overlay {
   position: fixed;
   inset: 0;
-  z-index: 20;
+  z-index: 120;
   display: grid;
   place-items: center;
   padding: 24px;
@@ -2417,10 +2417,9 @@ textarea::-webkit-scrollbar-thumb {
 
 .title-backdrop {
   background:
-    radial-gradient(circle at 72% 22%, rgba(215, 175, 94, 0.2), transparent 10%),
-    radial-gradient(circle at 70% 20%, rgba(215, 175, 94, 0.42), transparent 18%),
-    linear-gradient(180deg, rgba(93, 142, 199, 0.18), transparent 24%),
-    linear-gradient(135deg, rgba(170, 62, 73, 0.18), transparent 45%),
+    linear-gradient(90deg, rgba(4, 6, 9, 0.92) 0%, rgba(4, 6, 9, 0.58) 42%, rgba(4, 6, 9, 0.82) 100%),
+    linear-gradient(180deg, rgba(5, 8, 13, 0.12), rgba(5, 8, 13, 0.9)),
+    url("/intro/fg1/fg1-splash-relay-19-web.webp") center / cover no-repeat,
     repeating-linear-gradient(
       90deg,
       transparent 0,
@@ -2543,6 +2542,9 @@ textarea::-webkit-scrollbar-thumb {
 .story-canvas {
   position: absolute;
   inset: 0;
+  background:
+    linear-gradient(180deg, rgba(5, 8, 13, 0.04), rgba(5, 8, 13, 0.32)),
+    var(--story-image, none) center / cover no-repeat;
   transform: scale(1.08);
   animation: scenePan 18s ease-in-out infinite alternate;
 }
@@ -2636,75 +2638,40 @@ textarea::-webkit-scrollbar-thumb {
   opacity: 0.86;
 }
 
-.scene-conquering {
+.scene-society {
   background:
-    radial-gradient(circle at 72% 20%, rgba(215, 175, 94, 0.55), transparent 14%),
-    radial-gradient(circle at 50% 58%, rgba(255, 255, 255, 0.08), transparent 24%),
-    linear-gradient(180deg, rgba(39, 47, 61, 0.7) 0%, rgba(11, 15, 22, 0.92) 68%),
-    linear-gradient(135deg, rgba(70, 84, 108, 0.8), rgba(18, 21, 29, 0.95));
+    linear-gradient(180deg, rgba(8, 11, 17, 0.12), rgba(5, 8, 13, 0.72)),
+    var(--story-image) center / cover no-repeat;
 }
 
-.scene-colors {
+.scene-ganymede {
   background:
-    linear-gradient(
-      90deg,
-      rgba(170, 62, 73, 0.9) 0 15%,
-      rgba(116, 142, 171, 0.85) 15% 32%,
-      rgba(151, 160, 172, 0.78) 32% 48%,
-      rgba(61, 74, 89, 0.85) 48% 64%,
-      rgba(215, 175, 94, 0.9) 64% 100%
-    ),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.5));
+    linear-gradient(180deg, rgba(8, 11, 17, 0.08), rgba(5, 8, 13, 0.72)),
+    var(--story-image) center / cover no-repeat;
 }
 
-.scene-mines {
+.scene-mara {
   background:
-    radial-gradient(circle at 25% 30%, rgba(215, 175, 94, 0.12), transparent 14%),
-    linear-gradient(180deg, rgba(170, 62, 73, 0.2), transparent 38%),
-    repeating-linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.03) 0,
-      rgba(255, 255, 255, 0.03) 22px,
-      transparent 22px,
-      transparent 60px
-    ),
-    linear-gradient(180deg, rgba(32, 20, 16, 0.92), rgba(10, 11, 15, 0.98));
+    linear-gradient(180deg, rgba(40, 17, 16, 0.08), rgba(5, 8, 13, 0.74)),
+    var(--story-image) center / cover no-repeat;
 }
 
-.scene-ares {
+.scene-relay {
   background:
-    radial-gradient(circle at 20% 22%, rgba(170, 62, 73, 0.26), transparent 16%),
-    radial-gradient(circle at 82% 32%, rgba(93, 142, 199, 0.22), transparent 18%),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0,
-      transparent 80px,
-      rgba(255, 255, 255, 0.04) 80px,
-      rgba(255, 255, 255, 0.04) 82px
-    ),
-    linear-gradient(135deg, rgba(15, 20, 29, 0.96), rgba(5, 8, 13, 0.98));
+    linear-gradient(180deg, rgba(8, 11, 17, 0.08), rgba(5, 8, 13, 0.76)),
+    var(--story-image) center / cover no-repeat;
 }
 
-.scene-campaign {
+.scene-cell {
   background:
-    linear-gradient(180deg, rgba(93, 142, 199, 0.15), transparent 25%),
-    linear-gradient(135deg, rgba(215, 175, 94, 0.14), transparent 40%),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0,
-      transparent 58px,
-      rgba(255, 255, 255, 0.04) 58px,
-      rgba(255, 255, 255, 0.04) 60px
-    ),
-    linear-gradient(180deg, rgba(13, 16, 22, 0.94), rgba(6, 8, 11, 0.98));
+    linear-gradient(180deg, rgba(8, 11, 17, 0.1), rgba(5, 8, 13, 0.78)),
+    var(--story-image) center / cover no-repeat;
 }
 
 .scene-threshold {
   background:
-    radial-gradient(circle at 78% 22%, rgba(215, 175, 94, 0.42), transparent 12%),
-    radial-gradient(circle at 50% 42%, rgba(93, 142, 199, 0.16), transparent 26%),
-    linear-gradient(180deg, rgba(170, 62, 73, 0.14), transparent 30%),
-    linear-gradient(135deg, rgba(15, 18, 27, 0.96), rgba(5, 8, 13, 0.99));
+    linear-gradient(180deg, rgba(8, 11, 17, 0.06), rgba(5, 8, 13, 0.74)),
+    var(--story-image) center / cover no-repeat;
 }
 
 @keyframes promptBlink {

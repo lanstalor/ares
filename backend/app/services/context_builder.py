@@ -140,9 +140,6 @@ def _render_player_safe_brief(
                 else ""
             )
         )
-        # Add known character relationships with their castes
-        lines.append("Known recurring characters and their castes:")
-        lines.append("  - Delta Sorin (Red): bunkmate, ore-hopper operator, genuine highRed")
         if character.conditions:
             conditions_str = ", ".join(c.condition_type for c in character.conditions)
             lines.append(f"  Active conditions: {conditions_str}")

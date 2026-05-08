@@ -48,11 +48,11 @@ export function createDevUiSnapshot() {
   const campaigns = [
     {
       id: primaryCampaignId,
-      name: "Ash in the Dockyards",
-      tagline: "A quiet extraction collapses into a pressure-cooker meeting in the Crescent Block.",
+      name: "Ghost Packet at Relay 19",
+      tagline: "A surface relay job becomes a race against a BoQC audit checksum.",
       current_date_pce: 728,
       hidden_state_enabled: true,
-      current_location_label: "Crescent Block / Callisto Depot District",
+      current_location_label: "Surface Relay Tower 19",
       created_at: isoAt(-240),
       updated_at: isoAt(-8),
     },
@@ -61,27 +61,27 @@ export function createDevUiSnapshot() {
   const campaignStateById = {
     [primaryCampaignId]: {
       campaign: campaigns[0],
-      current_location: "Crescent Block / Callisto Depot District",
-      active_objective: "Get the stolen burner ledger out before the Gray sweep locks the tram lines.",
+      current_location: "Surface Relay Tower 19",
+      active_objective: "Recover the ghost packet before Pelsin scrubs the carrier.",
       recent_turns: [
-        "A dock contact slipped Davan a stolen ledger tagged with Gray routing marks.",
-        "A command relay warned that an inspection team is already moving toward the block.",
+        "The relay buffer still holds a ghost packet in Pellam's maintenance code.",
+        "Two Gray supervisors are watching the surface cradle from the checkpoint blister.",
       ],
       player_character: {
         id: "dev-character-1",
         campaign_id: primaryCampaignId,
-        name: "Davan of Tharsis",
+        name: "Mara of Cimmeria",
         race: "HighRed",
-        character_class: "Operative",
-        cover_identity: "Dav of Vashti",
-        current_hp: 38,
-        max_hp: 38,
-        cover_integrity: 7,
+        character_class: "Howler",
+        cover_identity: "Mara of Cimmeria",
+        current_hp: 40,
+        max_hp: 40,
+        cover_integrity: 8,
         items: [
-          { id: "1", name: "Forged sigil", quantity: 1, tags: "ident" },
-          { id: "2", name: "Relay wafer", quantity: 1, tags: "comms" },
-          { id: "3", name: "Burner ledger", quantity: 1, tags: "intel" },
-          { id: "4", name: "Work harness", quantity: 1, is_equipped: true },
+          { id: "1", name: "Pressure suit", quantity: 1, tags: "survival", is_equipped: true },
+          { id: "2", name: "Relay tools", quantity: 1, tags: "engineering", is_equipped: true },
+          { id: "3", name: "Signal damper", quantity: 2, tags: "comms" },
+          { id: "4", name: "Dead radiation badge", quantity: 1, tags: "cover" },
         ],
         notes: "Mock UI state for frontend iteration only.",
         created_at: isoAt(-240),
@@ -98,7 +98,7 @@ export function createDevUiSnapshot() {
         speaker: "system",
         label: "System",
         meta: "Link primed",
-        text: "Operative channel open. Crescent Block is unstable. Gray movement is light but converging.",
+        text: "Operative channel open. Relay 19 is live. Pelsin's diagnostic scrub is moving on the clock.",
         timestamp: isoAt(-7),
       },
       {
@@ -106,15 +106,15 @@ export function createDevUiSnapshot() {
         speaker: "gm",
         label: "GM",
         meta: "Player-safe",
-        text: "Steam hisses from cracked pipes above the tram channel. Blue work-lights smear across the wet steel as your contact edges out from behind a cargo brace and presses the ledger into your palm.",
+        text: "The service cradle locks beneath Relay 19. Ice dust scours the gantry while the mast ticks through carrier light, HoloCan repeater, BoQC sensor plate, private Gold band.",
         timestamp: isoAt(-6),
       },
       {
         id: "dev-turn-3",
         speaker: "player",
         label: "Player",
-        meta: "Davan",
-        text: "I tuck the ledger under my harness, keep my voice low, and ask who else knows it changed hands.",
+        meta: "Mara",
+        text: "I keep one hand on the relay casing, angle my suit cam toward the damaged strut, and start pulling the ghost packet.",
         timestamp: isoAt(-5),
       },
       {
@@ -122,7 +122,7 @@ export function createDevUiSnapshot() {
         speaker: "gm",
         label: "GM",
         meta: "Player-safe",
-        text: '[Red]"Only the wrong people," she says. [Gray]"Keep moving," a lurcher barks from the tram cut as the siren starts to rise somewhere deeper in the block.',
+        text: '[Red]"Cradle brake is drifting again," Oran says over comms. [Gray]"Technician," the supervisor cuts in. [Gray]"Explain why your slate just went dark."',
         timestamp: isoAt(-4),
       },
     ],
@@ -131,16 +131,16 @@ export function createDevUiSnapshot() {
   const suggestedActionsByCampaign = {
     [primaryCampaignId]: [
       {
-        label: "Press The Contact",
-        prompt: "I keep my voice low and press the contact to tell me who is already hunting the ledger.",
+        label: "Pull The Packet",
+        prompt: "I start the buffer extraction and mask it as a repeater calibration fault.",
       },
       {
-        label: "Slip To Transit",
-        prompt: "I break from the stall line and angle toward the tram spine before the Gray sweep closes.",
+        label: "Distract The Gray",
+        prompt: "I report the drifting cradle brake and make the supervisor look at the wrong failure first.",
       },
       {
-        label: "Read The Room",
-        prompt: "I stay still for a beat and read the market for who is acting scared, armed, or too calm.",
+        label: "Ask Oran",
+        prompt: "I ask Oran to talk me through the cleanest way to kill the suit-cam feed for ten seconds.",
       },
     ],
   };
@@ -148,15 +148,15 @@ export function createDevUiSnapshot() {
   const sceneParticipantsByCampaign = {
     [primaryCampaignId]: [
       {
-        name: "Tavi of Ceres Row",
+        name: "Oran of Cimmeria",
         caste: "Red",
-        role: "Dock contact",
+        role: "Relay crew lead",
         disposition: "friendly",
       },
       {
         name: "Lurcher Vexa ti Rhone",
         caste: "Gray",
-        role: "Security sweep lead",
+        role: "Surface checkpoint supervisor",
         disposition: "suspicious",
       },
     ],

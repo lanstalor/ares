@@ -95,7 +95,7 @@ docker compose up --build --no-deps -d frontend
 
 1. **Hidden state must never leak to the player.**
 2. **Canon guard is not optional.** (Blocks Darrow, Eo, etc.).
-3. **The player character is Davan of Tharsis.**
+3. **The focus-group player character is Mara of Cimmeria.** Keep Red Rising canon, Colors, factions, and 728–732 PCE constraints intact.
 4. **Campaign window is 728–732 PCE.**
 5. **Provider abstraction is non-negotiable.** All AI calls go through a Provider Protocol.
 6. **No state in world_bible.md.** Database is authoritative after seeding.

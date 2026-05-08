@@ -4,57 +4,63 @@ export const BOOT_SEQUENCE_LINES = [
   "Indexing Board of Quality Control watchlists...",
   "Compiling campaign lattice...",
   "Locking hidden-state partitions...",
-  "Syncing Ganymede operative feed...",
+  "Syncing Relay 19 surface feed...",
   "Priming Project Ares runtime...",
 ];
 
 export const UNIVERSAL_STORY_SCENES = [
   {
-    key: "conquering",
+    key: "society",
     kicker: "Scene 01",
-    title: "Seven centuries after the Conquering, humanity does not live in peace.",
+    title: "The Society calls the chain civilization.",
     body:
-      "It lives inside a machine. Gold sits at the summit. Every other Color is shaped, named, and spent according to the needs of the Society.",
-    caption: "The hierarchy is older than memory and sharper than law.",
+      "Gold rules. Gray enforces. Copper records. Red works until the body gives out. Every Color is taught that obedience is purpose.",
+    caption: "Order is engineered, then mistaken for nature.",
+    image: "/scene-art/codovan_tier.png",
   },
   {
-    key: "colors",
+    key: "ganymede",
     kicker: "Scene 02",
-    title: "The Color system turned birth into destiny.",
+    title: "On Ganymede, the machinery never sleeps.",
     body:
-      "Gold commands. Silver counts. Gray enforces. Red endures. Every caste is taught to revere the chain that binds it, even as the chain tightens.",
-    caption: "Order is not natural here. It is engineered.",
+      "House Codovan owns the dockyards, the pressure domes, the relay towers, and the paperwork that decides which workers are worth saving.",
+    caption: "The moon is too useful to be kind.",
+    image: "/intro/fg1/fg1-splash-relay-19-web.webp",
   },
   {
-    key: "mines",
+    key: "mara",
     kicker: "Scene 03",
-    title: "The lowColors keep the worlds alive and are told to be grateful for the privilege.",
+    title: "Mara of Cimmeria knows how systems fail.",
     body:
-      "In mines, refineries, and pressure domes, labor disappears into quotas. People disappear into silence. The Society calls this stability.",
-    caption: "Cruelty is most efficient when it looks routine.",
+      "A highRed relay technician can reach machines the Society trusts more than people. That access is her cover, her weapon, and the easiest way to get killed.",
+    caption: "A wrench in the right gear can sound like rebellion.",
+    image: "/intro/fg1/fg1-slide-mara-relay-web.webp",
   },
   {
-    key: "ares",
+    key: "relay",
     kicker: "Scene 04",
-    title: "On Ganymede, a rumor became a movement and a movement became a cell.",
+    title: "Relay 19 is holding a message that should not exist.",
     body:
-      "The Sons of Ares move through freight tunnels, blackout markets, and sealed districts. Their victories are small, deniable, and paid for in blood.",
-    caption: "No banners. No speeches. Only pressure against the machine.",
+      "The Weaver found a ghost packet in last night's carrier wave. In twenty minutes a Copper diagnostic scrub will erase it or deliver it to the BoQC.",
+    caption: "Pull the packet. Keep the cover. Survive the audit.",
+    image: "/intro/fg1/fg1-slide-ghost-packet-web.webp",
   },
   {
-    key: "campaign",
+    key: "cell",
     kicker: "Scene 05",
-    title: "This campaign is already in motion before the first player choice.",
+    title: "The cell is not ready for what the packet points toward.",
     body:
-      "The characters, factions, betrayals, and secrets have been built into the world by the developer acting as GM architect. When play begins, the live LLM GM inherits that frame and drives the story forward.",
-    caption: "You are entering a loaded situation, not an empty sandbox.",
+      "Nagasos, forged sigils, dead maintenance codes, and a checksum moving toward the Board of Quality Control. The first job is small. The consequences are not.",
+    caption: "The hidden state is already moving.",
+    image: "/intro/fg1/fg1-slide-gray-watch-web.webp",
   },
   {
     key: "threshold",
     kicker: "Scene 06",
-    title: "When the feed opens, the story belongs to the cell.",
+    title: "When the feed opens, you are outside the dome.",
     body:
-      "The system will remember the hidden state. The GM will carry the pressure. The Society will keep watching. Step carefully.",
+      "Your suit cam is live. Your tools are locked. A Gray has looked up from his slate. The GM will remember what you risk and what you leave behind.",
     caption: "Project Ares online.",
+    image: "/intro/fg1/fg1-splash-relay-19-web.webp",
   },
 ];
