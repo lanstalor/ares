@@ -35,9 +35,6 @@ import { buildActionPresets, buildSceneParticipants, deriveSceneTone } from "./l
 
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 
-const STORY_SCENE_DURATION_MS = 5400;
-const STORY_BLACKOUT_OFFSET_MS = 4500;
-
 function buildCampaignTurns(selectedCampaign, campaignState, turnHistoryByCampaign) {
   if (!selectedCampaign) {
     return [];
@@ -411,39 +408,6 @@ export default function App() {
       return undefined;
     }
 
-    if (presentationStage !== "story") {
-      return undefined;
-    }
-
-    setScenePhase("steady");
-
-    const blackoutTimer = window.setTimeout(() => {
-      setScenePhase("flash");
-    }, STORY_BLACKOUT_OFFSET_MS);
-
-    const advanceTimer = window.setTimeout(() => {
-      setScenePhase("steady");
-
-      if (storySceneIndex >= UNIVERSAL_STORY_SCENES.length - 1) {
-        localStorage.setItem("ares_intro_seen", "1");
-        setPresentationStage("game");
-        return;
-      }
-
-      setStorySceneIndex((current) => current + 1);
-    }, STORY_SCENE_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(blackoutTimer);
-      window.clearTimeout(advanceTimer);
-    };
-  }, [devUiMode, presentationStage, storySceneIndex]);
-
-  useEffect(() => {
-    if (devUiMode) {
-      return undefined;
-    }
-
     function handleKeydown(event) {
       if (event.repeat) {
         return;
@@ -740,6 +704,7 @@ export default function App() {
 
   function handleAdvanceStory() {
     if (storySceneIndex >= UNIVERSAL_STORY_SCENES.length - 1) {
+      localStorage.setItem("ares_intro_seen", "1");
       setScenePhase("steady");
       setPresentationStage("game");
       return;

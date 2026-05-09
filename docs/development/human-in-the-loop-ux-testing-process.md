@@ -59,6 +59,8 @@ Player prompt:
 
 Start at `http://<host-lan-ip>:5180/?intro=1` from another LAN device, or `http://localhost:5180/?intro=1` on the host, so prior browser state cannot skip the intro. Current host LAN URL for FG1 is `http://192.168.3.233:5180/?intro=1`.
 
+The intro slides are player-paced. Let the player press **Continue** when ready; do not coach them through the slides unless they are blocked.
+
 Observe:
 
 - Does "Mara of Cimmeria" read as a Red protagonist quickly?

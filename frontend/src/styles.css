@@ -2546,7 +2546,7 @@ textarea::-webkit-scrollbar-thumb {
     linear-gradient(180deg, rgba(5, 8, 13, 0.04), rgba(5, 8, 13, 0.32)),
     var(--story-image, none) center / cover no-repeat;
   transform: scale(1.08);
-  animation: scenePan 18s ease-in-out infinite alternate;
+  animation: scenePan 80s ease-in-out infinite alternate;
 }
 
 .story-canvas::before {
@@ -2715,7 +2715,7 @@ textarea::-webkit-scrollbar-thumb {
   }
 
   100% {
-    transform: scale(1.14) translate3d(1.2%, 1%, 0);
+    transform: scale(1.1) translate3d(0.6%, 0.5%, 0);
   }
 }
 

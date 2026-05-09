@@ -53,6 +53,8 @@ Start URL:
 
 This forces the intro even if the browser has already set `localStorage.ares_intro_seen=1` from a previous run.
 
+The intro slides are player-paced. Use **Continue** when the player is ready; the slides should not auto-advance during the test.
+
 Player prompt:
 
 > Start from the title screen. Watch the intro, enter the campaign, identify who you are, where you are, what is urgent, and take the first action that feels right.
