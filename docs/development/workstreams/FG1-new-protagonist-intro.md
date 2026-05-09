@@ -5,7 +5,7 @@
 | **Track** | Focus Group |
 | **Branch** | `focus-group/new-protagonist-intro` |
 | **Worktree** | `~/ares` |
-| **PR** | TBD |
+| **PR** | https://github.com/lanstalor/ares/pull/15 |
 | **Status** | review |
 | **Last agent** | Codex |
 | **Next agent** | any |
@@ -57,7 +57,7 @@ Test status at this commit:
 
 ## Next concrete step
 
-Open a draft PR for `focus-group/new-protagonist-intro`, then run the FG1 Intro Scenario from the HITL process with one human player before adding more mechanics.
+Run the FG1 Intro Scenario from the HITL process with one human player before adding more mechanics.
 
 ## Open questions / blockers
 
@@ -68,6 +68,7 @@ Open a draft PR for `focus-group/new-protagonist-intro`, then run the FG1 Intro 
 
 - `2026-05-08 00:00 UTC` — Codex → created FG1 branch/workstream from `groom/operator-token-gate`; started campaign refresh; user corrected protagonist should remain Red.
 - `2026-05-08 18:10 UTC` — Codex → completed Mara/Relay 19 campaign refresh, generated intro assets, wired intro flow, verified tests/build/screenshots; ready for review.
+- `2026-05-09 00:10 UTC` — Codex → opened draft PR #15, ran Docker-backed seed/state/frontend smoke, and added `docs/development/focus-group/FG1-hitl-smoke-and-test-plan-2026-05-09.md`.
 
 ## Verification on completion
 

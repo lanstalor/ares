@@ -10,7 +10,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
-| FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Codex | review | Open draft PR, then run the FG1 Intro Scenario with a human player. |
+| FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Codex | review | Draft PR #15 open; run the FG1 Intro Scenario with a human player. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
