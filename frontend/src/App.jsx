@@ -301,6 +301,15 @@ function buildShellStatusText(loadingShell, healthStatus) {
   return "Uplink degraded";
 }
 
+function shouldForceIntroFromUrl() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  return params.get("intro") === "1" || params.get("resetIntro") === "1";
+}
+
 export default function App() {
   const devUiMode = isDevUiMode();
   const [assetOverlayMode, setAssetOverlayMode] = useState(() => isAssetOverlayMode());
@@ -333,6 +342,11 @@ export default function App() {
   const [isClarifySidebarOpen, setIsClarifySidebarOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [presentationStage, setPresentationStage] = useState(() => {
+    if (shouldForceIntroFromUrl()) {
+      localStorage.removeItem("ares_intro_seen");
+      return "boot";
+    }
+
     if (typeof localStorage !== "undefined" && localStorage.getItem("ares_intro_seen")) {
       return "game";
     }

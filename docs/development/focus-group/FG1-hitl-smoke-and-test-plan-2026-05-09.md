@@ -46,6 +46,12 @@ Notes:
 
 Run with one player and one facilitator/operator.
 
+Start URL:
+
+> `http://localhost:5180/?intro=1`
+
+This forces the intro even if the browser has already set `localStorage.ares_intro_seen=1` from a previous run.
+
 Player prompt:
 
 > Start from the title screen. Watch the intro, enter the campaign, identify who you are, where you are, what is urgent, and take the first action that feels right.

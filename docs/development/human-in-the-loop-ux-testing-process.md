@@ -57,6 +57,8 @@ Player prompt:
 
 > Start from the title screen. Watch the intro, enter the campaign, identify who you are, where you are, what is urgent, and take the first action that feels right.
 
+Start at `http://localhost:5180/?intro=1` so prior local browser state cannot skip the intro.
+
 Observe:
 
 - Does "Mara of Cimmeria" read as a Red protagonist quickly?
