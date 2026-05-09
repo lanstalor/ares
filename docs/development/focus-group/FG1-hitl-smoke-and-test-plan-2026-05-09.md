@@ -21,6 +21,7 @@ Commands / checks:
 - `POST /api/v1/seed/world-bible`
 - `GET /api/v1/campaigns/{campaign_id}/state`
 - Playwright title-screen smoke at `http://localhost:5180/`
+- LAN reachability check at `http://192.168.3.233:5180/?intro=1`
 
 Seeded smoke campaign:
 
@@ -48,7 +49,7 @@ Run with one player and one facilitator/operator.
 
 Start URL:
 
-> `http://localhost:5180/?intro=1`
+> `http://192.168.3.233:5180/?intro=1`
 
 This forces the intro even if the browser has already set `localStorage.ares_intro_seen=1` from a previous run.
 

@@ -6,7 +6,7 @@ Run structured human play sessions that expose immersion breaks, confusing UI st
 
 ## Roles
 
-- **Player:** Uses only the player-facing app at `http://localhost:5180/`. Thinks aloud, but does not inspect admin state or logs.
+- **Player:** Uses only the player-facing app. On the host machine this is `http://localhost:5180/`; from another LAN device use the host LAN address, for example `http://192.168.3.233:5180/`. Thinks aloud, but does not inspect admin state or logs.
 - **Facilitator:** Watches the player, asks neutral prompts, timestamps issues, and avoids explaining the system unless the player is blocked.
 - **Operator:** Uses `/admin`, backend logs, and DB/API checks only between turns or after a scenario. Does not coach the player.
 - **Recorder:** Captures notes, screenshots, and issue IDs. This can be the facilitator for small sessions.
@@ -25,7 +25,7 @@ For early Ares testing, one person can play Player and one person can combine Fa
    - `make backend-test`
    - `make frontend-build`
    - `make compose-up`
-4. Open `http://localhost:5180/` and set `localStorage.ares_intro_seen=1` when the intro is not under test.
+4. Open the player URL (`http://localhost:5180/` on the host, or `http://<host-lan-ip>:5180/` from another LAN device) and set `localStorage.ares_intro_seen=1` when the intro is not under test.
 5. Open `/admin` in a separate browser profile or private window so operator state cannot affect the player session.
 
 ## Session Structure
@@ -57,7 +57,7 @@ Player prompt:
 
 > Start from the title screen. Watch the intro, enter the campaign, identify who you are, where you are, what is urgent, and take the first action that feels right.
 
-Start at `http://localhost:5180/?intro=1` so prior local browser state cannot skip the intro.
+Start at `http://<host-lan-ip>:5180/?intro=1` from another LAN device, or `http://localhost:5180/?intro=1` on the host, so prior browser state cannot skip the intro. Current host LAN URL for FG1 is `http://192.168.3.233:5180/?intro=1`.
 
 Observe:
 
