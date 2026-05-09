@@ -54,7 +54,8 @@ function TitleScreen({ audioMuted, audioReady, onPressStart, onToggleAudio, shel
         </div>
 
         <p className="intro-copy title-copy">
-          A Red Rising hidden-state campaign opening with Mara of Cimmeria outside the pressure dome.
+          Mara of Cimmeria is a highRed relay technician recruited by the Sons. The Weaver has sent one order:
+          pull a ghost packet from Relay 19 before a Copper scrub erases it or exposes it to the Board of Quality Control.
         </p>
 
         <div className="title-meta">

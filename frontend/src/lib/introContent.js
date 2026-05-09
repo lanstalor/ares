@@ -1,8 +1,8 @@
 export const BOOT_SEQUENCE_LINES = [
   "Mounting dockyard relay...",
-  "Decrypting rebel whisper traffic...",
+  "Decrypting Weaver dead-channel ping...",
   "Indexing Board of Quality Control watchlists...",
-  "Compiling campaign lattice...",
+  "Pinning Relay 19 buffer window...",
   "Locking hidden-state partitions...",
   "Syncing Relay 19 surface feed...",
   "Priming Project Ares runtime...",
@@ -39,27 +39,27 @@ export const UNIVERSAL_STORY_SCENES = [
   {
     key: "relay",
     kicker: "Scene 04",
-    title: "Relay 19 is holding a message that should not exist.",
+    title: "The Weaver is your handler. Relay 19 is the job.",
     body:
-      "The Weaver found a ghost packet in last night's carrier wave. In twenty minutes a Copper diagnostic scrub will erase it or deliver it to the BoQC.",
-    caption: "Pull the packet. Keep the cover. Survive the audit.",
+      "The Weaver is an anonymous Sons of Ares coordinator who never meets Mara in person. Last night they used Pellam's old maintenance code to send one order: Relay 19. Ghost packet. Pull it before Pelsin scrubs the carrier.",
+    caption: "The handler stays hidden. The order is concrete.",
     image: "/intro/fg1/fg1-slide-ghost-packet-web.webp",
   },
   {
     key: "cell",
     kicker: "Scene 05",
-    title: "The cell is not ready for what the packet points toward.",
+    title: "The ghost packet is stuck inside the tower buffer.",
     body:
-      "Nagasos, forged sigils, dead maintenance codes, and a checksum moving toward the Board of Quality Control. The first job is small. The consequences are not.",
-    caption: "The hidden state is already moving.",
+      "Relay 19 is an exterior comm mast on Ganymede's dome rim: HoloCan repeater, BoQC sensor plate, and private Gold band in one ugly stack. A Copper diagnostic scrub starts in twenty minutes. If Mara is slow, the packet is erased. If she is sloppy, the anomaly reaches the Board of Quality Control.",
+    caption: "Pull the packet. Keep the cover. Survive the audit.",
     image: "/intro/fg1/fg1-slide-gray-watch-web.webp",
   },
   {
     key: "threshold",
     kicker: "Scene 06",
-    title: "When the feed opens, you are outside the dome.",
+    title: "The GM opens with Mara already under watch.",
     body:
-      "Your suit cam is live. Your tools are locked. A Gray has looked up from his slate. The GM will remember what you risk and what you leave behind.",
+      "Your suit cam is live. Your tools are locked because two Grays can see your slate. Oran is on comms trying to keep the job looking routine. The first move is yours: splice, bluff, distract, or run the buffer pull cold.",
     caption: "Project Ares online.",
     image: "/intro/fg1/fg1-splash-relay-19-web.webp",
   },

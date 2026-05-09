@@ -44,8 +44,11 @@ Test status at this commit:
 - `backend/tests/test_turn_api_contract.py` ✅ — expects Mara and Relay 19 on seeded campaigns.
 - `frontend/src/lib/introContent.js` ✅ — restored campaign-specific intro slides around Ghost Packet / Relay 19.
 - `frontend/src/components/IntroOverlay.jsx` ✅ — title screen and story slides use campaign-specific copy and image backgrounds.
+- `frontend/src/components/TurnFeed.jsx` ✅ — empty-feed GM opening now defines the Weaver, Relay 19, the ghost packet, and the first actionable scene.
+- `frontend/src/lib/portraitLibrary.js` ✅ — Mara portrait mapped; ephemeral GM participants no longer force missing generated portrait URLs.
 - `frontend/src/styles.css` ✅ — intro overlay now sits above app chrome; generated splash/slide assets wired as backgrounds.
 - `frontend/public/intro/fg1/` ✅ — compressed generated WebP intro assets.
+- `frontend/public/portraits/mara-of-cimmeria.png` ✅ — generated avatar crop from the FG1 Mara relay slide.
 - `frontend/src/lib/devUiFixture.js` ✅ — dev fixture now reflects Mara and Relay 19.
 - `frontend/src/components/SceneBackdrop.jsx` ✅ — default scene/map labels point to Relay 19.
 - `frontend/src/lib/sceneArtLibrary.js` ✅ — scene-art keyword lookup recognizes Relay 19.
@@ -70,6 +73,7 @@ Run the FG1 Intro Scenario from the HITL process with one human player before ad
 - `2026-05-08 18:10 UTC` — Codex → completed Mara/Relay 19 campaign refresh, generated intro assets, wired intro flow, verified tests/build/screenshots; ready for review.
 - `2026-05-09 00:10 UTC` — Codex → opened draft PR #15, ran Docker-backed seed/state/frontend smoke, and added `docs/development/focus-group/FG1-hitl-smoke-and-test-plan-2026-05-09.md`.
 - `2026-05-09 00:25 UTC` — Codex → made FG1 story slides player-paced, slowed intro image pan, rebuilt frontend Docker container, and verified the first slide remains stable until Continue is clicked.
+- `2026-05-09 00:50 UTC` — Codex → clarified intro terminology around the Weaver, Relay 19, the ghost packet, and Pelsin's scrub; added the opening GM stage-setting message and Mara portrait asset.
 
 ## Verification on completion
 

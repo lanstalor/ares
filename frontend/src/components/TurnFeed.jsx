@@ -3,6 +3,16 @@ import { AssetOverlay } from "./AssetOverlay";
 import { resolvePortrait } from "../lib/portraitLibrary";
 import { getCasteColorToken } from "../lib/uiTheme";
 
+const EMPTY_FEED_OPENING = `You are Mara of Cimmeria: a highRed relay technician on Ganymede, Sons of Ares for seven months, still carrying a legal worker file the Society thinks it owns.
+
+The Weaver is your anonymous Sons handler. They do not meet you in person. They send orders through dead relay pings, and last night they used Pellam's old maintenance code to send one clear message: "Relay 19. Ghost packet. Pull it before Pelsin scrubs the carrier."
+
+Relay 19 is the exterior communications mast bolted to the pressure rim: HoloCan repeater, Board of Quality Control sensor plate, emergency beacon, and private Gold band running through lowColor hardware. The ghost packet is a corrupted data fragment stuck in that relay buffer. You do not know what it means yet. You do know Station Chief Pelsin si Vorath's morning diagnostic scrub starts in twenty minutes.
+
+Your maintenance cradle has stopped six meters below the mast. Your suit cam is live. Your tool harness is locked. Oran is on comms, trying to make this look like normal repair work. Two Gray supervisors watch from the checkpoint blister, and one has just looked up from his slate.
+
+What do you do?`;
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -249,7 +259,7 @@ export function TurnFeed({
                     <span className="turn-objective-label">Objective — </span>{objective}
                   </p>
                 ) : null}
-                <p>The relay is armed and the hidden-state engine is live. Describe your first move.</p>
+                <div className="turn-body">{renderText(EMPTY_FEED_OPENING, "gm", nameColorMap)}</div>
               </div>
             </article>
           ) : (

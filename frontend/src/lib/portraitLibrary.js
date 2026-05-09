@@ -6,6 +6,7 @@ const PORTRAIT_BY_NAME = new Map([
   ["holiday ti nakamura", "/portraits/holiday-ti-nakamura.png"],
   ["legate voss ti harlan", "/portraits/legate-voss-ti-harlan.png"],
   ["lorn au arcos", "/portraits/lorn-au-arcos.png"],
+  ["mara of cimmeria", "/portraits/mara-of-cimmeria.png"],
   ["nero au augustus", "/portraits/nero-au-augustus.png"],
   ["regulus ag sun quicksilver", "/portraits/regulus-ag-sun-quicksilver.png"],
   ["ryanna of cryssos", "/portraits/ryanna-of-cryssos.png"],
@@ -73,6 +74,10 @@ export function resolvePortrait(name) {
  */
 export function getGeneratedPortraitUrl(character) {
   if (!character || !character.name) {
+    return null;
+  }
+
+  if (!character.id || String(character.id).startsWith("gm-npc-")) {
     return null;
   }
 

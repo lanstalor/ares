@@ -98,7 +98,7 @@ export function createDevUiSnapshot() {
         speaker: "system",
         label: "System",
         meta: "Link primed",
-        text: "Operative channel open. Relay 19 is live. Pelsin's diagnostic scrub is moving on the clock.",
+        text: "Operative channel open. The Weaver's dead-channel ping is decoded: Relay 19. Ghost packet. Pull it before Pelsin scrubs the carrier.",
         timestamp: isoAt(-7),
       },
       {
@@ -106,7 +106,7 @@ export function createDevUiSnapshot() {
         speaker: "gm",
         label: "GM",
         meta: "Player-safe",
-        text: "The service cradle locks beneath Relay 19. Ice dust scours the gantry while the mast ticks through carrier light, HoloCan repeater, BoQC sensor plate, private Gold band.",
+        text: "Relay 19 is the exterior comm mast bolted to Ganymede's pressure rim: HoloCan repeater, Board of Quality Control sensor plate, emergency beacon, and private Gold band running through lowColor hardware. The ghost packet is a corrupted data fragment stuck in its buffer. You do not know what it means yet. You do know Pelsin's diagnostic scrub starts in twenty minutes.",
         timestamp: isoAt(-6),
       },
       {

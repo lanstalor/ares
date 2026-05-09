@@ -1262,9 +1262,19 @@ oppression is procedural: dose counters, shift clocks,
 checkpoint authority, and the fact that a Red can die outside
 the dome while a Copper debates form order.
 
-Last night, the Weaver sent a dead-channel ping in Pellam's
-old maintenance code: "Relay 19. Ghost packet. Pull it before
-Pelsin scrubs the carrier."
+The player-facing terms are concrete:
+- The Weaver is Mara's anonymous Sons handler, not a public title
+  or known identity. They send orders through dead relay pings and
+  never meet Mara in person.
+- Relay 19 is an exterior communications mast on Ganymede's pressure
+  rim: HoloCan repeater, BoQC sensor plate, emergency beacon, and
+  private Gold band stacked into one tower.
+- The ghost packet is a corrupted data fragment stuck in Relay 19's
+  buffer. Mara does not know what it means yet.
+
+Last night, the Weaver sent a dead-channel ping in Pellam's old
+maintenance code: "Relay 19. Ghost packet. Pull it before Pelsin
+scrubs the carrier."
 ```
 
 -----
@@ -1296,8 +1306,14 @@ carrier light, HoloCan repeater, BoQC sensor plate, private
 Gold band. In twenty minutes Station Chief Pelsin si Vorath's
 morning scrub will overwrite the buffer.
 
-Last night, the Weaver sent a dead-channel ping in Pellam's
-old maintenance code.
+The Weaver is your anonymous Sons handler, a voice in dead relay
+pings and borrowed maintenance codes. Relay 19 is the exterior mast
+above you: HoloCan repeater, Board of Quality Control sensor plate,
+emergency beacon, private Gold band. The ghost packet is a corrupted
+data fragment stuck in its buffer. You do not know what it means yet.
+
+Last night, the Weaver sent a dead-channel ping in Pellam's old
+maintenance code.
 
 Relay 19. Ghost packet. Pull it before Pelsin scrubs the carrier.
 
@@ -1321,7 +1337,7 @@ Status tracker for all campaign images.
 |Io                     |Planet map icon   |⏳ Pending    |Volcanic, sulfur yellow-orange, Jupiter edge.                    |
 |Phobos                 |Planet map icon   |⏳ Pending    |Irregular potato shape, Mars looming at edge.                    |
 |The Belt               |Planet map icon   |⏳ Pending    |Asteroid field, no single sphere.                                |
-|Mara of Cimmeria       |Character portrait|⏳ Pending    |See portrait prompt in Section 11.                               |
+|Mara of Cimmeria       |Character portrait|✅ Generated  |`frontend/public/portraits/mara-of-cimmeria.png`                 |
 |FG1 Relay 19 splash    |Intro splash      |✅ Generated  |`frontend/public/intro/fg1/fg1-splash-relay-19-web.webp`          |
 |FG1 Mara relay slide   |Intro slide       |✅ Generated  |`frontend/public/intro/fg1/fg1-slide-mara-relay-web.webp`         |
 |FG1 ghost packet slide |Intro slide       |✅ Generated  |`frontend/public/intro/fg1/fg1-slide-ghost-packet-web.webp`       |
