@@ -12,7 +12,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
-| FG2 | `groom/fg-focus-group-hardening` | `~/ares` | Codex | review | Hardening verified; fast-forward FG1/PR #15, then run HITL. |
+| FG2 | `groom/fg-focus-group-hardening` | `~/ares` | Codex | review | Hardening verified and fast-forwarded into PR #15; run HITL. |
 | FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Codex | review | Draft PR #15 open; run the FG1 Intro Scenario with a human player. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)

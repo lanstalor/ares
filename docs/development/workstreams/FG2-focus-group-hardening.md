@@ -29,7 +29,7 @@ Verification at that commit:
 
 ## In-flight WIP
 
-`clean after commit` — implementation complete on top of FG1. This branch is intended to merge into PR #15 before the first human focus-group pass.
+`clean after commit` — implementation complete and fast-forwarded into FG1 / PR #15 before the first human focus-group pass.
 
 ## Files touched so far
 
@@ -44,7 +44,7 @@ Verification at that commit:
 
 ## Next concrete step
 
-Fast-forward `focus-group/new-protagonist-intro`, push PR #15, then run the FG1 Intro Scenario and First Meaningful Turn HITL pass.
+Run the FG1 Intro Scenario and First Meaningful Turn HITL pass from PR #15. Log findings under `docs/development/ux-tests/`.
 
 ## Open questions / blockers
 
@@ -53,7 +53,7 @@ Fast-forward `focus-group/new-protagonist-intro`, push PR #15, then run the FG1 
 
 ## Agent rotation log
 
-- `2026-05-10 UTC` — Codex created `groom/fg-focus-group-hardening` from FG1, implemented provider condition updates, player-safe condition filtering, Relay 19 pressure clocks, scene progression guardrails, and sprint-doc alignment. Verified full backend suite, frontend build/check, Docker smoke, LAN app URL, seeded clocks, and player-safe filtering for `ident_flagged`.
+- `2026-05-10 UTC` — Codex created `groom/fg-focus-group-hardening` from FG1, implemented provider condition updates, player-safe condition filtering, Relay 19 pressure clocks, scene progression guardrails, and sprint-doc alignment. Verified full backend suite, frontend build/check, Docker smoke, LAN app URL, seeded clocks, and player-safe filtering for `ident_flagged`; fast-forwarded FG1 / PR #15 to include the hardening commits.
 
 ## Verification on completion
 
