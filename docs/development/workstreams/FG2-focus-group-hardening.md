@@ -63,7 +63,7 @@ Fast-forward `focus-group/new-protagonist-intro`, push PR #15, then run the FG1 
 - [x] Docker stack rebuilds
 - [x] LAN focus-group URL loads
 - [x] Workstream doc fully reflects final state
-- [ ] Branch pushed for handoff
+- [x] Branch pushed for handoff
 
 ## Hard constraints checklist
 
