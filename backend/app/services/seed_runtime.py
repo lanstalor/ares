@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.models.campaign import Campaign, Objective
+from app.models.campaign import Campaign, Clock, Objective
 from app.models.character import Character
 from app.models.memory import Secret
 from app.models.world import Area, Faction, LorePage, NPC, POI
@@ -96,7 +96,13 @@ def _seed_world_bible_into_campaign_impl(
     lore_count = _insert_lore_pages(session, bundle.lore_pages)
     secret_count = _insert_secrets(session, campaign.id, bundle.secrets)
     character_count = _insert_player_character(session, campaign.id, bundle.player_character)
-    objective_count = _insert_opening_objective(session, campaign.id, bundle.campaign_opening)
+    clock_count = _insert_campaign_clocks(session, campaign.id, bundle.campaign_clocks)
+    objective_count = _insert_opening_objective(
+        session,
+        campaign.id,
+        bundle.campaign_opening,
+        bundle.campaign_clocks,
+    )
 
     session.commit()
 
@@ -246,15 +252,48 @@ def _insert_player_character(session: Session, campaign_id: str, player_characte
     return 1
 
 
-def _insert_opening_objective(session: Session, campaign_id: str, campaign_opening) -> int:
+def _insert_campaign_clocks(session: Session, campaign_id: str, campaign_clocks) -> int:
+    count = 0
+    for clock_seed in campaign_clocks:
+        session.add(
+            Clock(
+                campaign_id=campaign_id,
+                label=clock_seed.label,
+                clock_type=clock_seed.clock_type,
+                current_value=clock_seed.current_value,
+                max_value=clock_seed.max_value,
+                hidden_from_player=clock_seed.hidden_from_player,
+            )
+        )
+        count += 1
+    return count
+
+
+def _format_clock_guidance(campaign_clocks) -> str | None:
+    guidance_lines = [
+        f"- {clock.label} ({clock.current_value}/{clock.max_value}): {clock.gm_guidance}"
+        for clock in campaign_clocks
+        if clock.gm_guidance
+    ]
+    if not guidance_lines:
+        return None
+    return "Opening pressure clocks:\n" + "\n".join(guidance_lines)
+
+
+def _insert_opening_objective(session: Session, campaign_id: str, campaign_opening, campaign_clocks=None) -> int:
     if campaign_opening is None:
         return 0
+
+    clock_guidance = _format_clock_guidance(campaign_clocks or [])
+    gm_instructions = campaign_opening.gm_instructions
+    if clock_guidance:
+        gm_instructions = f"{gm_instructions}\n\n{clock_guidance}"
 
     objective = Objective(
         campaign_id=campaign_id,
         title=FALLBACK_OPENING_OBJECTIVE,
         description=campaign_opening.opening_message,
-        gm_instructions=campaign_opening.gm_instructions,
+        gm_instructions=gm_instructions,
         is_active=True,
         is_complete=False,
     )

@@ -3,10 +3,11 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable
 
-from app.core.enums import Visibility
+from app.core.enums import ClockType, Visibility
 from app.schemas.seed import (
     SeedArea,
     SeedCampaignOpening,
+    SeedClock,
     SeedFaction,
     SeedLorePage,
     SeedNPC,
@@ -46,6 +47,7 @@ def parse_world_bible(markdown: str) -> WorldBibleSeed:
         lore_pages=_parse_lore_pages(sections.get("lore", "")),
         player_character=_parse_player_character(sections.get("player-characters", "")),
         campaign_opening=_parse_campaign_opening(sections.get("campaign-opening", "")),
+        campaign_clocks=_parse_campaign_clocks(sections.get("campaign-opening", "")),
     )
 
 
@@ -508,6 +510,44 @@ def _parse_campaign_opening(section: str) -> SeedCampaignOpening | None:
         gm_instructions=_extract_code_block(gm_body),
         opening_message=_extract_code_block(opening_body),
     )
+
+
+def _parse_campaign_clocks(section: str) -> list[SeedClock]:
+    entries = {title: body for title, body in _split_level3_entries(section)}
+    body = entries.get("Campaign Clocks (GM-only)")
+    if not body:
+        return []
+
+    clocks: list[SeedClock] = []
+    for raw_line in body.splitlines():
+        line = raw_line.strip()
+        if not line.startswith("|") or "---" in line:
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if len(cells) < 6 or cells[0].lower() == "clock":
+            continue
+
+        try:
+            current_value, max_value = (int(part.strip()) for part in cells[2].split("/", 1))
+        except (ValueError, IndexError):
+            current_value, max_value = 0, 4
+
+        try:
+            clock_type = ClockType(cells[1].lower())
+        except ValueError:
+            clock_type = ClockType.THREAT
+
+        clocks.append(
+            SeedClock(
+                label=cells[0],
+                clock_type=clock_type,
+                current_value=current_value,
+                max_value=max_value,
+                hidden_from_player=cells[3].lower() != "false",
+                gm_guidance=cells[5],
+            )
+        )
+    return clocks
 
 
 def _extract_code_block(body: str) -> str:

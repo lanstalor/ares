@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import copy
+import logging
 from typing import Any, Callable
 
 from app.core.enums import SecretStatus, Visibility
 from app.services.ai_provider import NarrationProvider, NarrationRequest, NarrationResponse, Roll
 from app.services.consequence_applier import (
     ClockTick,
+    ConditionUpdate,
     Consequences,
     InventoryUpdate,
     LocationChange,
@@ -16,6 +18,7 @@ from app.services.consequence_applier import (
 )
 
 _TOOL_NAME = "record_turn"
+logger = logging.getLogger(__name__)
 
 _SYSTEM_PROMPT = """You are the hidden-state Game Master for Project Ares, a Red Rising fan campaign set in 728-732 PCE on Ganymede during the Sons of Ares era.
 
@@ -75,6 +78,7 @@ Tool use:
 - consequences.new_memories: list of {content, visibility}. Visibility is one of: player_facing, gm_only, sealed, locked. Use player_facing for things the player saw or heard. Use gm_only for things you noted but the player did not perceive.
 - consequences.location_change: {new_location_label}. Emit only when the player physically moves to a different named area this turn. new_location_label must match an area name from the world context. Omit entirely if the player does not change location.
 - consequences.objective_updates: list of {title, action, description?}. action "complete" marks the named active objective done (use the exact title from the player-safe brief). action "add" creates a new objective with the given title and optional description. Only emit when an objective is genuinely achieved or a major new story goal appears — not for routine scene transitions.
+- consequences.condition_updates: list of {condition_type, duration?, source?}. Use when the player character gains or refreshes a mechanical condition such as bleeding, wounded, exhausted, poisoned, ident_flagged, stunned, disarmed, prone, or panicked. Use ident_flagged for hidden identity/security flags; it is GM-only and must not be narrated as a visible UI mechanic.
 - A clock marked "FIRED — consequence due" has reached its maximum. Act on its in-fiction consequence immediately this turn: escalate the threat, surface the reveal, or break the tension the label implies. Do not tick a FIRED clock again.
 - When a confrontation persists, use clocks, objective updates, location changes, or scene participants to show that the fiction moved. Do not leave all structured consequence fields empty while narrating a prolonged standoff.
 - Omit any field whose list is empty rather than emitting placeholder entries.
@@ -190,6 +194,40 @@ _TOOL_SCHEMA = {
                                 "tags": {"type": "string", "description": "Comma-separated tags like 'weapon, energy, heavy'."},
                             },
                             "required": ["name", "action"],
+                        },
+                    },
+                    "condition_updates": {
+                        "type": "array",
+                        "description": "Status conditions applied to the player character this turn.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "condition_type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "bleeding",
+                                        "poisoned",
+                                        "ident_flagged",
+                                        "wounded",
+                                        "exhausted",
+                                        "stunned",
+                                        "disarmed",
+                                        "prone",
+                                        "panicked",
+                                    ],
+                                },
+                                "duration": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 12,
+                                    "description": "Optional duration in turns. Omit to use the system default.",
+                                },
+                                "source": {
+                                    "type": "string",
+                                    "description": "Short source label for operator review.",
+                                },
+                            },
+                            "required": ["condition_type"],
                         },
                     },
                 },
@@ -503,10 +541,10 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
                     if isinstance(c, dict) and "condition_type" in c and "duration_remaining" in c:
                         validated.append(c)
                     else:
-                        self.logger.warning(f"Malformed condition in response: {c}")
+                        logger.warning("Malformed condition in response: %s", c)
                 participant["conditions"] = validated
             else:
-                self.logger.warning(f"Conditions is not a list: {type(conditions)}")
+                logger.warning("Conditions is not a list: %s", type(conditions))
                 participant["conditions"] = []
         else:
             participant["conditions"] = []
@@ -573,6 +611,15 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
                     tags=item.get("tags"),
                 )
                 for item in raw_consequences.get("inventory_updates", [])
+            ],
+            condition_updates=[
+                ConditionUpdate(
+                    condition_type=item["condition_type"],
+                    duration=item.get("duration"),
+                    source=item.get("source"),
+                )
+                for item in raw_consequences.get("condition_updates", [])
+                if isinstance(item, dict) and "condition_type" in item
             ],
         ),
     )

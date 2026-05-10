@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.core.enums import SecretStatus, Visibility
+from app.core.enums import ClockType, SecretStatus, Visibility
 
 
 class SeedNote(BaseModel):
@@ -83,6 +83,15 @@ class SeedCampaignOpening(BaseModel):
     opening_message: str
 
 
+class SeedClock(BaseModel):
+    label: str
+    clock_type: ClockType
+    current_value: int = 0
+    max_value: int = 4
+    hidden_from_player: bool = True
+    gm_guidance: str | None = None
+
+
 class SeedSecret(BaseModel):
     label: str
     content: str
@@ -105,6 +114,7 @@ class WorldBibleSeed(BaseModel):
     lore_pages: list[SeedLorePage] = Field(default_factory=list)
     player_character: SeedPlayerCharacter | None = None
     campaign_opening: SeedCampaignOpening | None = None
+    campaign_clocks: list[SeedClock] = Field(default_factory=list)
 
 
 class SeedCampaignRow(BaseModel):
@@ -124,3 +134,4 @@ class SeedImportBundle(BaseModel):
     secrets: list[SeedSecret] = Field(default_factory=list)
     player_character: SeedPlayerCharacter | None = None
     campaign_opening: SeedCampaignOpening | None = None
+    campaign_clocks: list[SeedClock] = Field(default_factory=list)

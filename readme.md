@@ -16,7 +16,7 @@ This README is the canonical spec and operations guide for Project Ares v1. It c
 - the operator workflows
 - the Codex CLI agent playbooks used to build and maintain the system
 
-**Current status (as of 2026-04-30):** The application is fully implemented and playable. All core phases — seed pipeline, GM engine, canon guard, consequence tracking, and the cinematic web UI — are complete. The playtester benchmark workflow is now implemented and configurable across OpenAI and Anthropic. The latest benchmark also showed that scene-stall and repetition remain active quality problems, so prompt tightening alone should not be treated as a complete fix. See `CLAUDE.md` and `docs/development/workstreams/playtester-prompt-pass.md` for the current implementation state and next engineering slices.
+**Current status (as of 2026-05-10):** The application is implemented and playable. The active focus-group branch uses Mara of Cimmeria, a highRed relay technician on Ganymede, not the older Davan opening. All core phases — seed pipeline, GM engine, canon guard, consequence tracking, operator API/UI, media providers, scene art, portraits, and the cinematic web UI — are present. The current risk is focus-group readiness: hidden-state leak protection, concrete opening pressure, and scene-stall prevention. See `CLAUDE.md`, `docs/development/master-plan.md`, and `docs/development/workstreams/FG2-focus-group-hardening.md` for current implementation state.
 
 ### Quick Start
 
@@ -30,6 +30,12 @@ make compose-up
 ```
 
 On first run, click **Seed World Bible** in the Campaign Lattice panel to import `world_bible.md` into the database. Select the seeded campaign to enter live play mode.
+
+### Current Focus-Group Premise
+
+The current test build opens in 728 PCE on Ganymede. The player is Mara of Cimmeria, a highRed relay technician recruited by the Sons of Ares. The first scene starts outside Surface Relay Tower 19: the Weaver has sent a dead-channel order to pull a ghost packet before Station Chief Pelsin si Vorath's diagnostic scrub erases it or exposes the anomaly to the Board of Quality Control.
+
+Older Davan references in completed workstream docs and historical plans are archival unless an active slice explicitly says otherwise.
 
 ### Current Benchmark Note
 

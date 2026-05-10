@@ -343,6 +343,8 @@ def test_openai_provider_passes_enable_dice_to_schema_and_prompt() -> None:
 
     properties = captured["tools"][0]["function"]["parameters"]["properties"]
     assert "rolls" in properties
+    consequence_props = properties["consequences"]["properties"]
+    assert "condition_updates" in consequence_props
     assert "skill check" in captured["messages"][0]["content"].lower()
 
 

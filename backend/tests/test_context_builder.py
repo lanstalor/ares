@@ -226,3 +226,32 @@ def test_hidden_gm_brief_does_not_mark_unfired_clock() -> None:
     ctx = build_turn_context(session, campaign, "Look around.")
 
     assert "FIRED" not in ctx.hidden_gm_brief
+
+
+def test_hidden_gm_brief_includes_scene_progression_guard_with_recent_gm_beats() -> None:
+    session = _make_session()
+    campaign = _bootstrap_scenario(session)
+    session.add_all(
+        [
+            Turn(
+                campaign_id=campaign.id,
+                player_input="Wait.",
+                gm_response="Vex repeats the same warning and does not move.",
+                player_safe_summary="Vex repeats a warning.",
+            ),
+            Turn(
+                campaign_id=campaign.id,
+                player_input="Wait again.",
+                gm_response="The Gray keeps his hand on the same latch.",
+                player_safe_summary="The Gray stays by the latch.",
+            ),
+        ]
+    )
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "Delay one more time.")
+
+    assert "Scene progression guard" in ctx.hidden_gm_brief
+    assert "change at least one concrete fact" in ctx.hidden_gm_brief
+    assert "Vex repeats the same warning" in ctx.hidden_gm_brief
+    assert "The Gray keeps his hand" in ctx.hidden_gm_brief

@@ -74,6 +74,7 @@ Run the FG1 Intro Scenario from the HITL process with one human player before ad
 - `2026-05-09 00:10 UTC` — Codex → opened draft PR #15, ran Docker-backed seed/state/frontend smoke, and added `docs/development/focus-group/FG1-hitl-smoke-and-test-plan-2026-05-09.md`.
 - `2026-05-09 00:25 UTC` — Codex → made FG1 story slides player-paced, slowed intro image pan, rebuilt frontend Docker container, and verified the first slide remains stable until Continue is clicked.
 - `2026-05-09 00:50 UTC` — Codex → clarified intro terminology around the Weaver, Relay 19, the ghost packet, and Pelsin's scrub; added the opening GM stage-setting message and Mara portrait asset.
+- `2026-05-10 UTC` — Codex → implemented FG2 focus-group hardening: provider condition updates, player-safe GM-only condition filtering, seeded Relay 19 pressure clocks, and scene progression guardrails.
 
 ## Verification on completion
 

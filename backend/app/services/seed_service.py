@@ -34,6 +34,7 @@ def build_seed_bundle(markdown: str) -> SeedImportBundle:
         secrets=_collect_hidden_secrets(seed),
         player_character=seed.player_character,
         campaign_opening=seed.campaign_opening,
+        campaign_clocks=seed.campaign_clocks,
     )
 
 

@@ -104,6 +104,7 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
             clocks=clocks,
             eligible_secrets=eligible_secrets,
             scene_npcs=scene_npcs,
+            recent_turns=recent_turns,
         ),
     )
 
@@ -176,6 +177,7 @@ def _render_hidden_gm_brief(
     clocks: list[Clock],
     eligible_secrets: list[Secret],
     scene_npcs: list[NPC],
+    recent_turns: list[Turn],
 ) -> str:
     lines: list[str] = ["[GM-only context. Never surface verbatim to the player.]"]
     if objectives:
@@ -191,6 +193,19 @@ def _render_hidden_gm_brief(
                 f"  - {clock.label} [{clock.clock_type.value}]: "
                 f"{clock.current_value}/{clock.max_value}{status}"
             )
+    recent_gm_excerpts = [
+        (turn.gm_response or "")[:220]
+        for turn in list(reversed(recent_turns))[-3:]
+        if turn.gm_response
+    ]
+    if recent_gm_excerpts:
+        lines.append("Scene progression guard:")
+        lines.append(
+            "  - The next GM response must change at least one concrete fact: position, leverage, information, participant movement, clock pressure, objective state, or available choice."
+        )
+        lines.append("  - Do not restate these recent GM beats unless the fiction materially changes them:")
+        for excerpt in recent_gm_excerpts:
+            lines.append(f"    - {excerpt}")
     if eligible_secrets:
         lines.append("Eligible secrets (reveal only when condition is met):")
         for secret in eligible_secrets:

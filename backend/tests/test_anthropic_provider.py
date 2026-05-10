@@ -6,6 +6,7 @@ import pytest
 from app.core.enums import SecretStatus, Visibility
 from app.services.ai_provider import NarrationRequest
 from app.services.anthropic_provider import AnthropicNarrationProvider
+from app.services.anthropic_provider import build_tool_schema
 
 
 @dataclass
@@ -145,6 +146,41 @@ def test_provider_parses_consequences_from_tool_call() -> None:
     )
     assert len(response.consequences.new_memories) == 1
     assert response.consequences.new_memories[0].visibility == Visibility.GM_ONLY
+
+
+def test_provider_parses_condition_updates_from_tool_call() -> None:
+    def fake_messages_create(**kwargs: Any) -> _FakeMessage:
+        return _make_canned_response(
+            consequences={
+                "condition_updates": [
+                    {
+                        "condition_type": "ident_flagged",
+                        "duration": 4,
+                        "source": "Gray checkpoint slate",
+                    }
+                ]
+            }
+        )
+
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
+
+    response = provider.narrate(_make_request())
+
+    assert len(response.consequences.condition_updates) == 1
+    update = response.consequences.condition_updates[0]
+    assert update.condition_type == "ident_flagged"
+    assert update.duration == 4
+    assert update.source == "Gray checkpoint slate"
+
+
+def test_tool_schema_exposes_condition_updates_for_all_providers() -> None:
+    consequence_props = build_tool_schema()["input_schema"]["properties"]["consequences"]["properties"]
+
+    assert "condition_updates" in consequence_props
+    assert "ident_flagged" in consequence_props["condition_updates"]["items"]["properties"]["condition_type"]["enum"]
 
 
 def test_provider_sends_briefs_in_user_message_and_pins_tool_choice() -> None:
@@ -319,3 +355,43 @@ def test_provider_parses_conditions_from_scene_participants() -> None:
     assert participant["conditions"][0]["duration_remaining"] == 2
     assert participant["conditions"][1]["condition_type"] == "stunned"
     assert participant["conditions"][1]["duration_remaining"] == 1
+
+
+def test_provider_ignores_malformed_scene_participant_conditions_without_self_logger_error() -> None:
+    def fake_messages_create(**kwargs: Any) -> _FakeMessage:
+        return _FakeMessage(
+            content=[
+                _FakeBlock(
+                    type="tool_use",
+                    name="record_turn",
+                    input={
+                        "narrative": "Vex ti Rhone keeps moving.",
+                        "player_safe_summary": "Vex keeps moving.",
+                        "suggested_actions": [
+                            {"label": "Approach", "prompt": "I approach Vex carefully."},
+                            {"label": "Retreat", "prompt": "I back away slowly."},
+                            {"label": "Observe", "prompt": "I watch from a distance."},
+                        ],
+                        "scene_participants": [
+                            {
+                                "name": "Vex ti Rhone",
+                                "caste": "Gray",
+                                "role": "Security escort",
+                                "disposition": "suspicious",
+                                "conditions": ["broken"],
+                            }
+                        ],
+                        "consequences": {},
+                    },
+                )
+            ]
+        )
+
+    provider = AnthropicNarrationProvider(
+        messages_create=fake_messages_create,
+        model="claude-sonnet-test",
+    )
+
+    response = provider.narrate(_make_request())
+
+    assert response.scene_participants[0]["conditions"] == []

@@ -2,9 +2,11 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from app.core.enums import CONDITION_METADATA
 from app.db.session import SessionDep
 from app.models.campaign import Campaign
 from app.models.character import Character
+from app.schemas.character import CharacterRead
 from app.services.npc_portrait_service import ensure_portrait
 from app.services.scene_art import get_cached_scene_art
 from app.schemas.campaign import CampaignCreate, CampaignRead, CampaignState
@@ -12,6 +14,19 @@ from app.schemas.seed_runtime import SeedImportResponse
 from app.services.seed_runtime import seed_world_bible_into_existing_campaign
 
 router = APIRouter()
+
+
+def _player_facing_character(character: Character | None) -> CharacterRead | None:
+    if character is None:
+        return None
+
+    character_read = CharacterRead.model_validate(character)
+    character_read.conditions = [
+        condition
+        for condition in character_read.conditions
+        if CONDITION_METADATA.get(condition.condition_type, {}).get("visibility") == "player_facing"
+    ]
+    return character_read
 
 
 @router.get("", response_model=list[CampaignRead])
@@ -87,7 +102,7 @@ def get_campaign_state(campaign_id: str, session: SessionDep) -> CampaignState:
         current_location=campaign.current_location_label,
         active_objective=active_objective,
         recent_turns=recent_turns,
-        player_character=latest_character,
+        player_character=_player_facing_character(latest_character),
         scene_art=scene_art,
         hidden_state_summary="Hidden state remains server-only.",
     )

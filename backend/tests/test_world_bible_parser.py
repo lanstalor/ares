@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from app.core.enums import Visibility
+from app.core.enums import ClockType, Visibility
 from app.services.seed_service import build_seed_bundle
 from app.services.world_bible_parser import parse_world_bible
 
@@ -29,6 +29,15 @@ def test_parse_world_bible_extracts_primary_sections() -> None:
     assert seed.player_character.max_hp == 40
     assert seed.campaign_opening is not None
     assert "Surface Relay Tower 19" in seed.campaign_opening.opening_message
+    assert len(seed.campaign_clocks) >= 5
+    clock_labels = {clock.label for clock in seed.campaign_clocks}
+    assert "Pelsin Diagnostic Scrub" in clock_labels
+    assert "BoQC Heat" in clock_labels
+    pelsin_clock = next(clock for clock in seed.campaign_clocks if clock.label == "Pelsin Diagnostic Scrub")
+    assert pelsin_clock.clock_type == ClockType.THREAT
+    assert pelsin_clock.current_value == 0
+    assert pelsin_clock.max_value == 4
+    assert pelsin_clock.hidden_from_player is True
 
 
 def test_parse_world_bible_preserves_visibility_markers() -> None:
@@ -62,3 +71,4 @@ def test_seed_service_builds_name_based_payloads_and_hidden_secrets() -> None:
     assert any(poi.name == "Surface Relay Tower 19" for poi in bundle.pois)
     assert any(secret.label.startswith("Faction: The Weaver’s Network") for secret in bundle.secrets)
     assert any(secret.label == "CampaignOpening: GM instructions" for secret in bundle.secrets)
+    assert any(clock.label == "Pelsin Diagnostic Scrub" for clock in bundle.campaign_clocks)

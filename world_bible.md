@@ -1243,6 +1243,18 @@ Standard-issue gear for a Sons of Ares cell operating on Ganymede. Most of this 
 
 -----
 
+### Campaign Clocks (GM-only)
+
+|Clock|Type|Start|Hidden|Player-safe pressure|GM trigger / consequence guidance|
+|---|---|---:|---|---|---|
+|Pelsin Diagnostic Scrub|threat|0/4|true|The morning scrub is moving closer.|Advance when Mara delays, makes noisy repairs, or fails a buffer action. At 4, the scrub overwrites the ghost packet unless Mara has extracted it.|
+|BoQC Heat|threat|0/6|true|Gray and Board attention is tightening.|Advance on visible sabotage, forged-sigil anomalies, unexplained comms loss, public violence, or failed cover lies. At 3, checkpoint scrutiny increases. At 6, BoQC opens a formal investigation.|
+|Mara Cover Integrity|tension|0/8|true|Mara's worker cover is under strain.|Advance when sabotage reads as intent instead of equipment failure. At 5, Oran must cover for Mara or step back. At 8, Mara's relay technician identity is burned.|
+|Cell Exposure|reveal|0/6|true|The Ganymede cell risks exposure.|Advance when the ghost packet, dead-channel ping, or Sons tools become visible to non-cell witnesses. At 6, the cell must abandon a safe contact or sacrifice a cover asset.|
+|Oran Collateral Risk|tension|0/4|true|Oran is close enough to be hurt by Mara's choices.|Advance when Oran lies for Mara, appears complicit, or is ordered into danger. At 4, Oran is detained, injured, or forced to expose a loyalty.|
+
+-----
+
 ### GM Instructions (AI reads, player does not see)
 
 ```

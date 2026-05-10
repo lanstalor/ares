@@ -6,10 +6,13 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 **Current wave:** fables.gg gap-closing roadmap — parent plan at `~/.claude/plans/a-i-happy-matsumoto.md`. Three parallel tracks (A: Mechanical Depth, B: Sensory Polish, C: Operator Depth), 15 slices total. Bootstrap a slice with `make bootstrap-slice SLICE=A1`.
 
+**Current focus-group premise:** Mara of Cimmeria, a highRed relay technician on Ganymede in 728 PCE, opens at Surface Relay Tower 19 with a Weaver dead-channel order to pull the ghost packet before Pelsin's diagnostic scrub. Older Davan references in completed workstreams are historical unless an active slice explicitly says otherwise.
+
 ## Now (In-Flight Slices)
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
+| FG2 | `groom/fg-focus-group-hardening` | `~/ares` | Codex | review | Hardening verified; fast-forward FG1/PR #15, then run HITL. |
 | FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Codex | review | Draft PR #15 open; run the FG1 Intro Scenario with a human player. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
