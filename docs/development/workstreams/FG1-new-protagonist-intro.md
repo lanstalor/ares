@@ -52,15 +52,18 @@ Test status at this commit:
 - `frontend/src/lib/devUiFixture.js` ✅ — dev fixture now reflects Mara and Relay 19.
 - `frontend/src/components/SceneBackdrop.jsx` ✅ — default scene/map labels point to Relay 19.
 - `frontend/src/lib/sceneArtLibrary.js` ✅ — scene-art keyword lookup recognizes Relay 19.
+- `backend/app/api/routes/turns.py` ✅ — `POST /turns` keeps `context_excerpt` API-compatible without returning raw turn context.
+- `frontend/src/lib/uiTheme.js` ✅ — Relay 19 opening actions replace generic fallback action buttons before the first submitted turn.
 - `docs/development/human-in-the-loop-ux-testing-process.md` ✅ — added FG1 intro scenario.
 - `docs/development/master-plan.md` ✅ — added FG1 to Now dashboard.
 - `docs/development/workstreams/FG1-new-protagonist-intro.md` ✅ — tracking stream for resumability.
+- `docs/development/workstreams/FG3-playtest-blockers.md` ✅ — handoff doc for the playtest blocker patch and next HITL pass.
 - `assets/samples/ui-iteration/2026-05-08-FG1-title-final-desktop.png` ✅ — desktop visual evidence.
 - `assets/samples/ui-iteration/2026-05-08-FG1-title-final-mobile.png` ✅ — mobile visual evidence.
 
 ## Next concrete step
 
-Run the FG1 Intro Scenario from the HITL process with one human player before adding more mechanics.
+Run the FG1 Intro Scenario plus First Meaningful Turn HITL pass from PR #15. Log notes under `docs/development/ux-tests/` before adding more mechanics.
 
 ## Open questions / blockers
 
@@ -75,6 +78,7 @@ Run the FG1 Intro Scenario from the HITL process with one human player before ad
 - `2026-05-09 00:25 UTC` — Codex → made FG1 story slides player-paced, slowed intro image pan, rebuilt frontend Docker container, and verified the first slide remains stable until Continue is clicked.
 - `2026-05-09 00:50 UTC` — Codex → clarified intro terminology around the Weaver, Relay 19, the ghost packet, and Pelsin's scrub; added the opening GM stage-setting message and Mara portrait asset.
 - `2026-05-10 UTC` — Codex → implemented FG2 focus-group hardening: provider condition updates, player-safe GM-only condition filtering, seeded Relay 19 pressure clocks, and scene progression guardrails.
+- `2026-05-11 UTC` — Codex → implemented FG3 playtest blockers: sanitized `POST /turns` `context_excerpt`, replaced generic opening actions with Relay 19 actions, renamed Mara's active role label to `Guerrilla Technician`, verified backend/frontend/Docker/Playwright smoke, and prepared cross-agent handoff.
 
 ## Verification on completion
 
