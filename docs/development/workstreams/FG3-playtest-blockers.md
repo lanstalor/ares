@@ -77,8 +77,12 @@ Run the FG1 Intro Scenario plus First Meaningful Turn HITL pass from PR #15 with
 
 ## Gemini CLI Resume Prompt
 
+Use this if Gemini is entering the project blind and should rely only on repo state:
+
 ```text
 Continue work in /home/lans/ares.
+
+Assume you have no useful chat history. Read only the repo docs and current git state.
 
 Read in this order:
 1. GEMINI.md or CLAUDE.md
@@ -86,7 +90,8 @@ Read in this order:
 3. docs/development/master-plan.md
 4. docs/development/workstreams/FG3-playtest-blockers.md
 
-Use branch focus-group/new-protagonist-intro and PR #15:
+Current branch: focus-group/new-protagonist-intro
+PR #15:
 https://github.com/lanstalor/ares/pull/15
 
 Latest blocker patch commit: 174cdd1.
