@@ -73,6 +73,7 @@ None currently recorded. Add rows only for real external blockers, not general u
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-05-11 | FG1, FG2, FG3: Focus Group | Blockers patched, hardening verified, HITL playtest simulated successfully. Merged to main. |
 | 2026-05-06 | A3: Conditions + status effects | ConditionType enum, Condition model + migration, ConditionService, consequence integration, turn-triggered ticking, ParticipantStrip rendering with color-coded chips, 70+ tests, 215 total passing |
 | 2026-05-06 | B3: NPC portrait generation | NpcPortrait model + service, eager generation on NPC creation, lazy generation on first appearance, operator regenerate endpoint, MediaProvider integration, frontend lazy-load with initials fallback |
 | 2026-05-06 | C2: Operator React app | Separate /admin route with token-gating, sidebar nav, entity editors (Campaign, Objectives, Clocks, Secrets, NPCs), reusable table/modal components |
