@@ -28,7 +28,7 @@ Seeded smoke campaign:
 - Campaign ID: `148bf7fa-8f5f-48ce-8fa3-c43eb03543fc`
 - Campaign name: `FG1 Docker Smoke 2026-05-09`
 - Player: `Mara of Cimmeria`
-- Race/class: `HighRed`, `Howler (Guerrilla subclass)`
+- Race/class: `HighRed`, `Guerrilla Technician`
 - Location: `Surface Relay Tower 19`
 - Objective: `Recover the ghost packet from Relay 19`
 - HP / cover: `40/40`, cover integrity `8`

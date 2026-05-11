@@ -11,6 +11,10 @@ from app.services.turn_engine import resolve_turn
 router = APIRouter()
 
 
+def _player_safe_context_excerpt(player_safe_summary: str | None) -> str:
+    return player_safe_summary or "Turn resolved. No player-safe summary was provided."
+
+
 @router.get("/{campaign_id}/turns", response_model=list[TurnRead])
 def list_turns(
     campaign_id: str,
@@ -63,7 +67,7 @@ def create_turn(campaign_id: str, payload: TurnCreate, session: SessionDep) -> T
 
     return TurnResolution(
         turn=turn,
-        context_excerpt=result.context_excerpt,
+        context_excerpt=_player_safe_context_excerpt(result.player_safe_summary),
         canon_guard_passed=result.canon_guard_passed,
         canon_guard_message=result.canon_guard_message,
         clocks_fired=result.clocks_fired,

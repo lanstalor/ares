@@ -587,7 +587,7 @@ export default function App() {
   const inferredSceneTone = deriveSceneTone({ campaignState, selectedCampaign, turns });
   const sceneTone = manualSceneTone === "auto" ? inferredSceneTone : manualSceneTone;
   const participants = buildSceneParticipants({ campaignState, gmSceneParticipants, selectedCampaign, sceneTone });
-  const staticPresets = buildActionPresets(sceneTone);
+  const staticPresets = buildActionPresets(sceneTone, { campaignState, selectedCampaign });
   const activeActions = suggestedActions.length
     ? suggestedActions.map((a, i) => ({ id: `gm-${i}`, key: String(i + 1), icon: "→", ...a }))
     : staticPresets;

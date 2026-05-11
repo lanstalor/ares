@@ -49,6 +49,41 @@ def test_create_turn_persists_response(monkeypatch) -> None:
     assert len(state.recent_turns) == 1
 
 
+def test_create_turn_context_excerpt_does_not_leak_hidden_state(monkeypatch) -> None:
+    monkeypatch.setenv("ARES_GENERATION_PROVIDER", "stub")
+    get_settings.cache_clear()
+    session = _make_session()
+    campaign = create_campaign(CampaignCreate(name="Leak Test"), session)
+    character = get_campaign_state(campaign.id, session).player_character
+    assert character is not None
+
+    session.add(
+        Condition(
+            campaign_id=campaign.id,
+            character_id=character.id,
+            condition_type="ident_flagged",
+            duration_remaining=5,
+            persistence="persistent",
+            source="checkpoint slate",
+        )
+    )
+    session.commit()
+
+    resolution = create_turn(
+        campaign.id,
+        TurnCreate(player_input="Pull the packet before the scrub."),
+        session,
+    )
+    payload = resolution.model_dump_json()
+
+    assert resolution.context_excerpt == resolution.turn.player_safe_summary
+    assert "ident_flagged" not in payload
+    assert "Active conditions" not in payload
+    assert "Active clocks" not in payload
+    assert "[GM-only context" not in payload
+    assert "Opening pressure clocks" not in payload
+
+
 def test_player_state_filters_gm_only_conditions_but_operator_state_keeps_them() -> None:
     session = _make_session()
     campaign = create_campaign(CampaignCreate(name="Condition Visibility Test"), session)

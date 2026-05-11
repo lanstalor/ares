@@ -59,7 +59,7 @@ def create_campaign(payload: CampaignCreate, session: SessionDep) -> Campaign:
             campaign_id=campaign.id,
             name="Mara of Cimmeria",
             race="HighRed",
-            character_class="Howler",
+            character_class="Guerrilla Technician",
             cover_identity="Mara of Cimmeria",
             current_hp=40,
             max_hp=40,

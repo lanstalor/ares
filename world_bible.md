@@ -407,13 +407,13 @@ Elite clawDrill operators. Not soldiers — something older and more reckless.
 
 -----
 
-### Howler *(HighRed primary)*
+### Guerrilla Technician *(HighRed primary)*
 
-HighRed rebel leader. Leads through charisma and tactical brilliance, not individual combat.
-**Hit Dice:** d8 | **Primary:** CHA > DEX > WIS
-**Core abilities:** Rally (grant allies advantage on next action), Sabotage (disable infrastructure), Propaganda (spread misinformation through HoloCan), Inspire Rebellion (faction rep gain with lowColors), Fade (disengage from pursuit without trace).
-**Resource:** Morale — depleted by losses, replenished by victories.
-**Subclasses:** Agitator (propaganda/recruitment), Guerrilla (hit-and-run), Foxhole (defensive ops/safe houses).
+HighRed rebel field specialist. Keeps cover through useful work, then turns trusted systems against the Society.
+**Hit Dice:** d8 | **Primary:** DEX > WIS > CHA
+**Core abilities:** Rally (grant allies advantage on next action), Sabotage (disable infrastructure), Signal Mask (hide rebel traffic inside routine relay noise), Worker Cover (deflect suspicion through plausible maintenance), Fade (disengage from pursuit through service routes).
+**Resource:** Cover — strained by visible sabotage, replenished by plausible repairs and crew support.
+**Subclasses:** Relay Technician (comms/sensors), Agitator (propaganda/recruitment), Foxhole (defensive ops/safe houses).
 
 -----
 
@@ -986,7 +986,7 @@ A 400-meter iron-nickel asteroid in the Drift’s outer arc. Single pressurized 
 
 ### Mara of Cimmeria
 
-**Race:** HighRed | **Class:** Howler (Guerrilla subclass) | **Faction:** Sons of Ares | **Level:** 3
+**Race:** HighRed | **Class:** Guerrilla Technician | **Faction:** Sons of Ares | **Level:** 3
 
 **Cover Identity:**
 
@@ -1022,7 +1022,7 @@ HP: 40 | AC: 13 | Speed: 30 ft | Hit Dice: d8
 
 **Proficiencies:** Athletics, Stealth, Perception, Survival, Insight, Engineering, relay maintenance tools, pressure-suit repair, simple weapons, light blades
 
-**Class Features (Howler — Guerrilla):**
+**Class Features (Guerrilla Technician):**
 
 - Surface-Bred (advantage navigating exterior maintenance routes, low gravity, and vacuum-adjacent hazards)
 - Sabotage (disable or reroute infrastructure with tools and time)

@@ -72,7 +72,7 @@ export function createDevUiSnapshot() {
         campaign_id: primaryCampaignId,
         name: "Mara of Cimmeria",
         race: "HighRed",
-        character_class: "Howler",
+        character_class: "Guerrilla Technician",
         cover_identity: "Mara of Cimmeria",
         current_hp: 40,
         max_hp: 40,

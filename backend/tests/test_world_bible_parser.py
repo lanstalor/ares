@@ -26,6 +26,7 @@ def test_parse_world_bible_extracts_primary_sections() -> None:
     assert seed.player_character is not None
     assert seed.player_character.name == "Mara of Cimmeria"
     assert seed.player_character.race == "HighRed"
+    assert seed.player_character.character_class == "Guerrilla Technician"
     assert seed.player_character.max_hp == 40
     assert seed.campaign_opening is not None
     assert "Surface Relay Tower 19" in seed.campaign_opening.opening_message

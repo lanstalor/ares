@@ -134,7 +134,55 @@ export function buildSceneParticipants({ campaignState, gmSceneParticipants, sel
   return [player, ...gmNpcs, systemParticipant].filter(Boolean);
 }
 
-export function buildActionPresets(sceneTone) {
+function isRelay19Opening({ campaignState, selectedCampaign } = {}) {
+  const text = [
+    selectedCampaign?.name,
+    selectedCampaign?.tagline,
+    selectedCampaign?.current_location_label,
+    campaignState?.current_location,
+    campaignState?.active_objective,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return text.includes("relay 19") || text.includes("ghost packet");
+}
+
+export function buildActionPresets(sceneTone, context = {}) {
+  if (isRelay19Opening(context)) {
+    return [
+      {
+        id: "run-cold-pull",
+        key: "1",
+        label: "Run Cold Pull",
+        icon: "++",
+        prompt: "I run a cold pull on the relay buffer and extract the ghost packet before the scrub can touch it.",
+      },
+      {
+        id: "loop-suit-cam",
+        key: "2",
+        label: "Loop Suit Cam",
+        icon: "//",
+        prompt: "I loop my suit-cam feed for ten seconds and make the blackout look like radiation scatter.",
+      },
+      {
+        id: "ask-oran",
+        key: "3",
+        label: "Ask Oran",
+        icon: "[]",
+        prompt: "I ask Oran for a routine maintenance callout that will cover the next move without exposing him.",
+      },
+      {
+        id: "fake-coupling-report",
+        key: "4",
+        label: "Fake Coupling Report",
+        icon: "--",
+        prompt: "I file a fake coupling fault report and route Pelsin's diagnostic attention away from the carrier buffer.",
+      },
+    ];
+  }
+
   if (sceneTone === "gold") {
     return [
       { id: "petition", key: "1", label: "Petition", icon: "[]", prompt: "I make a controlled, formal appeal and ask what this authority wants from us." },
