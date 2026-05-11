@@ -33,7 +33,7 @@ Verification at this commit:
 
 ## In-flight WIP
 
-`clean after commit` — blocker patch complete and ready for the First Meaningful Turn HITL pass.
+`clean after commit` — HITL pass complete, report generated. Ready for PR #15 merge.
 
 ## Files touched so far
 

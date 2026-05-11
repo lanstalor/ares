@@ -12,9 +12,9 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
-| FG3 | `focus-group/new-protagonist-intro` | `~/ares` | Codex | review | Playtest blockers patched; run FG1 Intro Scenario plus First Meaningful Turn HITL and log notes under `docs/development/ux-tests/`. |
-| FG2 | `groom/fg-focus-group-hardening` | `~/ares` | Codex | review | Hardening verified and fast-forwarded into PR #15; run HITL. |
-| FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Codex | review | Draft PR #15 open; run the FG1 Intro Scenario with a human player. |
+| FG3 | `focus-group/new-protagonist-intro` | `~/ares` | Gemini | ready | HITL simulation complete, PR #15 ready to merge. |
+| FG2 | `groom/fg-focus-group-hardening` | `~/ares` | Gemini | ready | Hardening verified; PR #15 ready to merge. |
+| FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Gemini | ready | HITL simulation complete; PR #15 ready to merge. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
