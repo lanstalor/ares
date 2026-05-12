@@ -133,6 +133,7 @@ def resolve_turn(
     if narration.narrative_summary_update:
         campaign.narrative_summary = narration.narrative_summary_update
     _apply_combat_state_change(campaign, narration)
+    session.flush()
 
     canon_guard_passed, canon_guard_message = evaluate_canon_guard(narration.narrative)
 
@@ -202,11 +203,7 @@ def _apply_combat_state_change(campaign: Campaign, narration) -> None:
         return
 
     if campaign.combat_state and campaign.combat_state.get("active"):
-        # Round progression: each player input represents one full round.
-        campaign.combat_state["round"] = int(campaign.combat_state.get("round", 1)) + 1
-
-        if narration.damage_summary:
-            campaign.combat_state["last_damage"] = narration.damage_summary
+        current = campaign.combat_state
 
         # Mark defeated from scene_participants HP.
         defeated_names = {
@@ -216,13 +213,18 @@ def _apply_combat_state_change(campaign: Campaign, narration) -> None:
             and p.get("current_hp") is not None
             and int(p["current_hp"]) <= 0
         }
-        if defeated_names:
-            for entry in campaign.combat_state["initiative_order"]:
-                if entry["name"] in defeated_names:
-                    entry["defeated"] = True
+        updated_order = [
+            {**entry, "defeated": True} if entry["name"] in defeated_names else dict(entry)
+            for entry in current.get("initiative_order", [])
+        ]
 
-        # SQLAlchemy JSON columns don't auto-detect in-place mutations.
-        campaign.combat_state = dict(campaign.combat_state)
+        # Build a fresh dict so SQLAlchemy detects the change on assignment.
+        campaign.combat_state = {
+            **current,
+            "round": int(current.get("round", 1)) + 1,
+            "last_damage": narration.damage_summary if narration.damage_summary else current.get("last_damage", ""),
+            "initiative_order": updated_order,
+        }
 
     if change and change.get("action") == "exit":
         campaign.combat_state = None

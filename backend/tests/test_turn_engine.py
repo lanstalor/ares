@@ -460,3 +460,85 @@ def test_resolve_turn_enters_combat() -> None:
     assert order[1]["is_player"] is True
     assert campaign.combat_state["last_damage"] == ""
     assert "started_at_iso" in campaign.combat_state
+
+
+def test_resolve_turn_progresses_combat_round() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    campaign.combat_state = {
+        "active": True,
+        "round": 1,
+        "initiative_order": [
+            {"name": "Gray Sergeant", "is_player": False, "initiative_score": 8, "defeated": False},
+            {"name": "Mara", "is_player": True, "initiative_score": 5, "defeated": False},
+        ],
+        "last_damage": "",
+        "started_at_iso": "2026-05-12T00:00:00+00:00",
+    }
+    session.commit()
+
+    from app.services.ai_provider import NarrationResponse
+    from app.services.consequence_applier import Consequences
+    from app.services.turn_engine import resolve_turn
+
+    class _Stub:
+        def narrate(self, request):
+            return NarrationResponse(
+                narrative="Mara dodges, Gray swings.",
+                player_safe_summary="Trade blows.",
+                consequences=Consequences(),
+                scene_state={"tension_tier": 4, "key_holdings": "blade live", "last_concrete_change": "Mara hit"},
+                damage_summary="Mara took 4 from the slingblade",
+            )
+        def clarify(self, request):
+            return ""
+
+    resolve_turn(session=session, campaign=campaign, player_input="dodge", narration_provider=_Stub())
+
+    session.refresh(campaign)
+    assert campaign.combat_state["round"] == 2
+    assert campaign.combat_state["last_damage"] == "Mara took 4 from the slingblade"
+
+
+def test_resolve_turn_marks_defeated_from_scene_participants() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    campaign.combat_state = {
+        "active": True,
+        "round": 2,
+        "initiative_order": [
+            {"name": "Gray Sergeant", "is_player": False, "initiative_score": 8, "defeated": False},
+            {"name": "Mara", "is_player": True, "initiative_score": 5, "defeated": False},
+            {"name": "Obsidian Guard", "is_player": False, "initiative_score": 3, "defeated": False},
+        ],
+        "last_damage": "",
+        "started_at_iso": "2026-05-12T00:00:00+00:00",
+    }
+    session.commit()
+
+    from app.services.ai_provider import NarrationResponse
+    from app.services.consequence_applier import Consequences
+    from app.services.turn_engine import resolve_turn
+
+    class _Stub:
+        def narrate(self, request):
+            return NarrationResponse(
+                narrative="Gray drops.",
+                player_safe_summary="Gray defeated.",
+                consequences=Consequences(),
+                scene_state={"tension_tier": 3, "key_holdings": "Mara standing", "last_concrete_change": "Gray down"},
+                scene_participants=[
+                    {"name": "Gray Sergeant", "caste": "Gray", "role": "guard", "disposition": "hostile", "current_hp": 0, "max_hp": 12},
+                    {"name": "Obsidian Guard", "caste": "Obsidian", "role": "muscle", "disposition": "hostile", "current_hp": 8, "max_hp": 14},
+                ],
+            )
+        def clarify(self, request):
+            return ""
+
+    resolve_turn(session=session, campaign=campaign, player_input="attack", narration_provider=_Stub())
+
+    session.refresh(campaign)
+    order = {p["name"]: p for p in campaign.combat_state["initiative_order"]}
+    assert order["Gray Sergeant"]["defeated"] is True
+    assert order["Obsidian Guard"]["defeated"] is False
+    assert order["Mara"]["defeated"] is False
