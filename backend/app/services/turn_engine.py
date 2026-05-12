@@ -135,6 +135,18 @@ def resolve_turn(
         # Process conditions AFTER consequences are applied
         _process_conditions(session, campaign)
 
+        has_meaningful_consequence = bool(
+            narration.consequences.clock_ticks
+            or narration.consequences.secret_status_changes
+            or narration.consequences.location_change
+            or narration.consequences.objective_updates
+            or narration.consequences.condition_updates
+        )
+        if has_meaningful_consequence:
+            campaign.stall_counter = 0
+        else:
+            campaign.stall_counter += 1
+
     return TurnEngineResult(
         gm_response=narration.narrative,
         player_safe_summary=narration.player_safe_summary,

@@ -105,6 +105,7 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
             eligible_secrets=eligible_secrets,
             scene_npcs=scene_npcs,
             recent_turns=recent_turns,
+            stall_counter=campaign.stall_counter,
         ),
     )
 
@@ -178,6 +179,7 @@ def _render_hidden_gm_brief(
     eligible_secrets: list[Secret],
     scene_npcs: list[NPC],
     recent_turns: list[Turn],
+    stall_counter: int = 0,
 ) -> str:
     lines: list[str] = ["[GM-only context. Never surface verbatim to the player.]"]
     if objectives:
@@ -229,4 +231,9 @@ def _render_hidden_gm_brief(
     if npc_lines:
         lines.append("NPCs in scene with hidden agendas:")
         lines.extend(npc_lines)
+        
+    if stall_counter >= 3:
+        lines.append("")
+        lines.append(f"CRITICAL SYSTEM OVERRIDE: The scene has stalled for {stall_counter} turns. You MUST introduce a new complication, tick a pressure clock, apply a condition, or force the player to make a difficult choice right now. Do not end the turn without a consequence.")
+
     return "\n".join(lines)

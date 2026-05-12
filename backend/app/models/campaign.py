@@ -13,6 +13,7 @@ class Campaign(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     current_date_pce: Mapped[int] = mapped_column(Integer, default=728)
     hidden_state_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
     current_location_label: Mapped[str | None] = mapped_column(String(255))
+    stall_counter: Mapped[int] = mapped_column(Integer, default=0)
 
     objectives: Mapped[list["Objective"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
     clocks: Mapped[list["Clock"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")

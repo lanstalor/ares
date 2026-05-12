@@ -29,15 +29,18 @@ Test status at this commit:
 
 ## In-flight WIP
 
-`clean` — no uncommitted edits.
+`clean` — fully implemented, tested, and playtester verified. Ready for PR.
 
 ## Files touched so far
 
-- `backend/app/services/turn_engine.py` — ⚠️ evaluating for stall tracking logic.
+- `backend/app/models/campaign.py` — ✅ Added stall_counter.
+- `backend/alembic/versions/` — ✅ Generated and fixed migration.
+- `backend/app/services/turn_engine.py` — ✅ Added consequence evaluation and counter logic.
+- `backend/app/services/context_builder.py` — ✅ Added critical prompt injection when stall_counter >= 3.
 
 ## Next concrete step
 
-Investigate `backend/app/services/turn_engine.py` and the existing prompt structure to design the stall tracking mechanism (e.g., counting turns without consequences).
+Create a PR for `carryover/anti-stall-safeguards`.
 
 ## Open questions / blockers
 
