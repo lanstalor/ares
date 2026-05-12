@@ -347,3 +347,37 @@ def test_hidden_brief_includes_repeated_phrase_banlist() -> None:
 
     assert "Banned phrases this scene" in ctx.hidden_gm_brief
     assert "hands where i can see them" in ctx.hidden_gm_brief
+
+
+def test_older_turns_use_player_safe_summary() -> None:
+    session = _make_session()
+    from datetime import datetime, timedelta, timezone
+    from app.models.campaign import Campaign
+    from app.models.memory import Turn
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.flush()
+
+    long_response = "FULL_GM_TEXT_" + ("x" * 1000)
+    base_time = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    for i in range(8):
+        turn = Turn(
+            campaign_id=campaign.id,
+            player_input=f"player_action_{i}",
+            gm_response=f"{long_response}_{i}",
+            player_safe_summary=f"summary_for_turn_{i}",
+        )
+        turn.created_at = base_time + timedelta(seconds=i)
+        session.add(turn)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "next action")
+
+    # Last 3 turns (5, 6, 7) should use full text
+    assert "FULL_GM_TEXT_" in ctx.player_safe_brief
+    assert "summary_for_turn_7" not in ctx.player_safe_brief
+
+    # Older turns (0–4) should use player_safe_summary
+    assert "summary_for_turn_0" in ctx.player_safe_brief
+    assert "summary_for_turn_3" in ctx.player_safe_brief
