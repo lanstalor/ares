@@ -316,3 +316,105 @@ def test_turn_engine_skips_location_change_when_canon_guard_fails() -> None:
     assert result.canon_guard_passed is False
     assert result.location_changed_to is None
     assert campaign.current_location_label == original_location
+
+
+def test_resolve_turn_persists_scene_state() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    from app.services.ai_provider import NarrationResponse
+    from app.services.consequence_applier import Consequences
+    from app.services.turn_engine import resolve_turn
+
+    class _Stub:
+        def narrate(self, request):
+            return NarrationResponse(
+                narrative="Gray drew the wand.",
+                player_safe_summary="Gray drew wand.",
+                consequences=Consequences(),
+                scene_state={
+                    "tension_tier": 3,
+                    "key_holdings": "Mara holds strip; Gray holds wand",
+                    "last_concrete_change": "Gray escalated to drawn weapon",
+                },
+            )
+        def clarify(self, request):
+            return ""
+
+    resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="reach for it",
+        narration_provider=_Stub(),
+    )
+
+    session.refresh(campaign)
+    assert campaign.last_scene_state == {
+        "tension_tier": 3,
+        "key_holdings": "Mara holds strip; Gray holds wand",
+        "last_concrete_change": "Gray escalated to drawn weapon",
+    }
+
+
+def test_resolve_turn_persists_narrative_summary_update() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    from app.services.ai_provider import NarrationResponse
+    from app.services.consequence_applier import Consequences
+    from app.services.turn_engine import resolve_turn
+
+    class _Stub:
+        def narrate(self, request):
+            return NarrationResponse(
+                narrative="x",
+                player_safe_summary="y",
+                consequences=Consequences(),
+                scene_state={"tension_tier": 1, "key_holdings": "", "last_concrete_change": "z"},
+                narrative_summary_update="Mara escaped Surface Relay 19 with the strip and went to ground in the lower berths.",
+            )
+        def clarify(self, request):
+            return ""
+
+    resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="flee",
+        narration_provider=_Stub(),
+    )
+
+    session.refresh(campaign)
+    assert "Mara escaped" in (campaign.narrative_summary or "")
+
+
+def test_resolve_turn_preserves_summary_when_no_update() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    campaign.narrative_summary = "Pre-existing arc."
+    session.commit()
+
+    from app.services.ai_provider import NarrationResponse
+    from app.services.consequence_applier import Consequences
+    from app.services.turn_engine import resolve_turn
+
+    class _Stub:
+        def narrate(self, request):
+            return NarrationResponse(
+                narrative="x",
+                player_safe_summary="y",
+                consequences=Consequences(),
+                scene_state={"tension_tier": 0, "key_holdings": "", "last_concrete_change": "tick"},
+                narrative_summary_update=None,
+            )
+        def clarify(self, request):
+            return ""
+
+    resolve_turn(
+        session=session,
+        campaign=campaign,
+        player_input="wait",
+        narration_provider=_Stub(),
+    )
+
+    session.refresh(campaign)
+    assert campaign.narrative_summary == "Pre-existing arc."

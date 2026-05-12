@@ -127,6 +127,11 @@ def resolve_turn(
         )
     )
 
+    if narration.scene_state is not None:
+        campaign.last_scene_state = narration.scene_state
+    if narration.narrative_summary_update:
+        campaign.narrative_summary = narration.narrative_summary_update
+
     canon_guard_passed, canon_guard_message = evaluate_canon_guard(narration.narrative)
 
     consequence_result = ConsequenceResult(clocks_fired=[], location_changed_to=None)
