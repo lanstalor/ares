@@ -175,6 +175,7 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
             stall_counter=campaign.stall_counter,
             last_scene_state=campaign.last_scene_state,
             narrative_summary=campaign.narrative_summary,
+            combat_state=campaign.combat_state,
         ),
     )
 
@@ -267,6 +268,7 @@ def _render_hidden_gm_brief(
     stall_counter: int = 0,
     last_scene_state: dict | None = None,
     narrative_summary: str | None = None,
+    combat_state: dict | None = None,
 ) -> str:
     lines: list[str] = ["[GM-only context. Never surface verbatim to the player.]"]
     if last_scene_state:
@@ -276,6 +278,24 @@ def _render_hidden_gm_brief(
         lines.append(f"  Last concrete change: {last_scene_state.get('last_concrete_change', '')}")
         lines.append(
             "  The next turn must move the scene beyond this state — change holdings, raise/lower tension tier through fiction, or name a new concrete change."
+        )
+
+    if combat_state and combat_state.get("active"):
+        lines.append("Combat state (live):")
+        lines.append(f"  Round: {combat_state.get('round', 1)}")
+        lines.append("  Initiative order:")
+        for entry in combat_state.get("initiative_order", []):
+            marker = " [PLAYER]" if entry.get("is_player") else ""
+            defeated = " [defeated]" if entry.get("defeated") else ""
+            lines.append(
+                f"    - {entry['name']} (init {entry['initiative_score']}){marker}{defeated}"
+            )
+        last_damage = combat_state.get("last_damage")
+        if last_damage:
+            lines.append(f"  Last damage: {last_damage}")
+        lines.append(
+            "  Rules: narrate this round in initiative order; pause before the player's next turn; "
+            "emit damage_summary if a hit lands; emit combat_state_change.action='exit' when the fight resolves."
         )
 
     if narrative_summary:

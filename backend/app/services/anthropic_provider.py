@@ -46,6 +46,17 @@ Scene change discipline:
 - When the player takes a bold or disruptive action — grabbing a contested object, drawing a weapon, fleeing, lying overtly, breaking cover, throwing the proverbial stick of dynamite — the resulting power state is the NEW GROUND TRUTH. Do not narrate an NPC instantly undoing it or restoring the prior standoff. The next pressure must come from a different angle: a new consequence, a third party arriving, an environmental shift, the player's action succeeding in a way that creates a worse problem. Never a reset to the previous tension geometry.
 - The hidden GM brief contains a structural "Scene state at start of this turn" block (tension_tier, key_holdings, last_concrete_change). Your turn must move that state. You also emit your own updated scene_state via the tool — it must reflect what actually changed in your narration, not what you wished had changed.
 
+Combat mode:
+- Enter combat (emit combat_state_change.action='enter' with initiative_rolls) when narrative tension crosses into open violence: a drawn weapon connects, an ambush triggers, a formal duel begins, an attack of opportunity lands. Initiative is d6 + Cunning modifier per combatant. Include the player and every named NPC who is fighting.
+- While combat is active, every response narrates ONE COMPLETE ROUND in initiative order, pausing at the moment immediately before the player would act again. If NPCs have higher initiative than the player, narrate their next-round actions in the same response.
+- The hidden brief contains a "Combat state (live)" block with the live initiative order, round, and last damage line. Narrate participants in that exact order. Do not skip turns. Do not reorder.
+- HP IS MANDATORY DURING COMBAT. The "omit HP unless pre-seeded" rule from the scene_participants instruction is SUSPENDED while combat_state.active is true. Every combatant in scene_participants — pre-seeded or invented this turn — MUST include numeric max_hp and current_hp on every combat turn. No exceptions. If you narrate a Gray getting hit, his scene_participants entry has numeric current_hp lower than last turn. If you introduce a new combatant mid-fight, give them max_hp and current_hp on their first appearance. Threat scale for inventing HP: 6–10 for fragile civilians, 10–16 for trained guards (most Grays), 16–24 for elite soldiers (Obsidian, decorated officers), 24+ for Praetorians and Peerless Scarred. The player character's HP comes from the player-safe brief; never invent it.
+- DAMAGE_SUMMARY IS MANDATORY ON HIT TURNS. If your narration describes any combatant taking damage this turn, you MUST emit damage_summary as one short line (e.g. "Mara took 8 from the slingblade", "Varek bled out from the throat-cut"). Silence on damage_summary while narrating wounds is a rule violation. Apply mechanical conditions (bleeding, wounded, prone, etc.) via condition_updates as appropriate.
+- The defeated flag in initiative_order is auto-set when current_hp ≤ 0. If you have killed a combatant, set their current_hp to 0 in scene_participants this turn so the UI marks them down.
+- Exit combat (emit combat_state_change.action='exit' with a one-line reason) when one side is defeated, retreats, surrenders, or a third party stops the fight. The player reaching 0 HP also exits combat — narrate the result (KO, capture, death) according to the fiction, but always exit the combat state.
+- The "first sentence names what changed" rule applies doubly in combat: lead with the most consequential beat of the round (a hit, a fall, a turn of momentum), not the initiative ordering or a recap.
+- Combat narration is not exempt from the stock-phrase banlist. Find fresh language for hits, misses, and physical positioning.
+
 Stock phrase banlist (do not use these unmodified — they are dead from overuse):
 - "hands where I can see them" (or any close variant)
 - "keep your/my hands open"
@@ -330,6 +341,35 @@ _TOOL_SCHEMA = {
             "narrative_summary_update": {
                 "type": "string",
                 "description": "Optional. Emit ONLY when a major arc event occurred (objective completed, location changed, secret revealed, significant NPC shift). 2–4 sentences, past tense, third person from the player's perspective, no hidden state. Overwrites the campaign's rolling story-so-far summary.",
+            },
+            "combat_state_change": {
+                "type": "object",
+                "description": "Emit when combat status changes this turn. Omit when unchanged.",
+                "properties": {
+                    "action": {"type": "string", "enum": ["enter", "exit"]},
+                    "initiative_rolls": {
+                        "type": "array",
+                        "description": "Required when action='enter'. Player + all combatant NPCs. Initiative score is d6 + Cunning modifier.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "is_player": {"type": "boolean"},
+                                "initiative_score": {"type": "integer", "minimum": 1, "maximum": 20},
+                            },
+                            "required": ["name", "is_player", "initiative_score"],
+                        },
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Required when action='exit'. One-line cause: defeated, retreated, surrendered, de-escalated, third-party intervention.",
+                    },
+                },
+                "required": ["action"],
+            },
+            "damage_summary": {
+                "type": "string",
+                "description": "Optional one-line hit-log entry during combat. Example: 'Mara took 8 from the slingblade'. Emit only when damage actually landed.",
             },
         },
         "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants", "scene_state"],
@@ -626,6 +666,14 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
         raw_summary_update.strip() if isinstance(raw_summary_update, str) and raw_summary_update.strip() else None
     )
 
+    raw_combat = tool_input.get("combat_state_change")
+    combat_state_change = raw_combat if isinstance(raw_combat, dict) else None
+
+    raw_damage = tool_input.get("damage_summary")
+    damage_summary = (
+        raw_damage.strip() if isinstance(raw_damage, str) and raw_damage.strip() else None
+    )
+
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
@@ -634,6 +682,8 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
         rolls=rolls,
         scene_state=scene_state,
         narrative_summary_update=narrative_summary_update,
+        combat_state_change=combat_state_change,
+        damage_summary=damage_summary,
         consequences=Consequences(
             clock_ticks=[
                 ClockTick(label=item["label"], delta=int(item.get("delta", 1)))

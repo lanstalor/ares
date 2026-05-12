@@ -6,6 +6,7 @@ import { IntroOverlay } from "./components/IntroOverlay";
 import { ParticipantStrip } from "./components/ParticipantStrip";
 import { PlayerInput } from "./components/PlayerInput";
 import { SceneBackdrop } from "./components/SceneBackdrop";
+import { CombatPanel } from "./components/CombatPanel";
 import { StatusPanel } from "./components/StatusPanel";
 import { TurnFeed } from "./components/TurnFeed";
 import { AssetOverlay } from "./components/AssetOverlay";
@@ -839,6 +840,11 @@ export default function App() {
             <span>Runtime</span>
             <strong>{selectedCampaign ? "Live" : "Standby"}</strong>
           </div>
+          {campaignState?.combat_state?.active ? (
+            <span className="topbar-combat-badge" title="Combat in progress">
+              ⚔ COMBAT — R{campaignState.combat_state.round}
+            </span>
+          ) : null}
           <button className="secondary-button scene-tone-button" onClick={handleCycleSceneTone} type="button">
             Tone: {manualSceneTone}
           </button>
@@ -913,6 +919,10 @@ export default function App() {
             selectedCampaign={selectedCampaign}
             shellReadiness={shellReadiness}
             systemStatus={systemStatus}
+          />
+          <CombatPanel
+            combatState={campaignState?.combat_state}
+            participants={participants}
           />
 
           <section className="presence-bar">

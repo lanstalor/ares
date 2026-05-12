@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -131,6 +132,8 @@ def resolve_turn(
         campaign.last_scene_state = narration.scene_state
     if narration.narrative_summary_update:
         campaign.narrative_summary = narration.narrative_summary_update
+    _apply_combat_state_change(campaign, narration)
+    session.flush()
 
     canon_guard_passed, canon_guard_message = evaluate_canon_guard(narration.narrative)
 
@@ -165,3 +168,63 @@ def resolve_turn(
         revealed_secrets=consequence_result.revealed_secrets,
         rolls=narration.rolls,
     )
+
+
+def _apply_combat_state_change(campaign: Campaign, narration) -> None:
+    """Apply combat lifecycle changes emitted by the GM this turn.
+
+    Handles: enter (build state), progression (increment round, persist damage,
+    mark defeated), and exit (clear state).
+    """
+    change = narration.combat_state_change
+
+    if change and change.get("action") == "enter":
+        rolls = change.get("initiative_rolls") or []
+        sorted_rolls = sorted(
+            rolls,
+            key=lambda r: int(r.get("initiative_score", 0)),
+            reverse=True,
+        )
+        campaign.combat_state = {
+            "active": True,
+            "round": 1,
+            "initiative_order": [
+                {
+                    "name": r["name"],
+                    "is_player": bool(r.get("is_player", False)),
+                    "initiative_score": int(r["initiative_score"]),
+                    "defeated": False,
+                }
+                for r in sorted_rolls
+            ],
+            "last_damage": "",
+            "started_at_iso": datetime.now(timezone.utc).isoformat(),
+        }
+        return
+
+    if campaign.combat_state and campaign.combat_state.get("active"):
+        current = campaign.combat_state
+
+        # Mark defeated from scene_participants HP.
+        defeated_names = {
+            p["name"]
+            for p in (narration.scene_participants or [])
+            if isinstance(p, dict)
+            and p.get("current_hp") is not None
+            and int(p["current_hp"]) <= 0
+        }
+        updated_order = [
+            {**entry, "defeated": True} if entry["name"] in defeated_names else dict(entry)
+            for entry in current.get("initiative_order", [])
+        ]
+
+        # Build a fresh dict so SQLAlchemy detects the change on assignment.
+        campaign.combat_state = {
+            **current,
+            "round": int(current.get("round", 1)) + 1,
+            "last_damage": narration.damage_summary if narration.damage_summary else current.get("last_damage", ""),
+            "initiative_order": updated_order,
+        }
+
+    if change and change.get("action") == "exit":
+        campaign.combat_state = None

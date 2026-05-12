@@ -4808,3 +4808,86 @@ textarea::-webkit-scrollbar-thumb {
 .condition-panicked {
   background-color: #ff0066;
 }
+
+.combat-panel {
+  border: 1px solid #5a2424;
+  background: rgba(28, 8, 8, 0.85);
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  font-family: "VT323", monospace;
+  color: #f3e6d6;
+}
+.combat-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.combat-panel-badge {
+  color: #ff6b4a;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+.combat-panel-round {
+  font-size: 1.1rem;
+}
+.combat-initiative {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.combat-initiative-row {
+  display: grid;
+  grid-template-columns: 1fr auto 80px auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.2rem 0;
+  border-bottom: 1px dashed rgba(243, 230, 214, 0.15);
+}
+.combat-initiative-row.is-player {
+  background: rgba(255, 200, 80, 0.08);
+  border-left: 3px solid #ffc850;
+  padding-left: 0.4rem;
+}
+.combat-initiative-row.is-defeated {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+.combat-initiative-score {
+  color: #b89876;
+  font-size: 0.9rem;
+}
+.combat-initiative-hp {
+  display: block;
+  width: 80px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.combat-initiative-hp-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #ff5252, #ff8a4a);
+  transition: width 0.4s ease;
+}
+.combat-initiative-defeated {
+  color: #ff6b4a;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+.combat-last-damage {
+  margin: 0.5rem 0 0;
+  font-style: italic;
+  color: #ffb380;
+}
+.topbar-combat-badge {
+  background: rgba(255, 80, 50, 0.2);
+  color: #ff8a4a;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid #5a2424;
+  border-radius: 3px;
+  font-family: "VT323", monospace;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}

@@ -105,6 +105,7 @@ def get_campaign_state(campaign_id: str, session: SessionDep) -> CampaignState:
         player_character=_player_facing_character(latest_character),
         scene_art=scene_art,
         hidden_state_summary="Hidden state remains server-only.",
+        combat_state=campaign.combat_state,
     )
 
 
