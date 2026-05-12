@@ -6,33 +6,25 @@
 
 ## Latest Session Summary
 
-Date: 2026-05-07
+Date: 2026-05-12
 
-### ✅ A3: Conditions System Completed
+### 🔄 Anti-Stall Safeguards (In Progress)
 
-**Delivered:**
-- **A3: Conditions + Status Effects** (ready to merge)
-  - ConditionType enum (9 types: bleeding, poisoned, ident_flagged, wounded, exhausted, stunned, disarmed, prone, panicked).
-  - Condition model + Alembic migration (campaign/character FK, duration tracking, source attribution).
-  - ConditionService (apply, remove, tick, query).
-  - Consequence integration: `ConditionUpdate` consequences → automatic application.
-  - Turn resolution: `process_conditions()` decrements/expires on each turn.
-  - ParticipantStrip rendering: color-coded condition chips below character name.
-  - API fix: selectinload(Character.conditions) → conditions now returned in campaign state.
-  - 70+ condition tests, 215 total tests passing.
-  - Desktop (1366×1024) and mobile (390×844) screenshots captured.
+**Current Focus:**
+- Addressing the LLM GM "Mexican Standoff" loops where it stalls on repetitive micro-actions without pushing the scene forward.
+- Swapped active model to `gpt-5.5` in `.env`.
+- Rewrote the GM system prompt (`anthropic_provider.py`) to heavily restrict mechanical jargon ("seam", "rip", "lane") and formally BAN static standoffs and mirroring player delay tactics.
+- Added a `stall_counter` to the `Campaign` model and database schema to track turns without concrete consequences.
+- Updated `turn_engine.py` to reset or increment the counter, and `context_builder.py` to inject a `CRITICAL SYSTEM OVERRIDE` into the GM prompt if `stall_counter >= 3`.
 
 **Status:**
-- **Wave 1** (A1, B1, C1) — ✅ Finished & merged.
-- **Wave 2 Sprint 1** (A2, B2, C2) — ✅ Finished & merged.
-- **Wave 2 Sprint 2** (A3) — ✅ Complete. B3, C3 in parallel.
-- Backend tests: 215 passing (70+ condition-specific).
-- All hard constraints verified (hidden state safe, canon guard intact, stub provider works offline).
+- **Pre-Wave Carryover** — Anti-stall feature is fully implemented, tests passed, and playtester verified on branch `carryover/anti-stall-safeguards`.
+- **Focus Group Slices (FG1, FG2, FG3)** — ✅ Finished, playtested (HITL), merged to main. Root noise cleaned up.
+- **Wave 3** — (A4, B4, C3) Ready to begin once anti-stall is formally wrapped.
 
 **Ready for:**
-- A3 to merge to main.
-- B3 and C3 completion.
-- Wave 3 Sprint 1 planning.
+- PR review/merge for `carryover/anti-stall-safeguards`.
+- Wave 3 slice selection.
 
 ---
 
