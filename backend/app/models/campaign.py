@@ -16,6 +16,7 @@ class Campaign(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     stall_counter: Mapped[int] = mapped_column(Integer, default=0)
     last_scene_state: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     narrative_summary: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    combat_state: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     objectives: Mapped[list["Objective"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
     clocks: Mapped[list["Clock"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
