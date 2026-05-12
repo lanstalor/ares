@@ -309,3 +309,47 @@ def test_hidden_brief_includes_gm_only_memories() -> None:
     assert "GM-only observations" in ctx.hidden_gm_brief
     assert "Mara flinched" in ctx.hidden_gm_brief
     assert "Mara flinched" not in ctx.player_safe_brief
+
+
+def test_briefs_include_scene_state_and_narrative_summary() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+
+    campaign = Campaign(
+        name="Test",
+        current_date_pce=728,
+        last_scene_state={
+            "tension_tier": 3,
+            "key_holdings": "Mara holds strip; Gray holds wand",
+            "last_concrete_change": "Copper joined the catwalk",
+        },
+        narrative_summary="Mara entered Surface Relay 19 on a sabotage run and pulled a hidden carrier strip from the maintenance port under Gray scrutiny.",
+    )
+    session.add(campaign)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "next action")
+
+    assert "Scene state at start of this turn" in ctx.hidden_gm_brief
+    assert "Tension tier: 3" in ctx.hidden_gm_brief
+    assert "Mara holds strip" in ctx.hidden_gm_brief
+    assert "Copper joined the catwalk" in ctx.hidden_gm_brief
+
+    assert "Story so far" in ctx.hidden_gm_brief
+    assert "Story so far" in ctx.player_safe_brief
+    assert "sabotage run" in ctx.player_safe_brief
+
+
+def test_briefs_omit_empty_scene_state_and_summary() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "first turn")
+
+    assert "Scene state at start of this turn" not in ctx.hidden_gm_brief
+    assert "Story so far" not in ctx.hidden_gm_brief
+    assert "Story so far" not in ctx.player_safe_brief

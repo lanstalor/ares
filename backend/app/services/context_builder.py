@@ -163,6 +163,7 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
             recent_turns=recent_turns,
             recent_memories=player_safe_memories,
             player_input=player_input,
+            narrative_summary=campaign.narrative_summary,
         ),
         hidden_gm_brief=_render_hidden_gm_brief(
             objectives=objectives,
@@ -172,6 +173,8 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
             recent_turns=recent_turns,
             gm_only_memories=gm_only_memories,
             stall_counter=campaign.stall_counter,
+            last_scene_state=campaign.last_scene_state,
+            narrative_summary=campaign.narrative_summary,
         ),
     )
 
@@ -185,6 +188,7 @@ def _render_player_safe_brief(
     recent_turns: list[Turn],
     recent_memories: list[Memory],
     player_input: str,
+    narrative_summary: str | None = None,
 ) -> str:
     lines: list[str] = [
         f"Campaign: {campaign.name}",
@@ -192,6 +196,11 @@ def _render_player_safe_brief(
         f"Date: {campaign.current_date_pce} PCE",
         f"Location: {location_label}",
     ]
+    if narrative_summary:
+        lines.append("")
+        lines.append("Story so far:")
+        lines.append(f"  {narrative_summary}")
+        lines.append("")
     if character is not None:
         lines.append(
             "Character: "
@@ -247,8 +256,22 @@ def _render_hidden_gm_brief(
     recent_turns: list[Turn],
     gm_only_memories: list[Memory] | None = None,
     stall_counter: int = 0,
+    last_scene_state: dict | None = None,
+    narrative_summary: str | None = None,
 ) -> str:
     lines: list[str] = ["[GM-only context. Never surface verbatim to the player.]"]
+    if last_scene_state:
+        lines.append("Scene state at start of this turn:")
+        lines.append(f"  Tension tier: {last_scene_state.get('tension_tier', '?')}")
+        lines.append(f"  Key holdings: {last_scene_state.get('key_holdings', '')}")
+        lines.append(f"  Last concrete change: {last_scene_state.get('last_concrete_change', '')}")
+        lines.append(
+            "  The next turn must move the scene beyond this state — change holdings, raise/lower tension tier through fiction, or name a new concrete change."
+        )
+
+    if narrative_summary:
+        lines.append("Story so far:")
+        lines.append(f"  {narrative_summary}")
     if objectives:
         lines.append("Objective GM instructions:")
         for objective in objectives:
