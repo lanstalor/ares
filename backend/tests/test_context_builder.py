@@ -286,3 +286,26 @@ def test_hidden_gm_brief_includes_scene_progression_guard_with_recent_gm_beats()
     assert "change at least one concrete fact" in ctx.hidden_gm_brief
     assert "Vex repeats the same warning" in ctx.hidden_gm_brief
     assert "The Gray keeps his hand" in ctx.hidden_gm_brief
+
+
+def test_hidden_brief_includes_gm_only_memories() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+    from app.models.memory import Memory
+    from app.core.enums import Visibility
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.flush()
+
+    session.add_all([
+        Memory(campaign_id=campaign.id, content="GM noted Mara flinched at Gray's name", visibility=Visibility.GM_ONLY),
+        Memory(campaign_id=campaign.id, content="Player saw Vaia bow", visibility=Visibility.PLAYER_FACING),
+    ])
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "test input")
+
+    assert "GM-only observations" in ctx.hidden_gm_brief
+    assert "Mara flinched" in ctx.hidden_gm_brief
+    assert "Mara flinched" not in ctx.player_safe_brief
