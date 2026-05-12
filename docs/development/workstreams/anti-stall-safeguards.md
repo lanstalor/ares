@@ -37,10 +37,11 @@ Test status at this commit:
 - `backend/alembic/versions/` — ✅ Generated and fixed migration.
 - `backend/app/services/turn_engine.py` — ✅ Added consequence evaluation and counter logic.
 - `backend/app/services/context_builder.py` — ✅ Added critical prompt injection when stall_counter >= 3.
+- `backend/app/services/anthropic_provider.py` — ✅ Rewrote system prompt to explicitly ban static standoffs and tone down heavy sci-fi jargon.
 
 ## Next concrete step
 
-Create a PR for `carryover/anti-stall-safeguards`.
+Verify the prompt/model changes with manual testing, then create a PR for `carryover/anti-stall-safeguards`.
 
 ## Open questions / blockers
 
@@ -49,6 +50,7 @@ Create a PR for `carryover/anti-stall-safeguards`.
 ## Agent rotation log
 
 - `2026-05-11 UTC` — Gemini → Bootstrapped slice, created branch, updated master plan, and set up workstream doc.
+- `2026-05-11 UTC` — Gemini → Implemented stall_counter logic, rewrote GM system prompt to fix static standoffs and jargon, and swapped local `.env` model to `gpt-5.5`. Interim push before handoff.
 
 ## Verification on completion
 
