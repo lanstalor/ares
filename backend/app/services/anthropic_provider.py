@@ -287,8 +287,33 @@ _TOOL_SCHEMA = {
                 "minItems": 3,
                 "maxItems": 3,
             },
+            "scene_state": {
+                "type": "object",
+                "description": "Required structural snapshot of the scene after this turn. Forces explicit progression.",
+                "properties": {
+                    "tension_tier": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 4,
+                        "description": "0 calm, 1 charged, 2 contested, 3 escalating, 4 breaking. May only drop when fiction explicitly de-escalates.",
+                    },
+                    "key_holdings": {
+                        "type": "string",
+                        "description": "Short free-form: who currently holds what, who is positioned where. Example: 'Mara holds strip; Gray holds wand; Copper holds pad'.",
+                    },
+                    "last_concrete_change": {
+                        "type": "string",
+                        "description": "One short sentence naming the specific thing that changed this turn. Not what is the same — what is different.",
+                    },
+                },
+                "required": ["tension_tier", "key_holdings", "last_concrete_change"],
+            },
+            "narrative_summary_update": {
+                "type": "string",
+                "description": "Optional. Emit ONLY when a major arc event occurred (objective completed, location changed, secret revealed, significant NPC shift). 2–4 sentences, past tense, third person from the player's perspective, no hidden state. Overwrites the campaign's rolling story-so-far summary.",
+            },
         },
-        "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants"],
+        "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants", "scene_state"],
     },
 }
 
@@ -568,12 +593,28 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
         except (KeyError, TypeError, ValueError):
             continue
 
+    raw_scene_state = tool_input.get("scene_state")
+    scene_state: dict | None = None
+    if isinstance(raw_scene_state, dict):
+        scene_state = {
+            "tension_tier": int(raw_scene_state.get("tension_tier", 0)),
+            "key_holdings": str(raw_scene_state.get("key_holdings", "")),
+            "last_concrete_change": str(raw_scene_state.get("last_concrete_change", "")),
+        }
+
+    raw_summary_update = tool_input.get("narrative_summary_update")
+    narrative_summary_update = (
+        raw_summary_update.strip() if isinstance(raw_summary_update, str) and raw_summary_update.strip() else None
+    )
+
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
         suggested_actions=suggested_actions,
         scene_participants=scene_participants,
         rolls=rolls,
+        scene_state=scene_state,
+        narrative_summary_update=narrative_summary_update,
         consequences=Consequences(
             clock_ticks=[
                 ClockTick(label=item["label"], delta=int(item.get("delta", 1)))

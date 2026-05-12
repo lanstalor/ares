@@ -357,6 +357,70 @@ def test_provider_parses_conditions_from_scene_participants() -> None:
     assert participant["conditions"][1]["duration_remaining"] == 1
 
 
+def test_tool_schema_requires_scene_state():
+    from app.services.anthropic_provider import build_tool_schema
+
+    schema = build_tool_schema()
+    props = schema["input_schema"]["properties"]
+    required = schema["input_schema"]["required"]
+
+    assert "scene_state" in props, "scene_state must be a tool field"
+    assert "scene_state" in required, "scene_state must be required"
+
+    scene_props = props["scene_state"]["properties"]
+    assert "tension_tier" in scene_props
+    assert "key_holdings" in scene_props
+    assert "last_concrete_change" in scene_props
+
+    assert "narrative_summary_update" in props
+    assert "narrative_summary_update" not in required
+
+
+def test_build_response_extracts_scene_state_and_summary_update():
+    from app.services.anthropic_provider import _build_response
+
+    tool_input = {
+        "narrative": "n",
+        "player_safe_summary": "s",
+        "consequences": {},
+        "suggested_actions": [],
+        "scene_participants": [],
+        "scene_state": {
+            "tension_tier": 3,
+            "key_holdings": "Mara holds strip",
+            "last_concrete_change": "Gray drew wand",
+        },
+        "narrative_summary_update": "Mara reached Surface Relay 19 and seized contraband.",
+    }
+    response = _build_response(tool_input)
+
+    assert response.scene_state == {
+        "tension_tier": 3,
+        "key_holdings": "Mara holds strip",
+        "last_concrete_change": "Gray drew wand",
+    }
+    assert response.narrative_summary_update == "Mara reached Surface Relay 19 and seized contraband."
+
+
+def test_build_response_handles_missing_summary_update():
+    from app.services.anthropic_provider import _build_response
+
+    tool_input = {
+        "narrative": "n",
+        "player_safe_summary": "s",
+        "consequences": {},
+        "suggested_actions": [],
+        "scene_participants": [],
+        "scene_state": {
+            "tension_tier": 0,
+            "key_holdings": "",
+            "last_concrete_change": "scene opened",
+        },
+    }
+    response = _build_response(tool_input)
+    assert response.narrative_summary_update is None
+
+
 def test_provider_ignores_malformed_scene_participant_conditions_without_self_logger_error() -> None:
     def fake_messages_create(**kwargs: Any) -> _FakeMessage:
         return _FakeMessage(
