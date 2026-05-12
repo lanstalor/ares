@@ -30,6 +30,8 @@ class NarrationResponse:
     suggested_actions: list[dict] = field(default_factory=list)
     scene_participants: list[dict] = field(default_factory=list)
     rolls: list[Roll] = field(default_factory=list)
+    scene_state: dict | None = None
+    narrative_summary_update: str | None = None
 
 
 class NarrationProvider(Protocol):
