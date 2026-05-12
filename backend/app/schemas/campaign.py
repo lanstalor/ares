@@ -33,3 +33,4 @@ class CampaignState(BaseModel):
     player_character: CharacterRead | None
     scene_art: SceneArtRead | None = None
     hidden_state_summary: str
+    combat_state: dict | None = None
