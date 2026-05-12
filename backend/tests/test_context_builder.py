@@ -228,30 +228,156 @@ def test_hidden_gm_brief_does_not_mark_unfired_clock() -> None:
     assert "FIRED" not in ctx.hidden_gm_brief
 
 
-def test_hidden_gm_brief_includes_scene_progression_guard_with_recent_gm_beats() -> None:
+def test_extract_repeated_phrases_finds_cross_turn_repeats():
+    from app.services.context_builder import _extract_repeated_phrases
+
+    class _T:
+        def __init__(self, text): self.gm_response = text
+
+    turns = [
+        _T("She kept her hands where I can see them and waited."),
+        _T("The boots on the rail scuffed once. Hands where I can see them."),
+        _T("Boots on the rail again, hard now."),
+        _T("Her hands where i can see them, palms open."),
+        _T("Different scene entirely with no repeats."),
+    ]
+    phrases = _extract_repeated_phrases(turns)
+    joined = " | ".join(phrases)
+
+    assert "hands where i can see them" in joined
+    assert "boots on the rail" in joined
+    assert len(phrases) <= 6
+
+
+def test_extract_repeated_phrases_empty_when_no_repeats():
+    from app.services.context_builder import _extract_repeated_phrases
+
+    class _T:
+        def __init__(self, text): self.gm_response = text
+
+    turns = [_T("alpha bravo charlie delta echo"), _T("foxtrot golf hotel india juliet")]
+    assert _extract_repeated_phrases(turns) == []
+
+
+
+def test_hidden_brief_includes_gm_only_memories() -> None:
     session = _make_session()
-    campaign = _bootstrap_scenario(session)
-    session.add_all(
-        [
-            Turn(
-                campaign_id=campaign.id,
-                player_input="Wait.",
-                gm_response="Vex repeats the same warning and does not move.",
-                player_safe_summary="Vex repeats a warning.",
-            ),
-            Turn(
-                campaign_id=campaign.id,
-                player_input="Wait again.",
-                gm_response="The Gray keeps his hand on the same latch.",
-                player_safe_summary="The Gray stays by the latch.",
-            ),
-        ]
-    )
+    from app.models.campaign import Campaign
+    from app.models.memory import Memory
+    from app.core.enums import Visibility
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.flush()
+
+    session.add_all([
+        Memory(campaign_id=campaign.id, content="GM noted Mara flinched at Gray's name", visibility=Visibility.GM_ONLY),
+        Memory(campaign_id=campaign.id, content="Player saw Vaia bow", visibility=Visibility.PLAYER_FACING),
+    ])
     session.commit()
 
-    ctx = build_turn_context(session, campaign, "Delay one more time.")
+    ctx = build_turn_context(session, campaign, "test input")
 
-    assert "Scene progression guard" in ctx.hidden_gm_brief
-    assert "change at least one concrete fact" in ctx.hidden_gm_brief
-    assert "Vex repeats the same warning" in ctx.hidden_gm_brief
-    assert "The Gray keeps his hand" in ctx.hidden_gm_brief
+    assert "GM-only observations" in ctx.hidden_gm_brief
+    assert "Mara flinched" in ctx.hidden_gm_brief
+    assert "Mara flinched" not in ctx.player_safe_brief
+
+
+def test_briefs_include_scene_state_and_narrative_summary() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+
+    campaign = Campaign(
+        name="Test",
+        current_date_pce=728,
+        last_scene_state={
+            "tension_tier": 3,
+            "key_holdings": "Mara holds strip; Gray holds wand",
+            "last_concrete_change": "Copper joined the catwalk",
+        },
+        narrative_summary="Mara entered Surface Relay 19 on a sabotage run and pulled a hidden carrier strip from the maintenance port under Gray scrutiny.",
+    )
+    session.add(campaign)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "next action")
+
+    assert "Scene state at start of this turn" in ctx.hidden_gm_brief
+    assert "Tension tier: 3" in ctx.hidden_gm_brief
+    assert "Mara holds strip" in ctx.hidden_gm_brief
+    assert "Copper joined the catwalk" in ctx.hidden_gm_brief
+
+    assert "Story so far" in ctx.hidden_gm_brief
+    assert "Story so far" in ctx.player_safe_brief
+    assert "sabotage run" in ctx.player_safe_brief
+
+
+def test_briefs_omit_empty_scene_state_and_summary() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "first turn")
+
+    assert "Scene state at start of this turn" not in ctx.hidden_gm_brief
+    assert "Story so far" not in ctx.hidden_gm_brief
+    assert "Story so far" not in ctx.player_safe_brief
+
+
+def test_hidden_brief_includes_repeated_phrase_banlist() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+    from app.models.memory import Turn
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.flush()
+
+    session.add_all([
+        Turn(campaign_id=campaign.id, player_input="x", gm_response="She kept her hands where I can see them. She waited.", player_safe_summary="s"),
+        Turn(campaign_id=campaign.id, player_input="x", gm_response="Hands where I can see them, palms open. Quiet.", player_safe_summary="s"),
+        Turn(campaign_id=campaign.id, player_input="x", gm_response="He said hands where I can see them and stepped back.", player_safe_summary="s"),
+    ])
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "next action")
+
+    assert "Banned phrases this scene" in ctx.hidden_gm_brief
+    assert "hands where i can see them" in ctx.hidden_gm_brief
+
+
+def test_older_turns_use_player_safe_summary() -> None:
+    session = _make_session()
+    from datetime import datetime, timedelta, timezone
+    from app.models.campaign import Campaign
+    from app.models.memory import Turn
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.flush()
+
+    long_response = "FULL_GM_TEXT_" + ("x" * 1000)
+    base_time = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    for i in range(8):
+        turn = Turn(
+            campaign_id=campaign.id,
+            player_input=f"player_action_{i}",
+            gm_response=f"{long_response}_{i}",
+            player_safe_summary=f"summary_for_turn_{i}",
+        )
+        turn.created_at = base_time + timedelta(seconds=i)
+        session.add(turn)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "next action")
+
+    # Last 3 turns (5, 6, 7) should use full text
+    assert "FULL_GM_TEXT_" in ctx.player_safe_brief
+    assert "summary_for_turn_7" not in ctx.player_safe_brief
+
+    # Older turns (0–4) should use player_safe_summary
+    assert "summary_for_turn_0" in ctx.player_safe_brief
+    assert "summary_for_turn_3" in ctx.player_safe_brief

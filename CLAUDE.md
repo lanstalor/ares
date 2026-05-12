@@ -6,33 +6,38 @@
 
 ## Latest Session Summary
 
-Date: 2026-05-07
+Date: 2026-05-12
 
-### ✅ A3: Conditions System Completed
+### ✅ Chat Quality / Pacing / Memory Slice (Complete, Awaiting Playtest Confirmation)
 
-**Delivered:**
-- **A3: Conditions + Status Effects** (ready to merge)
-  - ConditionType enum (9 types: bleeding, poisoned, ident_flagged, wounded, exhausted, stunned, disarmed, prone, panicked).
-  - Condition model + Alembic migration (campaign/character FK, duration tracking, source attribution).
-  - ConditionService (apply, remove, tick, query).
-  - Consequence integration: `ConditionUpdate` consequences → automatic application.
-  - Turn resolution: `process_conditions()` decrements/expires on each turn.
-  - ParticipantStrip rendering: color-coded condition chips below character name.
-  - API fix: selectinload(Character.conditions) → conditions now returned in campaign state.
-  - 70+ condition tests, 215 total tests passing.
-  - Desktop (1366×1024) and mobile (390×844) screenshots captured.
+**Goal:** Eliminate the repetition / static-standoff failure modes in playtest reports (Repetition averaged 1.2–1.6 / 5, Flow 1.2–2.8) and durably extend the GM's story memory.
+
+**What landed on `carryover/anti-stall-safeguards` (pushed to origin):**
+- **Schema:** Two new Campaign columns — `last_scene_state` (JSON) and `narrative_summary` (Text). Migration `741c8686e3a3` applied.
+- **Tool schema:** `record_turn` now requires a `scene_state` object (`tension_tier` 0–4, `key_holdings`, `last_concrete_change`) and optionally accepts `narrative_summary_update`.
+- **Context builder:** Injects `last_scene_state` diff, rolling `narrative_summary`, `gm_only` memories, and a dynamic repeated-phrase banlist (4-/5-/6-grams across last 5 GM turns). Uses `player_safe_summary` for older turn excerpts (turns 4–10) and full GM text for the last 3. Old "Scene progression guard" block removed — subsumed by structural `scene_state`.
+- **Prompt surgery:** New "Scene change discipline" section (first-sentence-names-change, escalate-against-cautious-streaks, absorb-player-disruptions-without-resetting) + stock-phrase banlist (`hands where I can see them`, `the strip is warm`, etc.) extracted from the 2026-05-12 transcripts.
+- **Turn engine:** Persists GM-emitted `scene_state` and (optional) `narrative_summary_update` on the campaign row each turn.
+
+**Spec:** `docs/superpowers/specs/2026-05-12-chat-quality-pacing-design.md`.
+**Plan:** `docs/superpowers/plans/2026-05-12-chat-quality-pacing.md`.
+
+**Tests:** 237 passing, including new coverage for phrase detector, gm_only injection, scene_state injection, banlist injection, older-turn summary collapse, and turn engine persistence.
+
+**Initial playtest signal (5 turns gpt-5.5 player, gpt-5.5 GM):** Per-turn averages 4.2–4.5 (vs prior 1.5–2.5 baseline). Repetition score 3–5 per turn (was 1.2 avg), Flow consistently 5 (was 2.8 avg), Engagement 4–5 (was 3.2 avg). All spec targets exceeded. Full 20-turn run with Anthropic Haiku player/evaluator in progress as of session end — see `tools/playtester/reports/`.
 
 **Status:**
-- **Wave 1** (A1, B1, C1) — ✅ Finished & merged.
-- **Wave 2 Sprint 1** (A2, B2, C2) — ✅ Finished & merged.
-- **Wave 2 Sprint 2** (A3) — ✅ Complete. B3, C3 in parallel.
-- Backend tests: 215 passing (70+ condition-specific).
-- All hard constraints verified (hidden state safe, canon guard intact, stub provider works offline).
+- **`carryover/anti-stall-safeguards`** — Ready to open PR / merge. Pushed to origin.
+- **Focus Group Slices (FG1, FG2, FG3)** — ✅ Finished, playtested (HITL), merged to main.
+- **Wave 3** — (A4, B4, C3) Ready to begin after merge.
 
 **Ready for:**
-- A3 to merge to main.
-- B3 and C3 completion.
-- Wave 3 Sprint 1 planning.
+- PR review/merge for `carryover/anti-stall-safeguards`.
+- Wave 3 slice selection.
+
+### 🔄 Earlier in the day: Anti-Stall Safeguards
+
+Already implemented and merged into this branch prior to today's chat-quality slice. Included `stall_counter` on Campaign, `CRITICAL SYSTEM OVERRIDE` injection at threshold ≥3, and the original anti-jargon / anti-standoff prompt revisions. The chat-quality slice built on top of this foundation.
 
 ---
 

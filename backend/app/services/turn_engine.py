@@ -127,6 +127,11 @@ def resolve_turn(
         )
     )
 
+    if narration.scene_state is not None:
+        campaign.last_scene_state = narration.scene_state
+    if narration.narrative_summary_update:
+        campaign.narrative_summary = narration.narrative_summary_update
+
     canon_guard_passed, canon_guard_message = evaluate_canon_guard(narration.narrative)
 
     consequence_result = ConsequenceResult(clocks_fired=[], location_changed_to=None)
@@ -134,6 +139,18 @@ def resolve_turn(
         consequence_result = apply_consequences(session, campaign, narration.consequences)
         # Process conditions AFTER consequences are applied
         _process_conditions(session, campaign)
+
+        has_meaningful_consequence = bool(
+            narration.consequences.clock_ticks
+            or narration.consequences.secret_status_changes
+            or narration.consequences.location_change
+            or narration.consequences.objective_updates
+            or narration.consequences.condition_updates
+        )
+        if has_meaningful_consequence:
+            campaign.stall_counter = 0
+        else:
+            campaign.stall_counter += 1
 
     return TurnEngineResult(
         gm_response=narration.narrative,

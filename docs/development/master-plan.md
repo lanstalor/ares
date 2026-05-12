@@ -12,9 +12,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
-| FG3 | `focus-group/new-protagonist-intro` | `~/ares` | Gemini | ready | HITL simulation complete, PR #15 ready to merge. |
-| FG2 | `groom/fg-focus-group-hardening` | `~/ares` | Gemini | ready | Hardening verified; PR #15 ready to merge. |
-| FG1 | `focus-group/new-protagonist-intro` | `~/ares` | Gemini | ready | HITL simulation complete; PR #15 ready to merge. |
+| Anti-Stall | `carryover/anti-stall-safeguards` | `~/ares` | Gemini | in-flight | Investigate turn_engine.py for stall tracking logic. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -55,7 +53,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | Slice | Status | Next step |
 |---|---|---|
 | UI overhaul (golden slice merged) | finished | Completed in session 2026-05-05 |
-| GM anti-stall safeguards | ready | Build structural scene-progression guardrails using `docs/development/workstreams/playtester-prompt-pass.md` and the `2026-04-30-00-28.md` benchmark |
+| GM anti-stall safeguards | in-flight | In progress on `carryover/anti-stall-safeguards` |
 
 ## Later
 

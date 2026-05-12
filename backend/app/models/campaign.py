@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Enum, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.enums import ClockType
@@ -13,6 +13,9 @@ class Campaign(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     current_date_pce: Mapped[int] = mapped_column(Integer, default=728)
     hidden_state_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
     current_location_label: Mapped[str | None] = mapped_column(String(255))
+    stall_counter: Mapped[int] = mapped_column(Integer, default=0)
+    last_scene_state: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    narrative_summary: Mapped[str | None] = mapped_column(Text(), nullable=True)
 
     objectives: Mapped[list["Objective"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
     clocks: Mapped[list["Clock"]] = relationship(back_populates="campaign", cascade="all, delete-orphan")

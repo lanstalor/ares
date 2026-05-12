@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+from collections import Counter
 from dataclasses import dataclass
 
 from sqlalchemy import select
@@ -16,6 +18,57 @@ from app.models.world import NPC, Area, Faction
 class TurnContext:
     player_safe_brief: str
     hidden_gm_brief: str
+
+
+_PHRASE_NGRAM_SIZES = (6, 5, 4)
+_PHRASE_MIN_TURNS = 2
+_PHRASE_MAX_RESULTS = 6
+_WORD_RE = re.compile(r"[a-z0-9]+")
+
+
+def _extract_repeated_phrases(recent_turns: list) -> list[str]:
+    """Return up to 6 phrases (4- or 5-grams) that appear across 2+ distinct GM turns.
+
+    Longer phrases beat shorter ones at the same frequency.
+    """
+    per_turn_phrases: list[set[str]] = []
+    for turn in recent_turns:
+        text = (getattr(turn, "gm_response", "") or "").lower()
+        words = _WORD_RE.findall(text)
+        seen: set[str] = set()
+        for size in _PHRASE_NGRAM_SIZES:
+            for i in range(0, len(words) - size + 1):
+                seen.add(" ".join(words[i : i + size]))
+        per_turn_phrases.append(seen)
+
+    counts: Counter[str] = Counter()
+    for phrases in per_turn_phrases:
+        for phrase in phrases:
+            counts[phrase] += 1
+
+    ranked = [
+        phrase
+        for phrase, count in counts.items()
+        if count >= _PHRASE_MIN_TURNS
+    ]
+    ranked.sort(key=lambda p: (-counts[p], -len(p)))
+
+    deduped: list[str] = []
+    for phrase in ranked:
+        # If this phrase subsumes a shorter already-accepted phrase, replace it.
+        to_remove = [e for e in deduped if e in phrase]
+        if to_remove:
+            for e in to_remove:
+                deduped.remove(e)
+            deduped.append(phrase)
+        elif any(phrase in existing for existing in deduped):
+            # Already covered by a longer phrase — skip.
+            continue
+        else:
+            deduped.append(phrase)
+        if len(deduped) >= _PHRASE_MAX_RESULTS:
+            break
+    return deduped
 
 
 _RECENT_TURN_LIMIT = 10
@@ -89,6 +142,18 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
         )
     )
 
+    gm_only_memories = list(
+        session.scalars(
+            select(Memory)
+            .where(
+                Memory.campaign_id == campaign.id,
+                Memory.visibility == "gm_only",
+            )
+            .order_by(Memory.created_at.desc())
+            .limit(_RECENT_TURN_LIMIT)
+        )
+    )
+
     return TurnContext(
         player_safe_brief=_render_player_safe_brief(
             campaign=campaign,
@@ -98,6 +163,7 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
             recent_turns=recent_turns,
             recent_memories=player_safe_memories,
             player_input=player_input,
+            narrative_summary=campaign.narrative_summary,
         ),
         hidden_gm_brief=_render_hidden_gm_brief(
             objectives=objectives,
@@ -105,6 +171,10 @@ def build_turn_context(session: Session, campaign: Campaign, player_input: str) 
             eligible_secrets=eligible_secrets,
             scene_npcs=scene_npcs,
             recent_turns=recent_turns,
+            gm_only_memories=gm_only_memories,
+            stall_counter=campaign.stall_counter,
+            last_scene_state=campaign.last_scene_state,
+            narrative_summary=campaign.narrative_summary,
         ),
     )
 
@@ -118,6 +188,7 @@ def _render_player_safe_brief(
     recent_turns: list[Turn],
     recent_memories: list[Memory],
     player_input: str,
+    narrative_summary: str | None = None,
 ) -> str:
     lines: list[str] = [
         f"Campaign: {campaign.name}",
@@ -125,6 +196,11 @@ def _render_player_safe_brief(
         f"Date: {campaign.current_date_pce} PCE",
         f"Location: {location_label}",
     ]
+    if narrative_summary:
+        lines.append("")
+        lines.append("Story so far:")
+        lines.append(f"  {narrative_summary}")
+        lines.append("")
     if character is not None:
         lines.append(
             "Character: "
@@ -157,12 +233,21 @@ def _render_player_safe_brief(
     if objectives:
         lines.append("Active objectives: " + "; ".join(o.title for o in objectives))
     if recent_turns:
-        lines.append("Recent turns (player action → GM narrative excerpt):")
-        for turn in reversed(recent_turns):
-            player_line = (turn.player_input or "")[:120]
-            gm_excerpt = (turn.gm_response or "")[:300]
+        lines.append("Recent turns (player action → GM narrative):")
+        # recent_turns is ordered newest-first; reverse to chronological for the brief.
+        chronological = list(reversed(recent_turns))
+        cutoff = max(0, len(chronological) - 3)  # last 3 turns get full text; older get summary
+        for index, turn in enumerate(chronological):
+            player_line = (turn.player_input or "")[:200]
             lines.append(f"  Player: {player_line}")
-            lines.append(f"  GM: {gm_excerpt}")
+            if index >= cutoff:
+                gm_excerpt = (turn.gm_response or "")
+                lines.append(f"  GM: {gm_excerpt}")
+            else:
+                summary = (turn.player_safe_summary or "").strip()
+                if not summary:
+                    summary = (turn.gm_response or "")[:300]
+                lines.append(f"  GM (summary): {summary}")
     if recent_memories:
         lines.append("Player-known memories:")
         for memory in reversed(recent_memories):
@@ -178,8 +263,31 @@ def _render_hidden_gm_brief(
     eligible_secrets: list[Secret],
     scene_npcs: list[NPC],
     recent_turns: list[Turn],
+    gm_only_memories: list[Memory] | None = None,
+    stall_counter: int = 0,
+    last_scene_state: dict | None = None,
+    narrative_summary: str | None = None,
 ) -> str:
     lines: list[str] = ["[GM-only context. Never surface verbatim to the player.]"]
+    if last_scene_state:
+        lines.append("Scene state at start of this turn:")
+        lines.append(f"  Tension tier: {last_scene_state.get('tension_tier', '?')}")
+        lines.append(f"  Key holdings: {last_scene_state.get('key_holdings', '')}")
+        lines.append(f"  Last concrete change: {last_scene_state.get('last_concrete_change', '')}")
+        lines.append(
+            "  The next turn must move the scene beyond this state — change holdings, raise/lower tension tier through fiction, or name a new concrete change."
+        )
+
+    if narrative_summary:
+        lines.append("Story so far:")
+        lines.append(f"  {narrative_summary}")
+
+    repeated_phrases = _extract_repeated_phrases(recent_turns[:5])
+    if repeated_phrases:
+        lines.append("Banned phrases this scene (already overused — do not reuse):")
+        for phrase in repeated_phrases:
+            lines.append(f"  - {phrase}")
+
     if objectives:
         lines.append("Objective GM instructions:")
         for objective in objectives:
@@ -193,19 +301,6 @@ def _render_hidden_gm_brief(
                 f"  - {clock.label} [{clock.clock_type.value}]: "
                 f"{clock.current_value}/{clock.max_value}{status}"
             )
-    recent_gm_excerpts = [
-        (turn.gm_response or "")[:220]
-        for turn in list(reversed(recent_turns))[-3:]
-        if turn.gm_response
-    ]
-    if recent_gm_excerpts:
-        lines.append("Scene progression guard:")
-        lines.append(
-            "  - The next GM response must change at least one concrete fact: position, leverage, information, participant movement, clock pressure, objective state, or available choice."
-        )
-        lines.append("  - Do not restate these recent GM beats unless the fiction materially changes them:")
-        for excerpt in recent_gm_excerpts:
-            lines.append(f"    - {excerpt}")
     if eligible_secrets:
         lines.append("Eligible secrets (reveal only when condition is met):")
         for secret in eligible_secrets:
@@ -229,4 +324,14 @@ def _render_hidden_gm_brief(
     if npc_lines:
         lines.append("NPCs in scene with hidden agendas:")
         lines.extend(npc_lines)
+        
+    if gm_only_memories:
+        lines.append("GM-only observations:")
+        for memory in reversed(gm_only_memories):
+            lines.append(f"  - {memory.content}")
+
+    if stall_counter >= 3:
+        lines.append("")
+        lines.append(f"CRITICAL SYSTEM OVERRIDE: The scene has stalled for {stall_counter} turns. You MUST introduce a new complication, tick a pressure clock, apply a condition, or force the player to make a difficult choice right now. Do not end the turn without a consequence.")
+
     return "\n".join(lines)

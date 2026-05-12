@@ -69,6 +69,18 @@ class TextGenerator:
         return self._client
 
     def generate(self, *, system: str, user: str) -> str:
+        import time
+
+        last_err: Exception | None = None
+        for attempt in range(3):
+            try:
+                return self._generate_once(system=system, user=user)
+            except RuntimeError as err:
+                last_err = err
+                time.sleep(1.0 * (attempt + 1))
+        raise last_err  # type: ignore[misc]
+
+    def _generate_once(self, *, system: str, user: str) -> str:
         client = self._get_client()
         if self.config.provider == "openai":
             response = client.chat.completions.create(

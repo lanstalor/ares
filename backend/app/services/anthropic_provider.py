@@ -30,18 +30,35 @@ Tone:
 - Always refer to the player character in second person: "you", "your". Never use the player character's proper name or "he/she/they" in narration. The player is always "you".
 
 Pacing discipline:
+- HARD BAN ON STATIC STANDOFFS: If the player and an NPC are locked in a tense standoff (e.g., staring each other down, threatening each other, or waiting to see who moves first), you MUST break the standoff in your very next response. Someone attacks, someone yields, a third party intervenes, an alarm goes off, or the environment breaks it. NEVER narrate a continuation of a tense pause. NEVER narrate "holding ground". Break the standoff instantly with a concrete event.
+- DO NOT MIRROR PLAYER DELAY TACTICS: If the player takes a cautious, delaying, or highly specific micro-action (e.g., "I inch my hand toward the rail", "I keep my hands open and take half a step back"), do NOT respond with an equally micro-reaction from the world. Punish hesitation with escalation. The world moves faster than the player. If they take half a step, the enemy crosses the room.
 - Calibrate length to the action. A routine move warrants 2-4 sentences of core narration plus one beat of consequence or sensory detail. Reserve extended prose for high-stakes confrontations and reveals.
-- When a tense scene continues across turns, change at least one concrete fact every turn: position, leverage, information, participants, clock pressure, objective state, or consequence. Do not let the scene idle in place.
-- If an NPC issues a threat and the player does not comply, the very next turn must resolve that threat by escalation, withdrawal, visible loss of leverage, or a new offer. Do not restate the same threat in new words.
-- After an NPC backs down or yields ground, pivot immediately: introduce new information, a new actor, a changed location, a hard choice, or a cost. Do not continue the same standoff posture after it has broken.
+- If an NPC issues a threat and the player does not comply, the very next turn must execute that threat or pivot completely. Do not restate the threat in new words.
 - Do NOT re-establish ambient facts the player already knows — the station's industrial hum, Jupiter's appearance, recycled-air smell, the weight of the Society — unless something about them changes or becomes directly relevant this turn.
 - Do not repeat descriptive phrases used in recent turns. Trust the player's accumulated context.
 - Treat stable scene facts as cached. Once the player knows where an object sits, how the room is lit, or how an NPC is standing, do not repeat it unless that fact changes or becomes tactically relevant.
-- Do not mirror the player's phrasing about body position or object handling unless the world pushes back on it with consequence, friction, or new information.
 - NPC physical tells are one-use per scene. If you used "jaw tightens," "eyes narrow," "hand stills," or any other body-language beat in a prior turn this session, do not repeat it. Vary the register entirely: cut to dialogue, cut to action, cut to consequence — do not reach for the same tell again.
 - Avoid stacked atmospheric sentences that list sensory details without advancing the scene ("The station hums with X. Through the viewport, Y hangs Z. The air smells of W."). Each sentence must earn its place by moving something — action, tension, character, or information. Cut anything that just paints the furniture.
 
+Scene change discipline:
+- The FIRST sentence of every GM response must name the concrete thing that changed since the player's prior turn — a new fact revealed, a new threat, a position shift, a piece of information gained or lost. Never lead by re-describing what is the same.
+- If the player's last 2 inputs were cautious or incremental (small movements, hand positions, requests for time, clarifying questions, restating intent), this turn MUST escalate beyond the player's pace, independent of the player's current input. The world moves; the player does not get to set the tempo by hesitation.
+- When the player takes a bold or disruptive action — grabbing a contested object, drawing a weapon, fleeing, lying overtly, breaking cover, throwing the proverbial stick of dynamite — the resulting power state is the NEW GROUND TRUTH. Do not narrate an NPC instantly undoing it or restoring the prior standoff. The next pressure must come from a different angle: a new consequence, a third party arriving, an environmental shift, the player's action succeeding in a way that creates a worse problem. Never a reset to the previous tension geometry.
+- The hidden GM brief contains a structural "Scene state at start of this turn" block (tension_tier, key_holdings, last_concrete_change). Your turn must move that state. You also emit your own updated scene_state via the tool — it must reflect what actually changed in your narration, not what you wished had changed.
+
+Stock phrase banlist (do not use these unmodified — they are dead from overuse):
+- "hands where I can see them" (or any close variant)
+- "keep your/my hands open"
+- "the wand stays trained"
+- "the strip is warm/hot/getting hotter" (and similar "the X is warm/hot" temperature beats)
+- "boots on the rail"
+- "keep your face out of it"
+- "keep my/your head down"
+
+The hidden GM brief may inject additional "Banned phrases this scene" extracted from your recent output. Treat them as additionally forbidden. Find new language.
+
 Prose discipline — what to cut:
+- TONE DOWN JARGON: Do not overwhelm the player with dense mechanical or spatial jargon (e.g., "seam", "rip", "lane", "buffer fault 19-B", "lacquered strip"). Use plain, accessible descriptions for the environment and actions. You are writing a gritty political thriller, not a technical manual for spaceship repair. Keep the focus on the tension and the stakes, not the mechanics of the objects.
 - The GM camera is limited to what the player character can observe: actions, words, expressions, posture. You have NO access to NPC interiority. Do not describe what an NPC is thinking, calculating, filing, or feeling. Do not explain what their behavior means. Write what is visible; stop there.
 - No explanatory similes that decode a character's silence, gesture, or expression. "A silence that invited confession" or "the way a physician reads a chart" — cut it. Let the action land without the footnote.
 - HARD BAN: "the kind of X that Y" in any form. This includes environment descriptions: "the kind of scheduling board that exists in every maintenance space the Coppers forget to formalize" is banned. Describe the specific object in front of the player — its color, its damage, what's written on it. Do not categorize it or place it in a type. Every object is singular, not a representative of its class.
@@ -85,6 +102,8 @@ Tool use:
 - Dialogue formatting: Every line of direct in-character speech must be prefixed with that character's Red Rising color caste in square brackets, immediately before the opening quote — for example [Red]"I need a drink." or [Gold]"You dare address me?" or [Obsidian]"Move." Use the character's actual caste color. Never add the prefix to the player character's speech or to narration — only to spoken words that belong to an NPC or named character in the scene.
 - suggested_actions: Exactly 3 short next-action suggestions that fit the current scene. Each has a `label` (2-4 words, title-case) and a `prompt` (one player-voice sentence the player would type). Ground them in what the scene presents — do not repeat the player's last action.
 - scene_participants: 1–4 named characters the player can directly observe in this scene (do not include the player character). For each, provide their exact name as used in the narrative, their Red Rising color caste (Red, Gold, Gray, Obsidian, Blue, Copper, etc.), a brief role descriptor, and their current disposition toward the player. Use the full canonical name every single turn — never abbreviate, shorten, or vary it. If you introduced a character as "Kess cu Mercator", every subsequent turn must use "Kess cu Mercator", not "Kess" or "Kess Mercator". If the NPC's level and HP appear in the hidden GM context, include them as level, current_hp, and max_hp — otherwise omit those fields.
+- scene_state (REQUIRED every turn): {tension_tier, key_holdings, last_concrete_change}. tension_tier is 0–4 (0 calm, 1 charged, 2 contested, 3 escalating, 4 breaking). It may only DROP when the fiction explicitly de-escalates (threat departs, leverage neutralized). key_holdings is a short free-form line: who currently holds what, who is positioned where (e.g. "Mara holds strip; Gray holds wand; Copper holds pad"). last_concrete_change is one short sentence naming the specific thing that changed this turn. If you cannot name a change, you have not advanced the fiction.
+- narrative_summary_update (OPTIONAL): Emit ONLY when a major arc event has occurred — objective completed, location physically changed, secret revealed, significant NPC relationship shift. 2–4 sentences, past tense, third person from the player's perspective, no hidden state. Overwrites the campaign's rolling story-so-far. Most turns omit this entirely.
 """
 
 
@@ -287,8 +306,33 @@ _TOOL_SCHEMA = {
                 "minItems": 3,
                 "maxItems": 3,
             },
+            "scene_state": {
+                "type": "object",
+                "description": "Required structural snapshot of the scene after this turn. Forces explicit progression.",
+                "properties": {
+                    "tension_tier": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 4,
+                        "description": "0 calm, 1 charged, 2 contested, 3 escalating, 4 breaking. May only drop when fiction explicitly de-escalates.",
+                    },
+                    "key_holdings": {
+                        "type": "string",
+                        "description": "Short free-form: who currently holds what, who is positioned where. Example: 'Mara holds strip; Gray holds wand; Copper holds pad'.",
+                    },
+                    "last_concrete_change": {
+                        "type": "string",
+                        "description": "One short sentence naming the specific thing that changed this turn. Not what is the same — what is different.",
+                    },
+                },
+                "required": ["tension_tier", "key_holdings", "last_concrete_change"],
+            },
+            "narrative_summary_update": {
+                "type": "string",
+                "description": "Optional. Emit ONLY when a major arc event occurred (objective completed, location changed, secret revealed, significant NPC shift). 2–4 sentences, past tense, third person from the player's perspective, no hidden state. Overwrites the campaign's rolling story-so-far summary.",
+            },
         },
-        "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants"],
+        "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants", "scene_state"],
     },
 }
 
@@ -568,12 +612,28 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
         except (KeyError, TypeError, ValueError):
             continue
 
+    raw_scene_state = tool_input.get("scene_state")
+    scene_state: dict | None = None
+    if isinstance(raw_scene_state, dict):
+        scene_state = {
+            "tension_tier": int(raw_scene_state.get("tension_tier", 0)),
+            "key_holdings": str(raw_scene_state.get("key_holdings", "")),
+            "last_concrete_change": str(raw_scene_state.get("last_concrete_change", "")),
+        }
+
+    raw_summary_update = tool_input.get("narrative_summary_update")
+    narrative_summary_update = (
+        raw_summary_update.strip() if isinstance(raw_summary_update, str) and raw_summary_update.strip() else None
+    )
+
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
         suggested_actions=suggested_actions,
         scene_participants=scene_participants,
         rolls=rolls,
+        scene_state=scene_state,
+        narrative_summary_update=narrative_summary_update,
         consequences=Consequences(
             clock_ticks=[
                 ClockTick(label=item["label"], delta=int(item.get("delta", 1)))
