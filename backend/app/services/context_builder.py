@@ -272,6 +272,13 @@ def _render_hidden_gm_brief(
     if narrative_summary:
         lines.append("Story so far:")
         lines.append(f"  {narrative_summary}")
+
+    repeated_phrases = _extract_repeated_phrases(recent_turns[:5])
+    if repeated_phrases:
+        lines.append("Banned phrases this scene (already overused — do not reuse):")
+        for phrase in repeated_phrases:
+            lines.append(f"  - {phrase}")
+
     if objectives:
         lines.append("Objective GM instructions:")
         for objective in objectives:
@@ -285,19 +292,6 @@ def _render_hidden_gm_brief(
                 f"  - {clock.label} [{clock.clock_type.value}]: "
                 f"{clock.current_value}/{clock.max_value}{status}"
             )
-    recent_gm_excerpts = [
-        (turn.gm_response or "")[:220]
-        for turn in list(reversed(recent_turns))[-3:]
-        if turn.gm_response
-    ]
-    if recent_gm_excerpts:
-        lines.append("Scene progression guard:")
-        lines.append(
-            "  - The next GM response must change at least one concrete fact: position, leverage, information, participant movement, clock pressure, objective state, or available choice."
-        )
-        lines.append("  - Do not restate these recent GM beats unless the fiction materially changes them:")
-        for excerpt in recent_gm_excerpts:
-            lines.append(f"    - {excerpt}")
     if eligible_secrets:
         lines.append("Eligible secrets (reveal only when condition is met):")
         for secret in eligible_secrets:

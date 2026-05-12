@@ -259,34 +259,6 @@ def test_extract_repeated_phrases_empty_when_no_repeats():
     assert _extract_repeated_phrases(turns) == []
 
 
-def test_hidden_gm_brief_includes_scene_progression_guard_with_recent_gm_beats() -> None:
-    session = _make_session()
-    campaign = _bootstrap_scenario(session)
-    session.add_all(
-        [
-            Turn(
-                campaign_id=campaign.id,
-                player_input="Wait.",
-                gm_response="Vex repeats the same warning and does not move.",
-                player_safe_summary="Vex repeats a warning.",
-            ),
-            Turn(
-                campaign_id=campaign.id,
-                player_input="Wait again.",
-                gm_response="The Gray keeps his hand on the same latch.",
-                player_safe_summary="The Gray stays by the latch.",
-            ),
-        ]
-    )
-    session.commit()
-
-    ctx = build_turn_context(session, campaign, "Delay one more time.")
-
-    assert "Scene progression guard" in ctx.hidden_gm_brief
-    assert "change at least one concrete fact" in ctx.hidden_gm_brief
-    assert "Vex repeats the same warning" in ctx.hidden_gm_brief
-    assert "The Gray keeps his hand" in ctx.hidden_gm_brief
-
 
 def test_hidden_brief_includes_gm_only_memories() -> None:
     session = _make_session()
@@ -353,3 +325,25 @@ def test_briefs_omit_empty_scene_state_and_summary() -> None:
     assert "Scene state at start of this turn" not in ctx.hidden_gm_brief
     assert "Story so far" not in ctx.hidden_gm_brief
     assert "Story so far" not in ctx.player_safe_brief
+
+
+def test_hidden_brief_includes_repeated_phrase_banlist() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+    from app.models.memory import Turn
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.flush()
+
+    session.add_all([
+        Turn(campaign_id=campaign.id, player_input="x", gm_response="She kept her hands where I can see them. She waited.", player_safe_summary="s"),
+        Turn(campaign_id=campaign.id, player_input="x", gm_response="Hands where I can see them, palms open. Quiet.", player_safe_summary="s"),
+        Turn(campaign_id=campaign.id, player_input="x", gm_response="He said hands where I can see them and stepped back.", player_safe_summary="s"),
+    ])
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "next action")
+
+    assert "Banned phrases this scene" in ctx.hidden_gm_brief
+    assert "hands where i can see them" in ctx.hidden_gm_brief
