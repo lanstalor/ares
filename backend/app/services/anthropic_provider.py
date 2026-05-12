@@ -331,6 +331,35 @@ _TOOL_SCHEMA = {
                 "type": "string",
                 "description": "Optional. Emit ONLY when a major arc event occurred (objective completed, location changed, secret revealed, significant NPC shift). 2–4 sentences, past tense, third person from the player's perspective, no hidden state. Overwrites the campaign's rolling story-so-far summary.",
             },
+            "combat_state_change": {
+                "type": "object",
+                "description": "Emit when combat status changes this turn. Omit when unchanged.",
+                "properties": {
+                    "action": {"type": "string", "enum": ["enter", "exit"]},
+                    "initiative_rolls": {
+                        "type": "array",
+                        "description": "Required when action='enter'. Player + all combatant NPCs. Initiative score is d6 + Cunning modifier.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "is_player": {"type": "boolean"},
+                                "initiative_score": {"type": "integer", "minimum": 1, "maximum": 20},
+                            },
+                            "required": ["name", "is_player", "initiative_score"],
+                        },
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Required when action='exit'. One-line cause: defeated, retreated, surrendered, de-escalated, third-party intervention.",
+                    },
+                },
+                "required": ["action"],
+            },
+            "damage_summary": {
+                "type": "string",
+                "description": "Optional one-line hit-log entry during combat. Example: 'Mara took 8 from the slingblade'. Emit only when damage actually landed.",
+            },
         },
         "required": ["narrative", "player_safe_summary", "consequences", "suggested_actions", "scene_participants", "scene_state"],
     },
@@ -626,6 +655,14 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
         raw_summary_update.strip() if isinstance(raw_summary_update, str) and raw_summary_update.strip() else None
     )
 
+    raw_combat = tool_input.get("combat_state_change")
+    combat_state_change = raw_combat if isinstance(raw_combat, dict) else None
+
+    raw_damage = tool_input.get("damage_summary")
+    damage_summary = (
+        raw_damage.strip() if isinstance(raw_damage, str) and raw_damage.strip() else None
+    )
+
     return NarrationResponse(
         narrative=tool_input["narrative"],
         player_safe_summary=tool_input["player_safe_summary"],
@@ -634,6 +671,8 @@ def _build_response(tool_input: dict[str, Any]) -> NarrationResponse:
         rolls=rolls,
         scene_state=scene_state,
         narrative_summary_update=narrative_summary_update,
+        combat_state_change=combat_state_change,
+        damage_summary=damage_summary,
         consequences=Consequences(
             clock_ticks=[
                 ClockTick(label=item["label"], delta=int(item.get("delta", 1)))

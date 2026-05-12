@@ -32,6 +32,8 @@ class NarrationResponse:
     rolls: list[Roll] = field(default_factory=list)
     scene_state: dict | None = None
     narrative_summary_update: str | None = None
+    combat_state_change: dict | None = None
+    damage_summary: str | None = None
 
 
 class NarrationProvider(Protocol):

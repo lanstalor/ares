@@ -459,3 +459,62 @@ def test_provider_ignores_malformed_scene_participant_conditions_without_self_lo
     response = provider.narrate(_make_request())
 
     assert response.scene_participants[0]["conditions"] == []
+
+
+def test_tool_schema_includes_combat_fields():
+    from app.services.anthropic_provider import build_tool_schema
+
+    schema = build_tool_schema()
+    props = schema["input_schema"]["properties"]
+    required = schema["input_schema"]["required"]
+
+    assert "combat_state_change" in props
+    assert "combat_state_change" not in required  # optional
+    cs_props = props["combat_state_change"]["properties"]
+    assert cs_props["action"]["enum"] == ["enter", "exit"]
+    assert "initiative_rolls" in cs_props
+    assert "reason" in cs_props
+
+    assert "damage_summary" in props
+    assert "damage_summary" not in required
+
+
+def test_build_response_extracts_combat_fields():
+    from app.services.anthropic_provider import _build_response
+
+    tool_input = {
+        "narrative": "n",
+        "player_safe_summary": "s",
+        "consequences": {},
+        "suggested_actions": [],
+        "scene_participants": [],
+        "scene_state": {"tension_tier": 3, "key_holdings": "", "last_concrete_change": "c"},
+        "combat_state_change": {
+            "action": "enter",
+            "initiative_rolls": [
+                {"name": "Gray Sergeant", "is_player": False, "initiative_score": 8},
+                {"name": "Mara", "is_player": True, "initiative_score": 5},
+            ],
+        },
+        "damage_summary": "Mara took 6 from the slingblade",
+    }
+    response = _build_response(tool_input)
+
+    assert response.combat_state_change == tool_input["combat_state_change"]
+    assert response.damage_summary == "Mara took 6 from the slingblade"
+
+
+def test_build_response_handles_missing_combat_fields():
+    from app.services.anthropic_provider import _build_response
+
+    tool_input = {
+        "narrative": "n",
+        "player_safe_summary": "s",
+        "consequences": {},
+        "suggested_actions": [],
+        "scene_participants": [],
+        "scene_state": {"tension_tier": 0, "key_holdings": "", "last_concrete_change": "x"},
+    }
+    response = _build_response(tool_input)
+    assert response.combat_state_change is None
+    assert response.damage_summary is None
