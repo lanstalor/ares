@@ -381,3 +381,49 @@ def test_older_turns_use_player_safe_summary() -> None:
     # Older turns (0–4) should use player_safe_summary
     assert "summary_for_turn_0" in ctx.player_safe_brief
     assert "summary_for_turn_3" in ctx.player_safe_brief
+
+
+def test_hidden_brief_includes_combat_state_when_active() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+
+    campaign = Campaign(
+        name="Test",
+        current_date_pce=728,
+        combat_state={
+            "active": True,
+            "round": 2,
+            "initiative_order": [
+                {"name": "Gray Sergeant", "is_player": False, "initiative_score": 8, "defeated": False},
+                {"name": "Mara", "is_player": True, "initiative_score": 5, "defeated": False},
+                {"name": "Obsidian", "is_player": False, "initiative_score": 3, "defeated": True},
+            ],
+            "last_damage": "Mara took 6 from the slingblade",
+            "started_at_iso": "2026-05-12T00:00:00+00:00",
+        },
+    )
+    session.add(campaign)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "next action")
+
+    assert "Combat state (live)" in ctx.hidden_gm_brief
+    assert "Round: 2" in ctx.hidden_gm_brief
+    assert "Gray Sergeant" in ctx.hidden_gm_brief
+    assert "init 8" in ctx.hidden_gm_brief
+    assert "[PLAYER]" in ctx.hidden_gm_brief
+    assert "defeated" in ctx.hidden_gm_brief.lower()  # marker for Obsidian
+    assert "Mara took 6 from the slingblade" in ctx.hidden_gm_brief
+    assert "Combat state (live)" not in ctx.player_safe_brief
+
+
+def test_hidden_brief_omits_combat_state_when_inactive() -> None:
+    session = _make_session()
+    from app.models.campaign import Campaign
+
+    campaign = Campaign(name="Test", current_date_pce=728)
+    session.add(campaign)
+    session.commit()
+
+    ctx = build_turn_context(session, campaign, "first turn")
+    assert "Combat state (live)" not in ctx.hidden_gm_brief
