@@ -418,3 +418,45 @@ def test_resolve_turn_preserves_summary_when_no_update() -> None:
 
     session.refresh(campaign)
     assert campaign.narrative_summary == "Pre-existing arc."
+
+
+def test_resolve_turn_enters_combat() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+
+    from app.services.ai_provider import NarrationResponse
+    from app.services.consequence_applier import Consequences
+    from app.services.turn_engine import resolve_turn
+
+    class _Stub:
+        def narrate(self, request):
+            return NarrationResponse(
+                narrative="The Gray draws his slingblade.",
+                player_safe_summary="Combat erupts.",
+                consequences=Consequences(),
+                scene_state={"tension_tier": 4, "key_holdings": "Gray has blade", "last_concrete_change": "Combat began"},
+                combat_state_change={
+                    "action": "enter",
+                    "initiative_rolls": [
+                        {"name": "Mara", "is_player": True, "initiative_score": 5},
+                        {"name": "Gray Sergeant", "is_player": False, "initiative_score": 8},
+                        {"name": "Obsidian Guard", "is_player": False, "initiative_score": 3},
+                    ],
+                },
+            )
+        def clarify(self, request):
+            return ""
+
+    resolve_turn(session=session, campaign=campaign, player_input="brace", narration_provider=_Stub())
+
+    session.refresh(campaign)
+    assert campaign.combat_state is not None
+    assert campaign.combat_state["active"] is True
+    assert campaign.combat_state["round"] == 1
+    order = campaign.combat_state["initiative_order"]
+    assert [p["name"] for p in order] == ["Gray Sergeant", "Mara", "Obsidian Guard"]
+    assert order[0]["initiative_score"] == 8
+    assert order[0]["defeated"] is False
+    assert order[1]["is_player"] is True
+    assert campaign.combat_state["last_damage"] == ""
+    assert "started_at_iso" in campaign.combat_state
