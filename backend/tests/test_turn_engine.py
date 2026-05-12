@@ -542,3 +542,39 @@ def test_resolve_turn_marks_defeated_from_scene_participants() -> None:
     assert order["Gray Sergeant"]["defeated"] is True
     assert order["Obsidian Guard"]["defeated"] is False
     assert order["Mara"]["defeated"] is False
+
+
+def test_resolve_turn_exits_combat() -> None:
+    session = _make_session()
+    campaign = _make_campaign(session)
+    campaign.combat_state = {
+        "active": True,
+        "round": 3,
+        "initiative_order": [
+            {"name": "Mara", "is_player": True, "initiative_score": 5, "defeated": False},
+        ],
+        "last_damage": "Final blow",
+        "started_at_iso": "2026-05-12T00:00:00+00:00",
+    }
+    session.commit()
+
+    from app.services.ai_provider import NarrationResponse
+    from app.services.consequence_applier import Consequences
+    from app.services.turn_engine import resolve_turn
+
+    class _Stub:
+        def narrate(self, request):
+            return NarrationResponse(
+                narrative="The Gray surrenders.",
+                player_safe_summary="Combat over.",
+                consequences=Consequences(),
+                scene_state={"tension_tier": 1, "key_holdings": "", "last_concrete_change": "Gray surrendered"},
+                combat_state_change={"action": "exit", "reason": "Gray surrendered"},
+            )
+        def clarify(self, request):
+            return ""
+
+    resolve_turn(session=session, campaign=campaign, player_input="hold blade to throat", narration_provider=_Stub())
+
+    session.refresh(campaign)
+    assert campaign.combat_state is None
