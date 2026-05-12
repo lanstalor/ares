@@ -228,6 +228,37 @@ def test_hidden_gm_brief_does_not_mark_unfired_clock() -> None:
     assert "FIRED" not in ctx.hidden_gm_brief
 
 
+def test_extract_repeated_phrases_finds_cross_turn_repeats():
+    from app.services.context_builder import _extract_repeated_phrases
+
+    class _T:
+        def __init__(self, text): self.gm_response = text
+
+    turns = [
+        _T("She kept her hands where I can see them and waited."),
+        _T("The boots on the rail scuffed once. Hands where I can see them."),
+        _T("Boots on the rail again, hard now."),
+        _T("Her hands where i can see them, palms open."),
+        _T("Different scene entirely with no repeats."),
+    ]
+    phrases = _extract_repeated_phrases(turns)
+    joined = " | ".join(phrases)
+
+    assert "hands where i can see them" in joined
+    assert "boots on the rail" in joined
+    assert len(phrases) <= 6
+
+
+def test_extract_repeated_phrases_empty_when_no_repeats():
+    from app.services.context_builder import _extract_repeated_phrases
+
+    class _T:
+        def __init__(self, text): self.gm_response = text
+
+    turns = [_T("alpha bravo charlie delta echo"), _T("foxtrot golf hotel india juliet")]
+    assert _extract_repeated_phrases(turns) == []
+
+
 def test_hidden_gm_brief_includes_scene_progression_guard_with_recent_gm_beats() -> None:
     session = _make_session()
     campaign = _bootstrap_scenario(session)

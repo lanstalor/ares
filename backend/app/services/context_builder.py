@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+from collections import Counter
 from dataclasses import dataclass
 
 from sqlalchemy import select
@@ -16,6 +18,57 @@ from app.models.world import NPC, Area, Faction
 class TurnContext:
     player_safe_brief: str
     hidden_gm_brief: str
+
+
+_PHRASE_NGRAM_SIZES = (6, 5, 4)
+_PHRASE_MIN_TURNS = 2
+_PHRASE_MAX_RESULTS = 6
+_WORD_RE = re.compile(r"[a-z0-9]+")
+
+
+def _extract_repeated_phrases(recent_turns: list) -> list[str]:
+    """Return up to 6 phrases (4- or 5-grams) that appear across 2+ distinct GM turns.
+
+    Longer phrases beat shorter ones at the same frequency.
+    """
+    per_turn_phrases: list[set[str]] = []
+    for turn in recent_turns:
+        text = (getattr(turn, "gm_response", "") or "").lower()
+        words = _WORD_RE.findall(text)
+        seen: set[str] = set()
+        for size in _PHRASE_NGRAM_SIZES:
+            for i in range(0, len(words) - size + 1):
+                seen.add(" ".join(words[i : i + size]))
+        per_turn_phrases.append(seen)
+
+    counts: Counter[str] = Counter()
+    for phrases in per_turn_phrases:
+        for phrase in phrases:
+            counts[phrase] += 1
+
+    ranked = [
+        phrase
+        for phrase, count in counts.items()
+        if count >= _PHRASE_MIN_TURNS
+    ]
+    ranked.sort(key=lambda p: (-counts[p], -len(p)))
+
+    deduped: list[str] = []
+    for phrase in ranked:
+        # If this phrase subsumes a shorter already-accepted phrase, replace it.
+        to_remove = [e for e in deduped if e in phrase]
+        if to_remove:
+            for e in to_remove:
+                deduped.remove(e)
+            deduped.append(phrase)
+        elif any(phrase in existing for existing in deduped):
+            # Already covered by a longer phrase — skip.
+            continue
+        else:
+            deduped.append(phrase)
+        if len(deduped) >= _PHRASE_MAX_RESULTS:
+            break
+    return deduped
 
 
 _RECENT_TURN_LIMIT = 10
