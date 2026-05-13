@@ -6,7 +6,7 @@ import pytest
 from app.core.enums import SecretStatus, Visibility
 from app.services.ai_provider import NarrationRequest
 from app.services.anthropic_provider import AnthropicNarrationProvider
-from app.services.anthropic_provider import build_tool_schema
+from app.services.anthropic_provider import build_tool_schema, _SYSTEM_PROMPT
 
 
 @dataclass
@@ -518,3 +518,30 @@ def test_build_response_handles_missing_combat_fields():
     response = _build_response(tool_input)
     assert response.combat_state_change is None
     assert response.damage_summary is None
+
+
+def test_system_prompt_has_length_discipline_section() -> None:
+    assert "Length discipline:" in _SYSTEM_PROMPT
+
+
+def test_system_prompt_has_plain_language_section() -> None:
+    assert "Plain language (enforce every turn):" in _SYSTEM_PROMPT
+
+
+def test_system_prompt_no_tone_down_jargon_rule() -> None:
+    assert "TONE DOWN JARGON" not in _SYSTEM_PROMPT
+
+
+def test_system_prompt_banned_terms_only_as_negative_examples() -> None:
+    # Each banned term may appear at most once (as a "not X" example in the Plain language section).
+    # They must not appear in positive-use framing anywhere else.
+    banned = [
+        "HoloCan",
+        "BoQC sensor plate",
+        "mag-rail service cradle",
+        "wrist slate",
+        "checkpoint blister",
+    ]
+    for term in banned:
+        count = _SYSTEM_PROMPT.count(term)
+        assert count <= 1, f"'{term}' appears {count} times in _SYSTEM_PROMPT — expected at most 1 (as negative example only)"
