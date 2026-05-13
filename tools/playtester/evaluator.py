@@ -1,6 +1,7 @@
 """EvaluatorAgent: scores GM responses per-turn and produces a holistic summary."""
 
 import json
+import re
 
 from llm import TextGenerator
 
@@ -108,7 +109,15 @@ class EvaluatorAgent:
             # Fallback: extract JSON from the response if there's surrounding text
             start = raw.find("{")
             end = raw.rfind("}") + 1
-            data = json.loads(raw[start:end]) if start != -1 else _neutral_score()
+            try:
+                data = json.loads(raw[start:end]) if start != -1 else _neutral_score()
+            except json.JSONDecodeError:
+                # Second fallback: regex-extract individual dimension scores
+                data = {}
+                for dim in DIMENSIONS:
+                    m = re.search(rf'"{dim}"[^{{]*"score"\s*:\s*(\d)', raw)
+                    score = int(m.group(1)) if m else 3
+                    data[dim] = {"score": score, "note": ""}
         return TurnScore(data)
 
     def holistic_summary(
