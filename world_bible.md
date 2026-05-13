@@ -1265,22 +1265,22 @@ highRed identity. Establish: pressure, exposure, and
 worker competence under surveillance. Open at Surface
 Relay Tower 19 during the 0520 exterior maintenance window.
 Jupiter fills the dome glass behind the tower. The player is
-outside the pressure rim in a mag-rail service cradle with
+outside the pressure rim in a maintenance cradle with
 Oran of Cimmeria on comms and two Gray supervisors watching
-from the checkpoint blister. Station Chief Pelsin si Vorath's
+from the checkpoint. Station Chief Pelsin si Vorath's
 morning diagnostics will overwrite the relay buffer in
 twenty minutes. Tone: grimdark industrial thriller. The
-oppression is procedural: dose counters, shift clocks,
+oppression is procedural: rad badges, shift timers,
 checkpoint authority, and the fact that a Red can die outside
 the dome while a Copper debates form order.
 
-The player-facing terms are concrete:
-- The Weaver is Mara's anonymous Sons handler, not a public title
-  or known identity. They send orders through dead relay pings and
-  never meet Mara in person.
-- Relay 19 is an exterior communications mast on Ganymede's pressure
-  rim: HoloCan repeater, BoQC sensor plate, emergency beacon, and
-  private Gold band stacked into one tower.
+Use plain, grounded language in narration. Keep the focus on tension
+and stakes, not the names of hardware:
+- The Weaver is Mara's anonymous Sons handler. They send orders through
+  dead relay pings and never meet Mara in person.
+- Relay 19 is the exterior comms mast above Mara: a comms repeater,
+  surveillance plate, emergency beacon, and private Gold band stacked
+  into one tower.
 - The ghost packet is a corrupted data fragment stuck in Relay 19's
   buffer. Mara does not know what it means yet.
 
@@ -1301,7 +1301,7 @@ Beyond the rail, Ganymede's ice runs white and dead under
 your boots. Beyond that, Jupiter fills the sky in bands of
 amber and cream, too large to be scenery and too distant to
 care. Your pressure suit reports green seals, yellow dose,
-eighteen minutes of exterior clearance before the shift clock
+eighteen minutes of exterior clearance before the shift timer
 starts billing your body as waste.
 
 [Red]"Cradle brake is drifting again," Oran of Cimmeria says
@@ -1309,20 +1309,19 @@ over the crew channel. His voice crackles through static and
 cheap insulation. [Red]"Log says it was fixed last cycle. Log
 is a lying Pixie."
 
-Two Gray supervisors watch from the checkpoint blister inside
+Two Gray supervisors watch from the checkpoint inside
 the dome rim. One has a scorcher slung low. The other is
 reading from a slate instead of looking at the ice.
 
 The relay mast above you ticks through its diagnostic warm-up:
-carrier light, HoloCan repeater, BoQC sensor plate, private
+carrier light, comms repeater, surveillance plate, private
 Gold band. In twenty minutes Station Chief Pelsin si Vorath's
 morning scrub will overwrite the buffer.
 
 The Weaver is your anonymous Sons handler, a voice in dead relay
 pings and borrowed maintenance codes. Relay 19 is the exterior mast
-above you: HoloCan repeater, Board of Quality Control sensor plate,
-emergency beacon, private Gold band. The ghost packet is a corrupted
-data fragment stuck in its buffer. You do not know what it means yet.
+above you. The ghost packet is a corrupted data fragment stuck in its
+buffer. You do not know what it means yet.
 
 Last night, the Weaver sent a dead-channel ping in Pellam's old
 maintenance code.

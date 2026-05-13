@@ -73,3 +73,27 @@ def test_seed_service_builds_name_based_payloads_and_hidden_secrets() -> None:
     assert any(secret.label.startswith("Faction: The Weaver’s Network") for secret in bundle.secrets)
     assert any(secret.label == "CampaignOpening: GM instructions" for secret in bundle.secrets)
     assert any(clock.label == "Pelsin Diagnostic Scrub" for clock in bundle.campaign_clocks)
+
+
+def test_opening_message_contains_no_compound_techno_nouns() -> None:
+    """Opening message must not seed the GM with compound techno-nouns."""
+    raw = _load_world_bible()
+    # Extract the Opening Message block between the heading and its closing fence
+    start_marker = "### Opening Message (Player-facing)\n\n```"
+    end_marker = "```"
+    start_idx = raw.index(start_marker) + len(start_marker)
+    end_idx = raw.index(end_marker, start_idx)
+    opening_message = raw[start_idx:end_idx]
+
+    banned = [
+        "HoloCan",
+        "BoQC sensor plate",
+        "mag-rail service cradle",
+        "wrist slate",
+        "checkpoint blister",
+        "dose counters",
+    ]
+    for term in banned:
+        assert term not in opening_message, (
+            f"Banned compound techno-noun ‘{term}’ found in opening message"
+        )
