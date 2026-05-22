@@ -5,9 +5,9 @@
 | **Track** | Carryover |
 | **Branch** | `carryover/anti-stall-safeguards` |
 | **Worktree** | `~/ares` |
-| **PR** | TBD |
-| **Status** | in-flight |
-| **Last agent** | Gemini |
+| **PR** | https://github.com/lanstalor/ares/pull/16 |
+| **Status** | merged |
+| **Last agent** | Codex |
 | **Next agent** | any |
 | **Parent plan** | `docs/development/master-plan.md` |
 
@@ -19,17 +19,16 @@ Build structural scene-progression guardrails to track stall state and force the
 
 ## Last-known-good commit
 
-`666422f` — `chore: remove one-off python utility scripts and old snapshot from root`
+`d5a8a40` — `feat: chat quality, pacing, and memory slice (carryover/anti-stall-safeguards) (#16)`
 
 Test status at this commit:
-- backend (`make backend-test`): not-run
-- frontend (`make check`): not-run
-- playtester (offline, stub provider): not-run
-- playwright screenshot at 5180: not-run
+- backend (`make backend-test`): passed in merge validation
+- frontend (`make check`): passed in merge validation
+- playtester: initial 5-turn signal improved; later 20-turn report required a follow-up because the playtester prompts still used the old Davan/Lykos premise
 
 ## In-flight WIP
 
-`clean` — fully implemented, tested, and playtester verified. Ready for PR.
+`merged` — PR #16 landed on `main`. A later Codex review found and patched two follow-up issues: canon-guard failures must not persist scene/combat summary state, and playtester prompts must use Mara/Relay 19 rather than Davan/Lykos before the next benchmark. The 2026-05-22 benchmark rerun produced a partial 9-turn report before OpenAI quota stopped backend GM calls and holistic evaluation.
 
 ## Files touched so far
 
@@ -38,36 +37,42 @@ Test status at this commit:
 - `backend/app/services/turn_engine.py` — ✅ Added consequence evaluation and counter logic.
 - `backend/app/services/context_builder.py` — ✅ Added critical prompt injection when stall_counter >= 3.
 - `backend/app/services/anthropic_provider.py` — ✅ Rewrote system prompt to explicitly ban static standoffs and tone down heavy sci-fi jargon.
+- `backend/app/services/ai_provider.py` — ✅ Added scene_state and narrative_summary_update to NarrationResponse.
+- `tools/playtester/player.py` — ✅ Retargeted player simulation to Mara of Cimmeria / Relay 19 in the follow-up pass.
+- `tools/playtester/evaluator.py` — ✅ Retargeted evaluator context to Mara of Cimmeria / Relay 19 in the follow-up pass.
 
 ## Next concrete step
 
-Verify the prompt/model changes with manual testing, then create a PR for `carryover/anti-stall-safeguards`.
+Restore provider quota or switch providers, then rerun the 20-turn playtester with Mara/Relay 19 prompts and compare against `tools/playtester/reports/2026-05-13-01-10.md`. Treat the older report's evaluator scores as suspect because its evaluator prompt referenced Davan/Lykos. Partial rerun evidence is in `tools/playtester/reports/2026-05-22-00-24.md`.
 
 ## Open questions / blockers
 
-- None
+- OpenAI quota stopped the 2026-05-22 rerun after 9 scored turns.
 
 ## Agent rotation log
 
 - `2026-05-11 UTC` — Gemini → Bootstrapped slice, created branch, updated master plan, and set up workstream doc.
 - `2026-05-11 UTC` — Gemini → Implemented stall_counter logic, rewrote GM system prompt to fix static standoffs and jargon, and swapped local `.env` model to `gpt-5.5`. Interim push before handoff.
+- `2026-05-12 UTC` — Claude/Codex → Expanded into chat quality, pacing, scene-state memory, and narrative summary. Merged via PR #16.
+- `2026-05-22 UTC` — Codex → Reviewed latest repo state, found canon-guard state persistence and stale playtester premise, patched both, and refreshed handoff docs for abrupt session continuation.
+- `2026-05-22 UTC` — Codex → Hardened playtester provider error handling and ran `ARES_PLAYTESTER_TURNS=20 python3 tools/playtester/run.py`; report stopped at 9 scored turns due OpenAI quota, saved as `tools/playtester/reports/2026-05-22-00-24.md`.
 
 ## Verification on completion
 
 Before marking this slice **review**:
 
-- [ ] `make backend-test` passes
-- [ ] `make check` passes
-- [ ] Playtester runs 30 turns clean with feature flag off (default) and on
+- [x] `make backend-test` passes
+- [x] `make check` passes
+- [ ] Full 20-turn playtester rerun with Mara/Relay 19 prompts
 - [ ] Playwright screenshot at 5180 (UI slices only) saved under `assets/samples/ui-iteration/`
-- [ ] Workstream doc fully reflects final state
-- [ ] Draft PR description summarizes the slice
-- [ ] `CLAUDE.md` "Recently Finished" updated if this is a major capability
+- [x] Workstream doc fully reflects final state
+- [x] PR description summarized the slice
+- [x] `CLAUDE.md` updated for current state
 
 ## Hard constraints checklist
 
-- [ ] Hidden state does not leak to player
-- [ ] Canon guard not bypassed
-- [ ] Current player-character constraint remains documented for this branch
-- [ ] All AI/media/TTS calls go through a Provider Protocol
-- [ ] Stub provider works offline (no API key required for `make backend-test`)
+- [x] Hidden state does not leak to player
+- [x] Canon guard not bypassed
+- [x] Current player-character constraint remains documented for this branch
+- [x] All AI/media/TTS calls go through a Provider Protocol
+- [x] Stub provider works offline (no API key required for `make backend-test`)

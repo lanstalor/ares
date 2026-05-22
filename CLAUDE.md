@@ -6,38 +6,26 @@
 
 ## Latest Session Summary
 
-Date: 2026-05-12
+Date: 2026-05-22
 
-### ✅ Chat Quality / Pacing / Memory Slice (Complete, Awaiting Playtest Confirmation)
+### ✅ Latest Review / Handoff State
 
-**Goal:** Eliminate the repetition / static-standoff failure modes in playtest reports (Repetition averaged 1.2–1.6 / 5, Flow 1.2–2.8) and durably extend the GM's story memory.
+**Merged since the focus-group branch:**
+- **FG1-FG3 focus-group build** — Mara of Cimmeria / Relay 19 intro, blocker patch, HITL simulation, merged via PR #15.
+- **Chat quality / pacing / memory** — `stall_counter`, `last_scene_state`, `narrative_summary`, repeated-phrase banlist, GM-only memory injection, and stronger scene-change prompt discipline, merged via PR #16.
+- **A4 turn-based combat mode** — GM-driven combat enter/progress/exit, initiative order, damage summary, hidden combat context, API exposure, and frontend CombatPanel, merged via PR #17.
+- **Narration quality follow-up** — Length discipline, plain-language prompt rules, Section 14 world-bible rewrite, and a 20-turn playtester report.
 
-**What landed on `carryover/anti-stall-safeguards` (pushed to origin):**
-- **Schema:** Two new Campaign columns — `last_scene_state` (JSON) and `narrative_summary` (Text). Migration `741c8686e3a3` applied.
-- **Tool schema:** `record_turn` now requires a `scene_state` object (`tension_tier` 0–4, `key_holdings`, `last_concrete_change`) and optionally accepts `narrative_summary_update`.
-- **Context builder:** Injects `last_scene_state` diff, rolling `narrative_summary`, `gm_only` memories, and a dynamic repeated-phrase banlist (4-/5-/6-grams across last 5 GM turns). Uses `player_safe_summary` for older turn excerpts (turns 4–10) and full GM text for the last 3. Old "Scene progression guard" block removed — subsumed by structural `scene_state`.
-- **Prompt surgery:** New "Scene change discipline" section (first-sentence-names-change, escalate-against-cautious-streaks, absorb-player-disruptions-without-resetting) + stock-phrase banlist (`hands where I can see them`, `the strip is warm`, etc.) extracted from the 2026-05-12 transcripts.
-- **Turn engine:** Persists GM-emitted `scene_state` and (optional) `narrative_summary_update` on the campaign row each turn.
+**Important review fixes from 2026-05-22:**
+- Canon-guard failures must not persist `last_scene_state`, `narrative_summary`, or `combat_state`.
+- `tools/playtester/player.py` and `tools/playtester/evaluator.py` must use Mara / Relay 19 context, not the old Davan / Lykos premise.
+- The 2026-05-13 report is useful as raw GM transcript evidence, but its evaluator notes/scores are suspect because the evaluator prompt still referenced Davan/Lykos.
 
-**Spec:** `docs/superpowers/specs/2026-05-12-chat-quality-pacing-design.md`.
-**Plan:** `docs/superpowers/plans/2026-05-12-chat-quality-pacing.md`.
-
-**Tests:** 237 passing, including new coverage for phrase detector, gm_only injection, scene_state injection, banlist injection, older-turn summary collapse, and turn engine persistence.
-
-**Initial playtest signal (5 turns gpt-5.5 player, gpt-5.5 GM):** Per-turn averages 4.2–4.5 (vs prior 1.5–2.5 baseline). Repetition score 3–5 per turn (was 1.2 avg), Flow consistently 5 (was 2.8 avg), Engagement 4–5 (was 3.2 avg). All spec targets exceeded. Full 20-turn run with Anthropic Haiku player/evaluator in progress as of session end — see `tools/playtester/reports/`.
-
-**Status:**
-- **`carryover/anti-stall-safeguards`** — Ready to open PR / merge. Pushed to origin.
-- **Focus Group Slices (FG1, FG2, FG3)** — ✅ Finished, playtested (HITL), merged to main.
-- **Wave 3** — (A4, B4, C3) Ready to begin after merge.
-
-**Ready for:**
-- PR review/merge for `carryover/anti-stall-safeguards`.
-- Wave 3 slice selection.
-
-### 🔄 Earlier in the day: Anti-Stall Safeguards
-
-Already implemented and merged into this branch prior to today's chat-quality slice. Included `stall_counter` on Campaign, `CRITICAL SYSTEM OVERRIDE` injection at threshold ≥3, and the original anti-jargon / anti-standoff prompt revisions. The chat-quality slice built on top of this foundation.
+**Current validation target:**
+- Rerun the 20-turn playtester with Mara/Relay 19 prompts after provider quota is available.
+- Compare response length, banned compound terms, repetition, flow, and engagement against `tools/playtester/reports/2026-05-13-01-10.md`.
+- Latest partial rerun: `tools/playtester/reports/2026-05-22-00-24.md` captured 9 scored turns before the backend GM provider and holistic evaluator hit OpenAI quota errors.
+- Record results under `tools/playtester/reports/` and update `docs/development/master-plan.md` plus the relevant workstream doc before handing off.
 
 ---
 
@@ -87,6 +75,8 @@ docker compose up --build --no-deps -d frontend
 - **Dice System**: Attribute check primitive (Strength, Cunning, Will, Charm, Tech) + feed rendering (Slice A1).
 - **Inventory**: Itemized Item model (tags, quantity, rarity, equipped) wired to consequences + frontend rendering (Slice A2).
 - **Conditions**: 9 condition types (bleeding, poisoned, etc.), applied via consequences, tick on turn, rendered as color-coded chips (Slice A3).
+- **Combat Mode**: GM-driven turn-based combat state, initiative ordering, damage summary, hidden combat context, and frontend CombatPanel (Slice A4).
+- **Chat Quality / Memory**: scene-state tracking, narrative summary, repeated-phrase banlist, GM-only memory reinjection, and anti-stall counter.
 - **Media System**: Provider-backed image generation abstraction (OpenAI/Replicate/Stub) (Slice B1).
 - **Scene Art**: Generated/cached per location, turn-triggered, with player-safe prompt building (Slice B2).
 - **NPC Portraits**: Generated on NPC creation/first appearance, cached per NPC, lazy-load with initials fallback, operator regenerate endpoint (Slice B3).

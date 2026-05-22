@@ -156,6 +156,19 @@ def test_turn_engine_skips_consequences_when_canon_guard_fails() -> None:
         NarrationResponse(
             narrative="Darrow steps from the shadows.",
             player_safe_summary="A figure appears.",
+            scene_state={
+                "tension_tier": 4,
+                "key_holdings": "Darrow holds the room",
+                "last_concrete_change": "Canon broke",
+            },
+            narrative_summary_update="Darrow entered the story.",
+            combat_state_change={
+                "action": "enter",
+                "initiative_rolls": [
+                    {"name": "Darrow", "is_player": False, "initiative_score": 9},
+                    {"name": "Mara", "is_player": True, "initiative_score": 5},
+                ],
+            },
             consequences=Consequences(
                 clock_ticks=[ClockTick(label="Citadel suspicion", delta=2)],
             ),
@@ -173,6 +186,10 @@ def test_turn_engine_skips_consequences_when_canon_guard_fails() -> None:
     assert result.canon_guard_passed is False
     assert "Darrow" in (result.canon_guard_message or "")
     assert session.scalar(select(Clock).where(Clock.id == clock.id)).current_value == 0
+    session.refresh(campaign)
+    assert campaign.last_scene_state is None
+    assert campaign.narrative_summary is None
+    assert campaign.combat_state is None
 
 
 def test_turn_engine_populates_clocks_fired_when_clock_reaches_max() -> None:

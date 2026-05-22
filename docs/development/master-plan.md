@@ -12,7 +12,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
-| Anti-Stall | `carryover/anti-stall-safeguards` | `~/ares` | Gemini | in-flight | Investigate turn_engine.py for stall tracking logic. |
+| Narration QA follow-up | `main` | `~/ares` | Codex | blocked | Provider quota stopped the 2026-05-22 rerun after 9 scored turns; rerun 20 turns when quota is available and compare against `tools/playtester/reports/2026-05-13-01-10.md`. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -25,7 +25,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | A1 | Dice + skill check primitive | finished |
 | A2 | Itemized inventory | finished |
 | A3 | Conditions + status effects | finished |
-| A4 | Turn-based combat mode | not-started |
+| A4 | Turn-based combat mode | finished |
 | A5 | Abilities/equipment registry | not-started |
 
 ### Track B — Sensory Polish
@@ -53,7 +53,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 | Slice | Status | Next step |
 |---|---|---|
 | UI overhaul (golden slice merged) | finished | Completed in session 2026-05-05 |
-| GM anti-stall safeguards | in-flight | In progress on `carryover/anti-stall-safeguards` |
+| GM anti-stall safeguards | finished | Merged through PR #16; current follow-up is playtester validation with Mara/Relay 19 prompts. |
 
 ## Later
 
@@ -65,12 +65,17 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 ## Blocked
 
-None currently recorded. Add rows only for real external blockers, not general uncertainty.
+| Blocker | Impact | Next step |
+|---|---|---|
+| OpenAI quota exhausted during playtester rerun | `tools/playtester/reports/2026-05-22-00-24.md` captured 9 scored turns, then backend GM calls and holistic evaluation returned quota errors. | Restore quota or switch playtester/backend providers, then rerun `ARES_PLAYTESTER_TURNS=20 python3 tools/playtester/run.py`. |
 
 ## Recently Finished
 
 | Date | Slice | Notes |
 |---|---|---|
+| 2026-05-13 | Narration quality | Added length discipline, plain-language prompt rules, Section 14 world-bible rewrite, and 20-turn report. Retargeted playtester prompts to Mara/Relay 19 in the 2026-05-22 follow-up before the next benchmark. |
+| 2026-05-12 | A4: Turn-based combat mode | GM-driven enter/progress/exit combat state, initiative order, damage summary, hidden combat context, API exposure, and frontend CombatPanel. Merged via PR #17. |
+| 2026-05-12 | Chat quality / pacing / memory | Scene-state persistence, narrative summary, repeated-phrase banlist, GM-only memory injection, stall counter, and stronger scene-change prompt discipline. Merged via PR #16. |
 | 2026-05-11 | FG1, FG2, FG3: Focus Group | Blockers patched, hardening verified, HITL playtest simulated successfully. Merged to main. |
 | 2026-05-06 | A3: Conditions + status effects | ConditionType enum, Condition model + migration, ConditionService, consequence integration, turn-triggered ticking, ParticipantStrip rendering with color-coded chips, 70+ tests, 215 total passing |
 | 2026-05-06 | B3: NPC portrait generation | NpcPortrait model + service, eager generation on NPC creation, lazy generation on first appearance, operator regenerate endpoint, MediaProvider integration, frontend lazy-load with initials fallback |

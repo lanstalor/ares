@@ -71,8 +71,8 @@ def main() -> None:
         print(f"ERROR: {e}", file=sys.stderr)
         sys.exit(1)
 
-    player = PlayerAgent(TextGenerator(player_config, max_tokens=200))
-    evaluator = EvaluatorAgent(TextGenerator(evaluator_config, max_tokens=2000))
+    player = PlayerAgent(TextGenerator(player_config, max_tokens=1000))
+    evaluator = EvaluatorAgent(TextGenerator(evaluator_config, max_tokens=3000))
 
     transcript: list[dict] = []
     scores: list[TurnScore] = []

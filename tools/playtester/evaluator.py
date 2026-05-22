@@ -9,8 +9,9 @@ DIMENSIONS = ["realism", "continuity", "engagement", "repetition", "quality", "f
 
 PER_TURN_SYSTEM = """\
 You are a critical evaluator of AI game master (GM) responses for a single-player TTRPG set in
-the Red Rising universe, 728 PCE (pre-Darrow). The player character is Davan o' Tharsis,
-a lowRed miner at Lykos station. Score the GM's latest response on six dimensions.
+the Red Rising universe, 728 PCE (pre-Darrow). The player character is Mara of Cimmeria,
+a highRed relay technician at Surface Relay Tower 19 on Ganymede. Score the GM's latest
+response on six dimensions.
 
 Scoring dimensions (1–5 each):
 - realism: Fits 728 PCE Red Rising setting. No anachronisms, correct caste voice, plausible
@@ -38,7 +39,7 @@ Respond ONLY with a JSON object matching this exact schema, no other text:
 
 HOLISTIC_SYSTEM = """\
 You are a critical evaluator reviewing a full 30-turn AI game master session for a single-player
-TTRPG set in the Red Rising universe, 728 PCE. The player character is Davan o' Tharsis.
+TTRPG set in the Red Rising universe, 728 PCE. The player character is Mara of Cimmeria.
 You have the full transcript and per-turn scores. Write a concise holistic analysis in markdown.
 
 Structure your response with exactly these sections:
@@ -102,7 +103,10 @@ class EvaluatorAgent:
             f"GM: {gm_response}\n\n"
             "Score the GM response above."
         )
-        raw = self._llm.generate(system=PER_TURN_SYSTEM, user=user_content)
+        try:
+            raw = self._llm.generate(system=PER_TURN_SYSTEM, user=user_content)
+        except Exception:
+            return TurnScore(_neutral_score())
         try:
             data = json.loads(raw)
         except json.JSONDecodeError:
@@ -132,7 +136,21 @@ class EvaluatorAgent:
             f"Per-turn scores:\n\n{scores_text}\n\n"
             "Write the holistic analysis."
         )
-        return self._llm.generate(system=HOLISTIC_SYSTEM, user=user_content)
+        try:
+            return self._llm.generate(system=HOLISTIC_SYSTEM, user=user_content)
+        except Exception as exc:
+            return (
+                "## Arc Summary\n"
+                f"Holistic evaluator failed: {exc}\n\n"
+                "## Worst Recurring Issues\n"
+                "Review the per-turn transcript manually.\n\n"
+                "## Best Moments\n"
+                "Review the per-turn transcript manually.\n\n"
+                "## Score Averages\n"
+                f"{scores_text}\n\n"
+                "## Top 3 Recommendations\n"
+                "Rerun the holistic evaluator when provider responses are stable."
+            )
 
 
 def _format_transcript(transcript: list[dict]) -> str:

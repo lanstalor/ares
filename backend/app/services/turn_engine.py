@@ -128,17 +128,17 @@ def resolve_turn(
         )
     )
 
-    if narration.scene_state is not None:
-        campaign.last_scene_state = narration.scene_state
-    if narration.narrative_summary_update:
-        campaign.narrative_summary = narration.narrative_summary_update
-    _apply_combat_state_change(campaign, narration)
-    session.flush()
-
     canon_guard_passed, canon_guard_message = evaluate_canon_guard(narration.narrative)
 
     consequence_result = ConsequenceResult(clocks_fired=[], location_changed_to=None)
     if canon_guard_passed:
+        if narration.scene_state is not None:
+            campaign.last_scene_state = narration.scene_state
+        if narration.narrative_summary_update:
+            campaign.narrative_summary = narration.narrative_summary_update
+        _apply_combat_state_change(campaign, narration)
+        session.flush()
+
         consequence_result = apply_consequences(session, campaign, narration.consequences)
         # Process conditions AFTER consequences are applied
         _process_conditions(session, campaign)
