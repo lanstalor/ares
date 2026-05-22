@@ -44,6 +44,36 @@ The next agent (possibly a different one) reads the doc + last commit and resume
 
 Substitute `{slice-id}` (e.g. `A1`) and `{slice-doc}` (e.g. `A1-dice-skill-checks`) before pasting.
 
+### Current Gemini Blind Resume Prompt
+
+```text
+Continue work in /home/lans/ares. You are entering the project blind; trust the repo docs and Git state over any chat transcript.
+
+Read in this order:
+1. GEMINI.md if present, otherwise CLAUDE.md
+2. docs/development/agent-handoff-protocol.md
+3. docs/development/master-plan.md
+4. docs/development/workstreams/anti-stall-safeguards.md
+
+Then run:
+- git status
+- git log -5 --oneline
+
+Current state as of commit d1637c8:
+- PR #15, #16, and #17 are merged to main.
+- A follow-up patch fixed canon-guard failures so they do not persist last_scene_state, narrative_summary, or combat_state.
+- The playtester player/evaluator prompts now use Mara of Cimmeria / Relay 19, not the old Davan/Lykos premise.
+- tools/playtester/reports/2026-05-22-00-24.md is partial evidence from a rerun that stopped after 9 scored turns because OpenAI quota was exhausted.
+
+Resume from the literal "Next concrete step" in docs/development/workstreams/anti-stall-safeguards.md:
+restore provider quota or switch providers, then rerun:
+ARES_PLAYTESTER_TURNS=20 python3 tools/playtester/run.py
+
+Compare the new report against tools/playtester/reports/2026-05-13-01-10.md for response length, banned compound terms, repetition, flow, and engagement. Treat the older evaluator scores as suspect because the old evaluator prompt referenced Davan/Lykos.
+
+Before stopping, update docs/development/master-plan.md and docs/development/workstreams/anti-stall-safeguards.md, commit, and push.
+```
+
 ### For Codex
 
 ```text
