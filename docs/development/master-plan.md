@@ -12,7 +12,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
-| Narration QA follow-up | `main` | `~/ares` | Codex | blocked | Provider quota stopped the 2026-05-22 rerun after 9 scored turns; rerun 20 turns when quota is available and compare against `tools/playtester/reports/2026-05-13-01-10.md`. |
+| Narration QA follow-up | `main` | `~/ares` | Codex | blocked | OpenAI quota stopped the 2026-05-22 rerun after 9 scored turns and still blocks a later smoke; rerun 20 turns on OpenAI when quota is available and compare against `tools/playtester/reports/2026-05-13-01-10.md`. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)
 
@@ -67,7 +67,7 @@ Pick any slice from a different track and run `make bootstrap-slice SLICE=<id>`.
 
 | Blocker | Impact | Next step |
 |---|---|---|
-| OpenAI quota exhausted during playtester rerun | `tools/playtester/reports/2026-05-22-00-24.md` captured 9 scored turns, then backend GM calls and holistic evaluation returned quota errors. | Restore quota or switch playtester/backend providers, then rerun `ARES_PLAYTESTER_TURNS=20 python3 tools/playtester/run.py`. |
+| OpenAI quota exhausted during playtester rerun | `tools/playtester/reports/2026-05-22-00-24.md` captured 9 scored turns, then backend GM calls and holistic evaluation returned quota errors. A later OpenAI smoke with `.env` sourced confirmed `insufficient_quota`; no additional benchmark report was written. | Restore OpenAI quota, then rerun `ARES_PLAYTESTER_TURNS=20 python3 tools/playtester/run.py`. Use Anthropic only as an explicitly documented fallback. |
 
 ## Recently Finished
 

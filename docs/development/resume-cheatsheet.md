@@ -59,14 +59,15 @@ Then run:
 - git status
 - git log -5 --oneline
 
-Current state as of commit d1637c8:
+Current state:
 - PR #15, #16, and #17 are merged to main.
 - A follow-up patch fixed canon-guard failures so they do not persist last_scene_state, narrative_summary, or combat_state.
 - The playtester player/evaluator prompts now use Mara of Cimmeria / Relay 19, not the old Davan/Lykos premise.
 - tools/playtester/reports/2026-05-22-00-24.md is partial evidence from a rerun that stopped after 9 scored turns because OpenAI quota was exhausted.
+- OpenAI is the preferred benchmark provider for experience quality. A later smoke with .env sourced still returned insufficient_quota; tools/playtester/run.py now aborts repeated initial turn failures without writing empty reports.
 
 Resume from the literal "Next concrete step" in docs/development/workstreams/anti-stall-safeguards.md:
-restore provider quota or switch providers, then rerun:
+restore OpenAI quota, then rerun:
 ARES_PLAYTESTER_TURNS=20 python3 tools/playtester/run.py
 
 Compare the new report against tools/playtester/reports/2026-05-13-01-10.md for response length, banned compound terms, repetition, flow, and engagement. Treat the older evaluator scores as suspect because the old evaluator prompt referenced Davan/Lykos.

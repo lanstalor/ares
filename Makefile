@@ -31,7 +31,7 @@ compose-up:
 	docker compose up --build
 
 migrate:
-	cd backend && alembic upgrade head
+	cd backend && .venv/bin/alembic upgrade head
 
 # Bootstrap a roadmap slice: branch + worktree + workstream doc.
 # Usage: make bootstrap-slice SLICE=A1

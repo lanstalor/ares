@@ -31,6 +31,7 @@ from reporter import write_report
 BACKEND_URL = os.getenv("ARES_BACKEND_URL", "http://localhost:8000")
 NUM_TURNS = int(os.getenv("ARES_PLAYTESTER_TURNS", "30"))
 PLAYER_CONTEXT_WINDOW = 5  # last N GM responses fed to the player agent
+MAX_INITIAL_TURN_FAILURES = 3
 
 
 def seed_campaign(http: httpx.Client) -> str:
@@ -77,6 +78,7 @@ def main() -> None:
     transcript: list[dict] = []
     scores: list[TurnScore] = []
     recent_gm: list[str] = []
+    consecutive_turn_failures = 0
 
     with httpx.Client() as http:
         # Verify backend is reachable
@@ -110,8 +112,20 @@ def main() -> None:
             try:
                 result = submit_turn(http, campaign_id, player_input)
             except httpx.HTTPError as e:
+                consecutive_turn_failures += 1
                 print(f"  [SKIP] Turn {turn_num} failed: {e}")
+                if (
+                    not transcript
+                    and consecutive_turn_failures >= min(MAX_INITIAL_TURN_FAILURES, NUM_TURNS)
+                ):
+                    print(
+                        "\nERROR: Aborting playtest after repeated initial turn failures; "
+                        "no benchmark report was written.",
+                        file=sys.stderr,
+                    )
+                    sys.exit(1)
                 continue
+            consecutive_turn_failures = 0
 
             gm_response = result["turn"]["gm_response"]
             print(f"  GM:     {gm_response[:120]}{'...' if len(gm_response) > 120 else ''}")
@@ -135,6 +149,10 @@ def main() -> None:
             )
             print(f"  Scores: {dim_summary}  avg={avg}")
             print()
+
+        if not transcript:
+            print("ERROR: No successful turns; no benchmark report was written.", file=sys.stderr)
+            sys.exit(1)
 
         print(f"{'='*60}")
         print("Running holistic analysis...")

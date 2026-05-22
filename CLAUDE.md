@@ -22,9 +22,10 @@ Date: 2026-05-22
 - The 2026-05-13 report is useful as raw GM transcript evidence, but its evaluator notes/scores are suspect because the evaluator prompt still referenced Davan/Lykos.
 
 **Current validation target:**
-- Rerun the 20-turn playtester with Mara/Relay 19 prompts after provider quota is available.
+- Rerun the 20-turn playtester with Mara/Relay 19 prompts after OpenAI quota is available. The OpenAI benchmark is preferred for experience quality; use Anthropic only as an explicitly documented fallback.
 - Compare response length, banned compound terms, repetition, flow, and engagement against `tools/playtester/reports/2026-05-13-01-10.md`.
 - Latest partial rerun: `tools/playtester/reports/2026-05-22-00-24.md` captured 9 scored turns before the backend GM provider and holistic evaluator hit OpenAI quota errors.
+- A later 2026-05-22 OpenAI smoke with `.env` sourced confirmed backend GM calls and evaluator calls still return `insufficient_quota`; `tools/playtester/run.py` now aborts repeated initial turn failures without writing empty benchmark reports.
 - Record results under `tools/playtester/reports/` and update `docs/development/master-plan.md` plus the relevant workstream doc before handing off.
 
 ---
