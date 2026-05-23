@@ -65,6 +65,7 @@ Current state:
 - The playtester player/evaluator prompts now use Mara of Cimmeria / Relay 19, not the old Davan/Lykos premise.
 - tools/playtester/reports/2026-05-22-00-24.md is partial evidence from a rerun that stopped after 9 scored turns because OpenAI quota was exhausted.
 - OpenAI is the preferred benchmark provider for experience quality. A later smoke with .env sourced still returned insufficient_quota; tools/playtester/run.py now aborts repeated initial turn failures without writing empty reports.
+- Sonnet 4.6 fallback benchmark completed at tools/playtester/reports/2026-05-23-00-19.md with overall 4.78. It is valid fallback evidence but not a replacement for the preferred OpenAI benchmark.
 
 Resume from the literal "Next concrete step" in docs/development/workstreams/anti-stall-safeguards.md:
 restore OpenAI quota, then rerun:
