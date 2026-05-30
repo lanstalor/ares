@@ -12,6 +12,7 @@ If you are switching agents after an interruption, use `docs/development/resume-
 
 | Slice | Branch | Worktree | Agent | Status | Next step |
 |---|---|---|---|---|---|
+| UI1 pixel chrome refresh | `ui/UI1-pixel-chrome-refresh` | `~/ares` | GitHub Copilot | in-flight | Validate the frontend build on the new chrome assets and route alias, then capture a compose-backed 5180 screenshot before PR review. |
 | Narration QA follow-up | `main` | `~/ares` | Codex | blocked | Sonnet 4.6 fallback benchmark completed at `tools/playtester/reports/2026-05-23-00-19.md`; OpenAI quota still blocks the preferred benchmark. Rerun 20 turns on OpenAI when quota is available. |
 
 ## Wave Backlog (Fables.gg Gap-Closing)

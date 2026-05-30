@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { ClarifySidebar } from "./components/ClarifySidebar";
 import { IntroOverlay } from "./components/IntroOverlay";
@@ -35,6 +35,14 @@ import { deriveShellReadiness } from "./lib/readiness";
 import { buildActionPresets, buildSceneParticipants, deriveSceneTone } from "./lib/uiTheme";
 
 const AdminApp = lazy(() => import("./admin/AdminApp"));
+
+function DevUiRouteAlias() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  params.set(DEV_UI_QUERY, "1");
+
+  return <Navigate replace to={{ pathname: "/", search: `?${params.toString()}` }} />;
+}
 
 function buildCampaignTurns(selectedCampaign, campaignState, turnHistoryByCampaign) {
   if (!selectedCampaign) {
@@ -309,6 +317,7 @@ function shouldForceIntroFromUrl() {
 }
 
 export default function App() {
+  const location = useLocation();
   const devUiMode = isDevUiMode();
   const [assetOverlayMode, setAssetOverlayMode] = useState(() => isAssetOverlayMode());
   const [healthStatus, setHealthStatus] = useState(null);
@@ -361,6 +370,10 @@ export default function App() {
   const devUiSnapshotRef = useRef(null);
 
   useEffect(() => () => disposeAmbientAudio(audioRuntimeRef), []);
+
+  useEffect(() => {
+    setAssetOverlayMode(isAssetOverlayMode());
+  }, [location.search]);
 
   useEffect(() => {
     const topbar = document.querySelector(".topbar");
@@ -785,6 +798,7 @@ export default function App() {
           </Suspense>
         }
       />
+      <Route path={DEV_UI_ROUTE} element={<DevUiRouteAlias />} />
       <Route path="/" element={
         <div className={`app-shell frame-shell scene-theme-${sceneTone} mode-${shellMode} ${devUiMode ? "dev-ui-mode" : ""} ${assetOverlayMode ? "asset-overlay-mode" : ""}`}>
       {devUiMode ? null : (
